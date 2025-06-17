@@ -1,0 +1,125 @@
+<div class="row">
+  <div class="col-xl-12">
+    <div class="frame-wrap">
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" class="custom-control-input" id="defaultInline1Radio" name="inlineDefaultRadiosExample" checked="" (change)="this.getRankingProductivesResearcher()">
+        <label class="custom-control-label" for="defaultInline1Radio">Productos</label>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" class="custom-control-input" id="defaultInline2Radio" name="inlineDefaultRadiosExample" (change)="this.getRankingImpactResearcher()">
+        <label class="custom-control-label" for="defaultInline2Radio">Citas</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="row js-list-filter" id="js-contacts">
+
+  <div class="col-xl-4" *ngFor="let item of ranked.slice(0,6)">
+    <div id="panel-8" class="panel">
+      <div class="panel-hdr">
+        <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+          <div class="d-flex flex-row align-items-center">
+          <span class="mr-3">
+            <span *ngIf="item.url_foto" class="rounded-circle profile-image d-block" style="background-size: cover;" [ngStyle]="{ 'background-image': 'url(' + item.url_foto + ')'}"></span>
+            <span *ngIf="!item.url_foto" class="rounded-circle profile-image d-block" style="background-size: cover;" [ngStyle]="{ 'background-image': 'url(../assets/img/demo/avatars/avatar-m.png)'}"></span>
+            <!--<span class="rounded-circle profile-image d-block" [style.backgroundImage]="'url('+ item.url_foto +')'" ></span>-->
+          </span>
+            <div class="info-card-text flex-1">
+              <a [href]="'/invest/' + item.id" [target]="'_blank'" class="fs-xl text-truncate text-truncate-lg text-info" aria-expanded="false">
+                {{ item.nombre }}
+              </a>
+              <span class="text-truncate text-truncate-xl">{{ item.grado_invest }}</span>
+            </div>
+            <button class="js-expand-btn btn btn-sm btn-default d-none waves-effect waves-themed" data-toggle="collapse" data-target="#c_1 > .card-body + .card-body" aria-expanded="false">
+              <span class="collapsed-hidden">+</span>
+              <span class="collapsed-reveal">-</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel-toolbar">
+          <h5 class="m-0">
+            Cantidad:
+          </h5>
+        </div>
+        <div class="panel-toolbar ml-2">
+          <h5 class="m-0">
+            <span class="badge badge-primary fw-400 l-h-n" *ngIf="rankingProd">
+              {{ item.cant_prod }}
+            </span>
+            <span class="badge badge-primary fw-400 l-h-n" *ngIf="!rankingProd">
+              {{ item.cant_citas }}
+            </span>
+          </h5>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="card-body p-0 collapse show">
+            <div class="p-3 height-sm">
+              <div *ngIf="item.pais != ''" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-map-marker-alt"></i>&nbsp;<strong style="font-family: Poppins">País:</strong>&nbsp; {{ item.pais }}</div>
+              <div *ngIf="item.campus != ''" class="mt-1 d-block fs-sm fw-400 text-dark" style="font-family: Poppins">
+                <i class="fas fa-building"></i>&nbsp;<strong style="font-family: Poppins">Campus:</strong>&nbsp;{{ item.campus | concatName }}</div>
+              <div *ngIf="item.colegios != ''" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-graduation-cap"></i>&nbsp;<strong style="font-family: Poppins">Colegios:</strong>&nbsp;{{ item.colegios | concatName }}</div>
+              <div *ngIf="item.centros != ''" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-chart-network"></i>&nbsp;<strong style="font-family: Poppins">Centros:</strong>&nbsp;{{ item.centros | concatName }}</div>
+              <div *ngIf="item.sni" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-chart-network"></i>&nbsp;<strong style="font-family: Poppins">SNI:</strong>&nbsp;{{ item.sni }}</div>
+            </div>
+          </div>
+        </div>
+        <!-- panel footer with utility classes -->
+        <div class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted d-flex">
+          <div class="d-flex flex-row">
+            <!-- google -->
+            <a *ngIf="getGoogleScholar(item.lista_redes_sociales)" [href]="getGoogleScholar(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#38A1F3">
+              <!--<i class="fab fa-facebook-square"></i>-->
+              <i class="fab fa-google"></i>
+            </a>
+            <!-- No tiene red social google -->
+            <a *ngIf="!getGoogleScholar(item.lista_redes_sociales)" class="mr-2 fs-xxl" style="filter: grayscale(1);">
+              <i class="fab fa-google"></i>
+            </a>
+            <!-- ResearchGate -->
+            <a *ngIf="getResearchGate(item.lista_redes_sociales)" [href]="getResearchGate(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#00d0af">
+              <i class="fab fa-researchgate"></i>
+            </a>
+            <!-- No tiene red social ResearchGate -->
+            <a *ngIf="!getResearchGate(item.lista_redes_sociales)" class="mr-2 fs-xxl" style="filter: grayscale(1);">
+              <i class="fab fa-researchgate"></i>
+            </a>
+            <!-- LinkedIn -->
+            <a *ngIf="getLinkedIn(item.lista_redes_sociales)" [href]="getLinkedIn(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#0077B5">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <!-- No tiene red social LinkedIn -->
+            <a *ngIf="!getLinkedIn(item.lista_redes_sociales)" class="mr-2 fs-xxl" style="filter: grayscale(1);">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <!-- Mendeley -->
+            <a *ngIf="getMendeley(item.lista_redes_sociales)" [href]="getMendeley(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#0077B5">
+              <i class="fab fa-mendeley"></i>
+            </a>
+            <!-- No tiene red social Mendeley -->
+            <a *ngIf="!getMendeley(item.lista_redes_sociales)" class="mr-2 fs-xxl" style="filter: grayscale(1);">
+              <i class="fab fa-mendeley"></i>
+            </a>
+            <a *ngIf="getOrcid(item.lista_redes_sociales)" [href]="getOrcid(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#a6ce39">
+              <i class="fab fa-orcid"></i>
+            </a>
+            <a *ngIf="!getOrcid(item.lista_redes_sociales)" class="mr-2 fs-xxl" style="filter: grayscale(1);">
+              <i class="fab fa-orcid"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

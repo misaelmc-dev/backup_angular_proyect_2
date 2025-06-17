@@ -1,0 +1,8 @@
+.size-xs{width:125px}
+.size-md{width:250px}
+.size-padding{
+  padding-right:22px;
+  padding-left:22px;
+  margin-top:-10px;
+  margin-bottom:-10px;
+}

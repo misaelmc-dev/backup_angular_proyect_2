@@ -1,0 +1,24 @@
+.td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.hover-custom:hover {
+  background-color: powderblue;
+  transition: background-color .5s;
+  cursor: pointer;
+}
+
+.red-border-color{
+  border: solid 2px;
+  border-color: white ;
+  animation-name: example;
+  animation-duration: 1s ;
+  animation-delay: -0.5s ;
+  animation-iteration-count: 1;
+}
+
+@keyframes example {
+  from {border-color: white;}
+  to {border-color: blue;}
+}

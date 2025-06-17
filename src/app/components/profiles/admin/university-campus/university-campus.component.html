@@ -1,0 +1,360 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-university mr-2'></i>Catálogo de campus <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button"
+                          (click)="filtrarCampus(false,'filtroBuscar')">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <app-filtro-avanzado
+              (backFilter)="recuperarSeleccionFiltroInstituciones($event)"
+              [optionStringSize]="46"
+              [dataLoadFunction]="filtroDataLoadInstituciones"
+              [pageSize]="25"
+              [iconFilter]="'fal fa-school'"
+              [textoSinFiltroSeleccionado]="'Filtrar por institución...'"
+              [update]="update1">
+            </app-filtro-avanzado>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;" aria-sort="ascending">Nombre</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 35%;">Dirección</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 25%;">Institución</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let lc of listaCampus | paginate : {
+                          id: 'campusPagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+            };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{lc.nombre}}</td>
+                <td class="sorting_1 dtr-control b-bot-l">{{lc.direccion}}</td>
+                <td class="sorting_1 dtr-control">
+                  <ng-container *ngIf="lc.id_institucion !== null">
+                    <ng-container *ngFor="let li of listaInstitucionesTotal">
+                      <ng-container *ngIf="lc.id_institucion == li.id">
+                        {{li.razon_social}}
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal" data-target="#consultar-modal" type="button" (click)="verInfoCampus(lc)"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal" data-target="#editar-modal" type="button" (click)="abrirModalActualizar(lc)"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button" (click)="eliminarCampus(lc)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">
+            Total de elementos: {{totalItems}}
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="campusPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles del campus
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-key width-1"></i>ID:</label>
+          <label class="col-9">{{campusId}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-university width-1"></i>Nombre:</label>
+          <label class="col-9">{{campusNombre}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>Dirección:</label>
+          <label class="col-9">{{campusDireccion}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-envelope width-1"></i>Correo:</label>
+          <label class="col-9">{{campusCorreo}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-phone width-1"></i>Teléfono:</label>
+          <label class="col-9">
+            <ng-container *ngIf="campusTelefono!=null">{{campusTelefono}}</ng-container>
+            <ng-container *ngIf="campusTelefono==null">No ingresado</ng-container>
+          </label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-school width-1"></i>Institución:</label>
+          <label class="col-9">
+            <ng-container *ngIf="campusInstitucion!=null">
+              <ng-container *ngFor="let li of listaInstitucionesTotal">
+                <ng-container *ngIf="campusInstitucion==li.id">
+                  {{li.razon_social}}
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>Colegios:</label>
+          <label class="col-9">
+            <ng-container *ngFor="let cc of campusColegios">
+              <li>{{cc.nombre}}</li>
+            </ng-container>
+            <ng-container *ngIf="campusColegios.length==0">
+              No hay colegios asignados
+            </ng-container>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos del campus
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa nombre..." [(ngModel)]="campusNombre">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Dirección:<b style="color:red">*</b></label>
+          <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa dirección..." [(ngModel)]="campusDireccion"></textarea>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Correo:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa correo..." [ngClass]="(validCorreo!=0)?'is-invalid':''"
+                 [(ngModel)]="campusCorreo" (keyup)="validarCorreo()">
+          <ng-container *ngIf="validCorreo==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Campo obligatorio</div>
+          </ng-container>
+          <ng-container *ngIf="validCorreo==2">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Formato de correo inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Teléfono:</label>
+          <input type="number" class="form-control col-8" placeholder="Ingresa teléfono..."
+                 [ngClass]="(campusTelefono>9999999999)?'is-invalid':''" [(ngModel)]="campusTelefono">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Institución:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-8" [(ngModel)]="campusInstitucion" (change)="filtrarColegios()">
+            <option value="0">Selecciona una institución...</option>
+            <ng-container *ngFor="let ld of listaInstitucionesTotal">
+              <option value="{{ld.id}}">{{ld.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Colegios:</label>
+          <select class="custom-select form-control col-5 mr-2" [(ngModel)]="selectColegio">
+            <ng-container *ngIf="campusInstitucion==0">
+              <option value="0">Selecciona primero una institución...</option>
+            </ng-container>
+            <ng-container *ngIf="campusInstitucion!=0">
+              <option value="0">Selecciona un colegio...</option>
+              <ng-container *ngFor="let ld of campusColegiosLista">
+                <option value="{{ld.id}}">{{ld.nombre}}</option>
+              </ng-container>
+            </ng-container>
+          </select>
+          <div class="col-3 m-0">
+            <button class="btn btn-primary waves-effect waves-themed w-100"
+                    [disabled]="campusInstitucion==0" (click)="agregarColegio()">Agregar</button>
+          </div>
+        </div>
+        <ng-container *ngFor="let cc of campusColegios">
+          <ng-container *ngIf="cc.accion!=null && cc.accion!='eliminar'">
+            <div class="row m-2">
+              <label class="col-3 mt-1"></label>
+              <div class="alert alert-primary alert-dismissible fade show col-8" role="alert" style="margin-bottom: 0px !important">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerColegio(cc)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{cc.nombre}}
+              </div>
+              <label class="col-1"></label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal" (click)="crearCampus()"
+                  [disabled]="campusNombre=='' || campusDireccion=='' || campusCorreo=='' || campusInstitucion==0 || validCorreo!=0 || campusTelefono>9999999999" >
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos del campus
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">ID:</label>
+          <input type="text" class="form-control col-8" [(ngModel)]="campusId" readonly disabled="true">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa nombre..." [(ngModel)]="campusNombre">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Dirección:<b style="color:red">*</b></label>
+          <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa dirección..." [(ngModel)]="campusDireccion"></textarea>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Correo:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa correo..." [ngClass]="(validCorreo!=0)?'is-invalid':''"
+                 [(ngModel)]="campusCorreo" (keyup)="validarCorreo()">
+          <ng-container *ngIf="validCorreo==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Campo obligatorio</div>
+          </ng-container>
+          <ng-container *ngIf="validCorreo==2">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Formato de correo inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Teléfono:</label>
+          <input type="number" class="form-control col-8" placeholder="Ingresa teléfono..."
+                 [ngClass]="(campusTelefono>9999999999)?'is-invalid':''" [(ngModel)]="campusTelefono">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Institución:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-8" [(ngModel)]="campusInstitucion" [disabled]="obligatorioInstitucion">
+            <option value="0">Selecciona una institución...</option>
+            <ng-container *ngFor="let ld of listaInstitucionesTotal">
+              <option value="{{ld.id}}">{{ld.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Colegios:</label>
+          <select class="custom-select form-control col-5 mr-2" [(ngModel)]="selectColegio">
+            <option value="0">Selecciona un colegio...</option>
+            <ng-container *ngFor="let ld of campusColegiosLista">
+              <option value="{{ld.id}}">{{ld.nombre}}</option>
+            </ng-container>
+          </select>
+          <div class="col-3 m-0">
+            <button class="btn btn-primary waves-effect waves-themed w-100"
+                    [disabled]="campusInstitucion==0" (click)="agregarColegio()">Agregar</button>
+          </div>
+        </div>
+        <ng-container *ngFor="let cc of campusColegios">
+          <ng-container *ngIf="cc.accion!=null && cc.accion!='eliminar'">
+            <div class="row m-2">
+              <label class="col-3 mt-1"></label>
+              <div class="alert alert-primary alert-dismissible fade show col-8" role="alert" style="margin-bottom: 0px !important">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerColegio(cc)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{cc.nombre}}
+              </div>
+              <label class="col-1"></label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal" (click)="actualizarCampus()"
+                  [disabled]="campusNombre=='' || campusDireccion=='' || campusCorreo=='' || campusInstitucion==0 || validCorreo!=0 || campusTelefono>9999999999" >
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

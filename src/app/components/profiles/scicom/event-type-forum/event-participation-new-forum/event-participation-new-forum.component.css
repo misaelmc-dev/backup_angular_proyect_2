@@ -1,0 +1,13 @@
+.image {
+  background-color: rgba(0,0,0,0.8);
+  height: 500px;
+  max-width: 100%;
+  filter:brightness(0.4);
+}
+.bar{
+  border-bottom:rgba(128,128,128,0.41) solid 1px;
+  margin:15px;
+}
+.red{
+  color:red;
+}

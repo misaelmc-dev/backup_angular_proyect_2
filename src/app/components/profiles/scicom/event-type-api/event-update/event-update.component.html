@@ -1,0 +1,178 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2><i class="fa fa-edit"></i>&nbsp;&nbsp;&nbsp;Edición</h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container" style="margin:10px">
+    <div *ngIf="seccion==1">
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <div class="panel-hdr">
+              <h2>Datos generales del evento : &nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>
+          </div>
+        </div>
+        <div class="p-2">
+          <div class="dropdown mt-2">
+            <ng-container *ngFor="let status of estatusEventos">
+              <button *ngIf="status.id==estatus" type="button" class="dropdown-toggle" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false" style="border:0;background-color: white">
+                <span class="badge badge-secondary badge-pill" *ngIf="status.id==1">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="{{(status.evento_publico)? 'fa fa-unlock' : 'fa fa-lock'}}"></i>
+                </span>
+                <span class="badge badge-primary badge-pill" *ngIf="status.id==2">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="{{(status.evento_publico)? 'fa fa-unlock' : 'fa fa-lock'}}"></i>
+                </span>
+                <span class="badge badge-info badge-pill" *ngIf="status.id==3">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="{{(status.evento_publico)? 'fa fa-unlock' : 'fa fa-lock'}}"></i>
+                </span>
+                <span class="badge badge-success badge-pill" *ngIf="status.id==4">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="{{(status.evento_publico)? 'fa fa-unlock' : 'fa fa-lock'}}"></i>
+                </span>
+              </button>
+            </ng-container>&nbsp;&nbsp;&nbsp;
+            <div *ngIf="this.permisosScicomService.canEditarEstatusEvento(eventoId)" class="dropdown-menu"
+                 aria-labelledby="dropdownMenuButton">
+              <ng-container *ngFor="let stat of estatusEventos">
+                <a class="dropdown-item drop" data-toggle="dropdown" (click)="changeEstatus(stat.id)">
+                  <i class="{{(stat.evento_publico)? 'fa fa-unlock' : 'fa fa-lock'}} ml-2"
+                     style="{{(stat.evento_publico)? 'color: rgba(10,110,189,0.62)' : 'color: red'}}"></i>&nbsp;&nbsp;&nbsp;{{stat.nombre}}
+                </a>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="p-2 mr-2">
+          <button class="btn btn-primary" (click)="saveEvent()"
+                  [disabled]="(fechaInicio=='' || fechaFinal=='' || nombre=='' || tipo==0) || !this.permisosScicomService.canEditarEstatusEvento(eventoId)">
+                  <i class="fa fa-save"></i>&nbsp;&nbsp;Guardar
+          </button>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="col-form-label col-1 form-label text-lg-right">Nombre:<b style="color:red;">*</b></label>
+        </div>
+        <div class="col-md-9">
+          <input type="text" [disabled]="!this.permisosScicomService.canEditarNombreEvento(eventoId)"
+                 [class]="{'form-control':true, 'is-invalid':(mensaje1==2)}" maxlength="100" height="100px"
+                 placeholder="Escribe el nombre del evento ..." rows="5" [(ngModel)]="nombre"
+                 (keyup)="validateInput('nombre')">
+          <div class="invalid-feedback" *ngIf="mensaje1==2">El campo es obligatorio.</div>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="col-form-label col-1 form-label text-lg-right">Tipo:<b style="color:red;">*</b></label>
+        </div>
+        <div class="col-md-9" >
+          <select [class]="{'form-control':true, 'is-invalid':(mensaje2==2)}" [(ngModel)]="tipo"
+                  (change)="validateInput('tipo')" disabled>
+            <option value="0">Selecciona un tipo de evento ...</option>
+            <ng-container *ngFor="let tipEV of tiposEvento">
+              <option value="{{tipEV.id}}">{{tipEV.nombre + ((tipEV.descripcion) ? (' - ' + tipEV.descripcion) : '')}}</option>
+            </ng-container>
+            <!--<option value="1">API - Programa de Apoyo a la Publicación de Investigaciones UVM, UNITEC</option>-->
+          </select>
+          <div class="invalid-feedback" *ngIf="mensaje2==2">El campo es obligatorio.</div>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="col-form-label col-1 form-label text-lg-right">Descripción:</label>
+        </div>
+        <div class="col-md-9">
+          <div class="input-group">
+            <textarea [disabled]="!this.permisosScicomService.canEditarDescripcionEvento(eventoId)" rows="8"
+                      [class]="{'form-control':true, 'is-invalid':(mensaje5==2)}"
+                      placeholder="Escribe la descripción del evento ..." [(ngModel)]="descripcion"
+                      (keyup)="validateInput('desc')"></textarea>
+          </div>
+          <div class="invalid-feedback" *ngIf="mensaje5==2">La descripción no puede tener más de 500 caracteres.</div>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="col-form-label col-1 form-label text-lg-right">Lema:</label>
+        </div>
+        <div class="col-md-9">
+          <div class="input-group">
+            <textarea [disabled]="!this.permisosScicomService.canEditarLemaEvento(eventoId)" rows="4"
+                      [class]="{'form-control':true, 'is-invalid':(mensaje6==2)}"
+                      placeholder="Escribe el lema del evento ..." [(ngModel)]="lema"
+                      (keyup)="validateInput('lema')"></textarea>
+          </div>
+          <div class="invalid-feedback" *ngIf="mensaje6==2">El lema no puede tener más de 200 caracteres.</div>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="col-form-label col-1 form-label text-lg-right">Objetivos:</label>
+          <label class="form-label"></label>
+        </div>
+        <div class="col-md-9">
+          <div class="input-group">
+            <textarea [disabled]="!this.permisosScicomService.canEditarObjetivoEvento(eventoId)" rows="8"
+                      [class]="{'form-control':true, 'is-invalid':(mensaje7==2)}"
+                      placeholder="Escribe los objetivos del evento ..." [(ngModel)]="objetivo"
+                      (keyup)="validateInput('objetivos')"></textarea>
+          </div>
+          <div class="invalid-feedback" *ngIf="mensaje7==2">Los objetivos no pueden tener más de 500 caracteres.</div>
+        </div>
+      </div>
+      <div class="row" style="margin:10px;">
+        <div class="col-md-2">
+          <label class="form-label"></label>
+          <label class="col-form-label col-1 form-label text-lg-right">Fecha&nbsp;inicio:<b style="color:red;">*</b></label>
+        </div>
+        <div class="col-md-3">
+          <div class="input-group">
+            <input [disabled]="!this.permisosScicomService.canEditarFechasRealizacionEvento(eventoId)" type="text"
+                   [class]="{'form-control': true, 'is-invalid': (mensaje3==2 || mensaje3==3)}"
+                   placeholder="Selecciona la fecha ..." (cambioFecha)="setFechaInicio($event)"
+                   (focus)="validateInput('fecha')" [(ngModel)]="showFechaInicio" appDateranger>
+            <div class="input-group-append">
+              <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+            </div>
+          </div>
+          <div class="invalid-feedback" *ngIf="mensaje3==2">El campo es obligatorio.</div>
+          <div class="invalid-feedback" *ngIf="mensaje3==3">La fecha inicial debe de ser anterior a la fecha final.</div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label"></label>
+          <label class="col-form-label col-1 form-label text-lg-right">Fecha&nbsp;final:<b style="color:red;">*</b></label>
+        </div>
+        <div class="col-md-3">
+          <div class="input-group">
+            <input [disabled]="!this.permisosScicomService.canEditarFechasRealizacionEvento(eventoId)" type="text"
+                   [class]="{'form-control': true, 'is-invalid': (mensaje4==2 || mensaje4==3 || mensaje4==4)}"
+                   placeholder="Selecciona la fecha ..." (cambioFecha)="setFechaFinal($event)"
+                   (focus)="validateInput('fecha')" [(ngModel)]="showFechaFinal" appDateranger>
+            <div class="input-group-append">
+              <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+            </div>
+          </div>
+          <div class="invalid-feedback" *ngIf="mensaje4==2">El campo es obligatorio.</div>
+          <div class="invalid-feedback" *ngIf="mensaje4==3">La fecha debe de ser posterior a la fecha inicial.</div>
+          <div class="invalid-feedback" *ngIf="mensaje4==4">Ingresa una fecha inicial.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-left:10px;margin-right:10px;">
+      <app-event-campus *ngIf="eventoId!=0 && seccion==2" [eventoId]="eventoId"></app-event-campus>
+      <app-event-evaluation *ngIf="eventoId!=0 && seccion==3" [eventoId]="eventoId"></app-event-evaluation>
+      <app-event-payments *ngIf="eventoId!=0 && seccion==4" [eventoId]="eventoId"></app-event-payments>
+      <app-event-type-participants *ngIf="eventoId!=0 && seccion==5" [eventoId]="eventoId"></app-event-type-participants>
+      <app-event-work *ngIf="eventoId!=0 && seccion==6" [eventoId]="eventoId"></app-event-work>
+      <app-event-files *ngIf="eventoId!=0 && seccion==7" [eventoId]="eventoId"></app-event-files>
+      <app-event-collaborators *ngIf="eventoId!=0 && seccion==8" [eventoId]="eventoId"></app-event-collaborators>
+    </div>
+  </div>
+  <br>
+  <br>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

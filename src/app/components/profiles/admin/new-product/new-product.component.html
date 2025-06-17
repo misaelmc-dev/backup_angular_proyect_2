@@ -1,0 +1,52 @@
+<div class="fade show w-100 " id="fuente-modal" tabindex="-1" style="display: block">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Nuevo producto
+          <small class="m-0 text-muted">
+            Ingrese los siguientes datos:
+          </small>
+        </h4>
+        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>-->
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="newProductFormGroup">
+          <div class="form-group">
+            <label class="form-label" for="titulo">Título</label>
+            <div class="input-group">
+              <input id="titulo" class="form-control" placeholder="Título..." formControlName="titulo">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="filterInvestigador">Búsqueda de investigador</label>
+            <div class="input-group">
+              <input type="text" id="filterInvestigador" class="form-control" placeholder="Búsqueda de investigador" formControlName="filtroInvestigador">
+              <div class="input-group-append">
+                <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="loadResearcherList()"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="investigadores">Investigadores</label>
+            <select class="form-control" id="investigadores" name="ror" formControlName="investigador">
+              <option [value]="'0'">Escoja un investigador</option>
+              <option *ngFor="let researcher of researcherList" [value]="researcher.id">
+                {{researcher.id + ' - ' + researcher.nombre}}
+              </option>
+            </select>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <!--<button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal" (click)="onSourceSelected()">OK</button>-->
+        <button (click)="saveAndRedirect()" type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">Crear e ir a validación</button>
+      </div>
+    </div>
+  </div>
+</div>

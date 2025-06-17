@@ -1,0 +1,170 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  <div class="alert alert-primary pb-0 mb-3" style="width: 100%" role="alert">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-2">
+        <div class="input-group">
+          <input type="text" id="simpleinput" class="form-control" placeholder="Buscar..."
+                 [(ngModel)]="filter" (keypress)="loadAllData()">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-default border-tr border-br"
+                    readonly=""><i class="fal fa-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-2">
+        <div class="input-daterange input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text btn-primary">Años:</span>
+          </div>
+          <select style="width:100px" class="custom-select form-control" [(ngModel)]="since" name="since" (change)="setToYear()">
+            <option *ngFor="let year of sinceYear" [value]="year">
+              {{year}}
+            </option>
+          </select>
+          <div class="input-group-append input-group-prepend">
+            <span class="input-group-text fs-xl"><i class="fal fa-ellipsis-h"></i></span>
+          </div>
+          <select style="width:100px" class="custom-select form-control" [(ngModel)]="to" name="to"
+                  (change)="getProductByRangeYear()">
+            <option *ngFor="let year of toYear" [value]="year">
+              {{year}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        <div class="input-group">
+          <div class="btn-group">
+            <button type="button" class="btn btn-primary waves-effect waves-themed">Exportar:</button>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToExcel()">
+              <i class="fas fa-file-excel"></i>&nbsp;Excel
+            </button>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToCsv()">
+              <i class="fas fa-file-csv"></i>&nbsp;CSV
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-end">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary waves-effect waves-themed">Ordenar:</button>
+          <button type="button" class="btn btn-default dropdown-toggle dropdown-toggle-split waves-effect waves-themed" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{orden}}&nbsp;
+            <ng-container *ngIf="orden=='Citas'">
+              <span *ngIf="citesMode==='asc'" class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="citesMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </ng-container>
+            <ng-container *ngIf="orden=='Fecha'">
+              <span *ngIf="dateMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="dateMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </ng-container>
+            <ng-container *ngIf="orden=='Tipo'">
+              <span *ngIf="typeMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="typeMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </ng-container>&nbsp;
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="javascript:void(0)" (click)="orderDataByCites()">Citas
+              <ng-container *ngIf="orden=='Citas'">
+                <span *ngIf="citesMode==='asc'" class="fas fa-long-arrow-alt-up"></span>
+                <span *ngIf="citesMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+              </ng-container>
+            </a>
+            <a class="dropdown-item" href="javascript:void(0)" (click)="orderDataByDate()">Fecha
+              <ng-container *ngIf="orden=='Fecha'">
+                <span *ngIf="dateMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+                <span *ngIf="dateMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+              </ng-container>
+            </a>
+            <a class="dropdown-item" href="javascript:void(0)" (click)="orderDataByType()">Tipo
+              <ng-container *ngIf="orden=='Tipo'">
+                <span *ngIf="typeMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+                <span *ngIf="typeMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+              </ng-container>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div *ngIf="dataSource.length==0">
+      <div class="alert border-primary bg-transparent text-primary fade show w-100" role="alert">
+        <div class="d-flex align-items-center">
+          <div class="alert-icon">
+            <i class="fal fa-info-circle"></i>
+          </div>
+          <div class="flex-1">
+            <span class="h5 m-0 fw-700">No se encontraron resultados.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" *ngFor="let product of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+      <div class="panel-hdr" *ngIf="product.titulo">
+        <h2 *ngIf="product.DOI">
+          <a [href]="'https://www.doi.org/'+product.DOI" class="link-info" target="_blank">{{ product.titulo }}</a>
+        </h2>
+        <h2 *ngIf="product.DOI===null && product.url!==null">
+          <a [href]="product.url" class="link-info" target="_blank">{{ product.titulo }}</a>
+        </h2>
+        <h2 *ngIf="product.DOI===null && product.url===null">{{ product.titulo }}</h2>
+        <div class="panel-toolbar">
+
+          <span class="badge mr-2" style="background-color: #6261ab;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.doaj">Doaj</span>
+          <span class="badge mr-2" style="background-color: #0e9187;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.jcr">JCR</span>
+          <span class="badge mr-2" style="background-color: #e69627;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scopus">Scopus</span>
+          <span class="badge mr-2" style="background-color: #154896;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.conacyt">Conacyt</span>
+          <span class="badge mr-2" style="background-color: #86011f;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scielo">Scielo</span>
+          <button data-action="panel-close" class="btn mr-1" target="_blank" id="citedby" routerLink="/invest/{{ id }}/quotes/{{ product.id }}"><u>Citas: {{ product.citedby }}</u></button>
+
+        </div>
+      </div>
+      <div class="panel-container show">
+        <!-- panel footer with utility classes -->
+        <div class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted">
+          <h5 class="m-0">
+            <span class="badge badge-primary fw-400 l-h-n" *ngIf="product.nombreTipo">
+              {{ product.nombreTipo }}
+            </span>
+          </h5>
+          <br>
+          <p>{{ product.anio }} * {{ product.fuente }}</p>
+          <p *ngIf="product.nombreInvest">
+            <i class="fas fa-users"></i>&nbsp;{{ product.nombreInvest}}<ng-container *ngFor="let c of product.coautores_ordenados">, {{c.nombre}}</ng-container>
+          </p>
+          <!--<p>{{ product.DOI }}</p>-->
+          <p *ngIf="product.DOI"><span class="font-weight-bold">DOI:&nbsp;</span><a target="_blank" [href]="'https://www.doi.org/'+product.DOI">{{ product.DOI }}</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="dataSource.length>0">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        &nbsp;&nbsp;Total de elementos: {{totalItems}}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-end">
+        <pagination-controls
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          [responsive]="responsive"
+          [id]="paginationId"
+          (pageChange)="handlePageChange($event)"
+          class="paginationStyle"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>

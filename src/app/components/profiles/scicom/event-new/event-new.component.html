@@ -1,0 +1,103 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2><i class="fa fa-calendar-plus"></i>&nbsp;&nbsp;Creación de nuevo evento
+      <span class="fw-300" style="color:#60AAE6"><b>
+        <ng-container *ngFor="let tipEV of tiposEvento">
+          <ng-container *ngIf="tipEV.id==tipoEventoSelected && tipEV.id!=0">
+            {{' > '+ tipEV.nombre + ((tipEV.descripcion) ? (' - ' + tipEV.descripcion) : '')}}
+          </ng-container>
+        </ng-container>
+      </b>
+      </span>
+    </h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container">
+    <div *ngIf="pasos.length>0">
+      <div class="bar"></div>
+      <div class="row align-content-center text-center align-items-center justify-content-center">
+        <ul class="swal2-progress-steps d-flex">
+          <ng-container *ngFor="let p of pasos">
+            <li class="swal2-progress-step-line" *ngIf="p.paso>1"></li>
+            <li class="swal2-progress-step" [class.swal2-active-progress-step]="pasoActual==p.paso" title="{{p.titulo}}"
+                style="cursor:pointer;">{{p.paso}}</li>
+          </ng-container>
+        </ul>
+      </div>
+      <div class="bar"></div>
+    </div>
+    <div *ngIf="pasoActual==1">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 m-2">
+        <div class="row">
+          <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <label class="form-label mt-2">Tipo:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <select class="form-control" [class.is-invalid]="validEventoTipo!=0" [(ngModel)]="tipoEventoSelected"
+                    (change)="changeTipoEvento()" [disabled]="eventoId!=0">
+              <option value="0">Selecciona un tipo de evento ...</option>
+              <ng-container *ngFor="let tipEV of tiposEvento">
+                <option value="{{tipEV.id}}">{{tipEV.nombre + ((tipEV.descripcion) ? (' - ' + tipEV.descripcion) : '')}}</option>
+              </ng-container>
+            </select>
+            <div class="invalid-feedback" *ngIf="validEventoTipo!=0">El campo es obligatorio.</div>
+          </div>
+        </div>
+        <app-event-new-api *ngIf="tipoEventoSelected==1" [flag]="guardar" [eventoId]="eventoId" [cordinadorId]="cordinadorId"
+                           (resultado)="resultadoGuardar($event)"></app-event-new-api>
+        <app-event-new-forum *ngIf="tipoEventoSelected==3" [variableForo]="variableForo" [eventoId]="eventoId" [cordinadorId]="cordinadorId"
+                             (resultado)="resultadoGuardarForo($event)"></app-event-new-forum>
+        <app-event-new-encounter *ngIf="tipoEventoSelected==4" [variableEncuentro]="variableEncuentro" [eventoId]="eventoId" [cordinadorId]="cordinadorId"
+                                 (resultado)="resultadoGuardarEncuentro($event)"></app-event-new-encounter>
+      </div>
+    </div>
+    <ng-container *ngIf="tipoEventoSelected==1">
+      <app-event-campus *ngIf="eventoId!=0 && pasoActual==2 " [eventoId]="eventoId"></app-event-campus>
+      <app-event-evaluation *ngIf="eventoId!=0 && pasoActual==3" [eventoId]="eventoId"></app-event-evaluation>
+      <app-event-payments *ngIf="eventoId!=0 && pasoActual==4" [eventoId]="eventoId"></app-event-payments>
+      <app-event-type-participants *ngIf="eventoId!=0 && pasoActual==5" [eventoId]="eventoId"></app-event-type-participants>
+      <app-event-work *ngIf="eventoId!=0 && pasoActual==6" [eventoId]="eventoId"></app-event-work>
+      <app-event-files *ngIf="eventoId!=0 && pasoActual==7" [eventoId]="eventoId"></app-event-files>
+      <app-event-collaborators *ngIf="eventoId!=0 && pasoActual==8" [eventoId]="eventoId"></app-event-collaborators>
+    </ng-container>
+    <ng-container *ngIf="tipoEventoSelected==3">
+      <app-event-campus-forum *ngIf="eventoId!=0 && pasoActual==2" [eventoId]="eventoId"></app-event-campus-forum>
+      <app-event-objectives-forum *ngIf="eventoId!=0 && pasoActual==3" [eventoId]="eventoId"></app-event-objectives-forum>
+      <app-event-files-forum *ngIf="eventoId!=0 && pasoActual==4" [eventoId]="eventoId"></app-event-files-forum>
+      <app-event-collaborators-forum *ngIf="eventoId!=0 && pasoActual==5" [eventoId]="eventoId"></app-event-collaborators-forum>
+    </ng-container>
+    <ng-container *ngIf="tipoEventoSelected==4">
+      <app-event-campus-encounter *ngIf="eventoId!=0 && pasoActual==2" [eventoId]="eventoId"></app-event-campus-encounter>
+      <app-event-objectives-encounter *ngIf="eventoId!=0 && pasoActual==3" [eventoId]="eventoId"></app-event-objectives-encounter>
+      <app-event-files-encounter *ngIf="eventoId!=0 && pasoActual==4" [eventoId]="eventoId"></app-event-files-encounter>
+      <app-event-collaborators-encounter *ngIf="eventoId!=0 && pasoActual==5" [eventoId]="eventoId"></app-event-collaborators-encounter>
+    </ng-container>
+  </div>
+  <br>
+  <div class="row ml-2">
+    <div class="col-2"><span *ngIf="pasoActual==1">(<b class="red">*</b>) campo obligatorio</span></div>
+    <div class="col-6 justify-content-center">
+      <button class="btn btn-primary" *ngIf="pasoActual==(pasos.length/pasos.length)" disabled><i class="fa fa-arrow-left"></i> Anterior </button>&nbsp;&nbsp;
+      <button class="btn btn-primary" *ngIf="pasoActual>=((pasos.length/pasos.length)*2)" (click)="changeSeccion('prev')"><i class="fa fa-arrow-left"></i> Anterior </button>&nbsp;&nbsp;
+      <button class="btn btn-primary" *ngIf="pasoActual<=(pasos.length-1)" (click)="changeSeccion('next')"> Siguiente <i class="fa fa-arrow-right"></i></button>
+      <button class="btn btn-primary" *ngIf="pasoActual==pasos.length" disabled> Siguiente <i class="fa fa-arrow-right"></i></button>
+    </div>
+    <div class="col-4">
+      <button class="btn btn-secondary" routerLink="/scicom/event-list">Cancelar</button>&nbsp;&nbsp;
+      <ng-container *ngIf="pasoActual==1">
+        <button class="btn btn-danger" (click)="finalizarEvento()"
+                [disabled]="tipoEventoSelected==0">Finalizar parametrización</button>
+      </ng-container>
+      <ng-container *ngIf="pasoActual!=1">
+        <button class="btn btn-danger" (click)="cerrarAlGuardar()">Finalizar parametrización</button>
+      </ng-container>
+    </div>
+  </div>
+  <br>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

@@ -1,0 +1,6 @@
+.size-xs{width:100px}
+.size-md{width:200px}
+.size-padding{
+  margin-bottom:-10px;
+  margin-top:-10px
+}

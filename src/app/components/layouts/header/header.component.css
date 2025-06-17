@@ -1,0 +1,10 @@
+.dropdown-icon-menu:hover > ul {
+  display: block;
+  opacity: 1;
+  /*
+			 * n = number of buttons minus 1
+			 *     eg. $header-btn-height * 2n
+			 */
+  height: 5.40rem; }
+.dropdown-icon-menu:hover > ul:hover {
+  overflow: visible; }

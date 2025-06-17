@@ -1,0 +1,22 @@
+.border-btm{
+  border-bottom: 1px solid rgba(128, 128, 128, 0.27);
+  margin-bottom: -10px;
+}
+.bange{
+  margin-top: 2px
+}
+.border-table{
+  border-radius:3px;
+}
+.border-tl{
+  border-top-left-radius:3px;
+}
+.border-tr{
+  border-top-right-radius:3px;
+}
+.border-bl{
+  border-bottom-left-radius:3px;
+}
+.border-br{
+  border-bottom-right-radius:3px;
+}

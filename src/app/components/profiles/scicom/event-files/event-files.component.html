@@ -1,0 +1,224 @@
+<div class="panel-hdr">
+  <h2> {{(titulo)?'Archivos del evento :':'Agregue los archivos necesarios del evento :'}}&nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"</h2>
+</div>
+
+<div class="row">
+  <div *ngIf="permisosScicomService.canVerArchConvocEvento(eventoId)" class="col-12" style="padding:20px">
+    <div class="panel-hdr">
+      <h2>Archivos de convocatoria de evento &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button *ngIf="permisosScicomService.canAgregarArchConvocEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+                data-toggle="modal" data-target="#files-modal" (click)="cleanValues()">
+          <i class="fal fa-plus"></i>
+        </button>
+      </h2>
+    </div>
+    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+           aria-describedby="dt-basic-example_info" >
+      <thead class="bg-primary-600 ">
+      <tr role="row">
+        <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Nombre</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+        <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;Eliminar</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="archivosConvocatoria.length!=0">
+        <tr role="row" class="odd" *ngFor="let archivo of archivosConvocatoria | paginate : {
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+          <td><a class="fs-lg text-dark">{{archivo.nombre}}</a></td>
+          <td><a class="fs-lg text-dark">{{archivo.descripcion}}</a></td>
+          <td>
+            <button class="btn btn-primary btn-icon" (click)="viewFileEvent(archivo.uri)">
+              <i class="fas fa-file" style="color: white;" ></i>
+            </button>&nbsp;
+            <button [disabled]="!permisosScicomService.canEliminarArchConvocEvento(eventoId)" class="btn btn-danger btn-icon" (click)="deleteFileEvent(archivo)">
+              <i class="fas fa-trash-alt" style="color: white;" ></i>
+            </button>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="archivosConvocatoria.length==0">
+        <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+      </ng-container>
+      </tbody>
+    </table>
+    <div class="row" *ngIf="archivosConvocatoria.length!=0">
+      <div class="col-6">
+        <div class="dataTables_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPagination}}</div>
+      </div>
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end">
+            <li class="paginate_button page-item previous disabled" *ngIf="pageNumber==1" >
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item previous" *ngIf="pageNumber!=1" (click)="loadPagination('prev')">
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <ng-container *ngFor="let page of pageNumbersArray">
+              <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber">
+                <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+              </li>
+              <li class="page-item" *ngIf="page.id!=pageNumber">
+                <a class="page-link" (click)="loadPagination(page.id)">{{page.id}}</a>
+              </li>
+            </ng-container>
+            <li class="paginate_button page-item next" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next')">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item next disabled" *ngIf="pageNumber==pageNumbers">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div *ngIf="permisosScicomService.canVerArchEvidenciaEvento(eventoId)" class="col-12" style="padding:20px">
+    <div class="panel-hdr">
+      <h2>Archivos de evidencia de evento &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button *ngIf="permisosScicomService.canAgregarArchEvidenciaEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+                data-toggle="modal" data-target="#files-modal" (click)="cleanValues2()">
+          <i class="fal fa-plus"></i>
+        </button>
+      </h2>
+    </div>
+    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+           aria-describedby="dt-basic-example_info" >
+      <thead class="bg-primary-600 ">
+      <tr role="row">
+        <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Nombre</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+        <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;Eliminar</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container>
+        <ng-container *ngIf="archivosEvidencia.length!=0">
+          <tr role="row" class="odd" *ngFor="let archivo of archivosEvidencia | paginate : {
+            itemsPerPage: pageSize2,
+            currentPage: pageNumber2,
+            totalItems: totalItems2
+            };let i = index">
+            <td><a class="fs-lg text-dark">{{archivo.nombre}}</a></td>
+            <td><a class="fs-lg text-dark">{{archivo.descripcion}}</a></td>
+            <td>
+              <button class="btn btn-primary btn-icon" (click)="viewFileEvent(archivo.uri)">
+                <i class="fas fa-file" style="color: white;" ></i>
+              </button>&nbsp;
+              <button [disabled]="!permisosScicomService.canEliminarArchEvidenciaEvento(eventoId)" class="btn btn-danger btn-icon" (click)="deleteFileEvent(archivo)">
+                <i class="fas fa-trash-alt" style="color: white;" ></i>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="archivosEvidencia.length==0">
+          <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+        </ng-container>
+      </ng-container>
+      </tbody>
+    </table>
+    <div class="row" *ngIf="archivosEvidencia.length!=0">
+      <div class="col-6">
+        <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPagination2}}</div>
+      </div>
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end">
+            <li class="paginate_button page-item previous disabled" *ngIf="pageNumber2==1" >
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item previous" *ngIf="pageNumber2!=1" (click)="loadPagination2('prev')">
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <ng-container *ngFor="let page of pageNumbersArray2">
+              <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber2">
+                <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+              </li>
+              <li class="page-item" *ngIf="page.id!=pageNumber2">
+                <a class="page-link" (click)="loadPagination2(page.id)">{{page.id}}</a>
+              </li>
+            </ng-container>
+            <li class="paginate_button page-item next" *ngIf="pageNumber2!=pageNumbers2" (click)="loadPagination2('next')">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item next disabled" *ngIf="pageNumber2==pageNumbers2">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="files-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="padding: 10px">
+      <div class="modal-header">
+        <h4 class="modal-title" *ngIf="tipoArchivoSelected==4">Nuevo archivo de convocatoria de evento</h4>
+        <h4 class="modal-title" *ngIf="tipoArchivoSelected==3">Nuevo archivo de evidencia de evento</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <input type="text" class="form-control" placeholder="Escribe un nombre..." [(ngModel)]="nombreArchivo">
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <div class="form-group mb-2" style="margin-right:12px">
+          <textarea class="form-control" placeholder="Escribe una descripción..." [(ngModel)]="descripcionArchivo"></textarea>
+        </div>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" (change)="extractFileFromEvent($event)" [(ngModel)]="archivoVacio">
+              <label class="custom-file-label">
+                <ng-container *ngIf="eventoArchivo">{{eventoArchivo.name}}</ng-container>
+                <ng-container *ngIf="!eventoArchivo">Selecciona un archivo...</ng-container>
+              </label>
+            </div>
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal"
+                  [disabled]="(tipoArchivoSelected==0 || !eventoArchivo || nombreArchivo=='')" (click)="saveFile()">
+            &nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

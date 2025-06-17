@@ -1,0 +1,138 @@
+<div class="panel-hdr">
+  <h2>{{(titulo)?'Tipos de evaluación permitidos en el evento :':'Agregue los tipos de evaluación permitidos en el evento :'}}&nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button *ngIf="this.permisosScicomService.canAgregarTipoEvalEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#evaluation-modal" (click)="cleanValues()">
+      <i class="fal fa-plus"></i>
+    </button>
+  </h2>
+</div>
+<div style="padding:10px">
+  <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+         aria-describedby="dt-basic-example_info" >
+    <thead class="bg-primary-600 ">
+    <tr role="row">
+      <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-clipboard-check"></i>&nbsp;&nbsp;Tipo de evaluación</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-calendar"></i>&nbsp;&nbsp;Fechas de evaluación</th>
+      <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;Eliminar</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="evaluationAsing.length!=0">
+      <tr class="odd" *ngFor="let eval of evaluationAsing | paginate : {
+            id:'evaluationPagination',
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+        <td>{{eval.nombre}}</td>
+        <td>
+          <ng-container *ngFor="let fa of fechasAsign">
+            <label *ngIf="eval.id==fa.id_tipo_evaluacion">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+          </ng-container>
+        </td>
+        <td>
+            <button [disabled]="!this.permisosScicomService.canEliminarTipoEvalEvento(eventoId)" type="button" class="btn btn-danger btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" data-dismiss="alert" aria-label="Close"
+                     (click)="removeEvaluation(eval.id)">
+              <i class="fal fa-trash"></i>
+            </button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="evaluationAsing.length==0">
+      <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay tipos de evaluaciones que mostrar</td></tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-sm-12 col-md-5 mt-2 mb-2">
+      <div class="dataTables_info ml-2" role="status" aria-live="polite">
+        Total de elementos: {{totalItems}}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+      <pagination-controls
+        id="evaluationPagination"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [responsive]=true
+        (pageChange)="cambiarPagina($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="evaluation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregue un tipo de evaluación</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="margin:0px;margin-bottom:10px;">
+          <select class="form-control" [(ngModel)]="evaluationSelected">
+            <ng-container *ngIf="evaluationNoAsing.length!=0">
+              <option value="0">Selecciona un tipo de evaluación...</option>
+              <ng-container *ngFor="let eval of evaluationNoAsing">
+                <option value="{{eval.id}}">{{eval.nombre}} - {{eval.descripcion}}</option>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="evaluationNoAsing.length==0">
+              <option value="0">No hay tipos de evaluación disponibles...</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="input-group">
+              <div class="input-group" style="width: 205px">
+                <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje3==2 || mensaje3==3 || mensaje3==5)}"
+                       placeholder="Fecha inicial ..." (cambioFecha)="setFechaInicio($event)"
+                       (focus)="validateInput('fecha')" [(ngModel)]="showFechaInicio" appDateranger>
+                <div class="input-group-append rounded-right-radius-3">
+                  <span class="input-group-text fs-xl border-tr border-br rounded-right-radius-3"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+              &nbsp;<b style="color:red;">*</b>
+            </div>
+            <div class="invalid-feedback" *ngIf="mensaje3==2">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="mensaje3==3">La fecha inicial debe de ser anterior a la fecha final.</div>
+            <div class="invalid-feedback" *ngIf="mensaje3==5">Fechas fuera del rango del evento</div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <div class="input-group" style="width: 205px">
+                <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje4==2 || mensaje4==3 || mensaje4==4 || mensaje4==5)}"
+                       placeholder="Fecha final..." (cambioFecha)="setFechaFinal($event)"
+                       (focus)="validateInput('fecha')" [(ngModel)]="showFechaFinal" appDateranger>
+                <div class="input-group-append">
+                  <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+              &nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" *ngIf="mensaje4==2">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==3">La fecha debe de ser posterior a la fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==4">Ingresa una fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==5">Fecha fuera del rango del evento</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span>(<b style="color:red">*</b>) campo obligatorio</span>
+        <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(evaluationSelected==0 || fechaInicio=='' || fechaFinal=='' || mensaje3!=1 || mensaje4!=1)" (click)="asingEvaluation()">
+          <i class="fal fa-plus" ></i>&nbsp;Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+
+

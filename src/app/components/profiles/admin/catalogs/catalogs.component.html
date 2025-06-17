@@ -1,0 +1,383 @@
+<div class="row g-3">
+  <div class="col">
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Coautores <span class="fw-300"></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button type="button" class="btn  btn-sm btn-primary mr-1 shadow-0 waves-effect waves-themed" data-toggle="modal" data-target="#coauthors-modal"
+          (click)="clearDataCoauthor()">
+            Agregar &nbsp;<i class="fas fa-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <table class="table m-0 table-bordered" *ngIf="coauthorsReady">
+            <thead>
+            <tr>
+              <th class="td" style="width:10%">Orden</th>
+              <th>Nombre</th>
+              <th>País</th>
+              <th>Afiliación</th>
+              <th>OrcId</th>
+              <!--<th class="td">Orden</th>-->
+              <th class="td"><i class="fa fa-envelope-square"></i></th>
+              <th class="td">Validado</th>
+              <th class="td">Editar</th>
+              <th class="td">Eliminar</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngFor="let row of coautoresDS">
+            <tr [class]="loadStylesRow(row.ordenTemp)">
+              <td class="td">
+                <div class="form-group">
+                  <button type="button" class="btn btn-xs btn-icon btn-default waves-effect waves-themed"
+                          title="Subir" [disabled]="row.ordenTemp==1" (click)="changeOrden(row.id,row.ordenTemp-1)" >
+                    <i class="fa fa-angle-up"></i>
+                  </button>
+                  {{row.ordenTemp}}
+                  <button type="button" class="btn btn-xs btn-icon btn-default waves-effect waves-themed"
+                          title="Bajar" [disabled]="row.ordenTemp==coautoresDS.length"
+                          (click)="changeOrden(row.id,row.ordenTemp+1)">
+                    <i class="fa fa-angle-down"></i>
+                  </button>
+                </div>
+              </td>
+              <th scope="row">{{row.nombre}}</th>
+              <td [innerHTML]="row.countries_names_string"></td>
+              <td [innerHTML]="row.institutions_names_string"></td>
+              <td>{{row.orcid_id}}</td>
+              <!--<td>{{row.orden}}</td>-->
+              <td class="td">
+                <a *ngIf="row.correspondencia" class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed">
+                  <i class="fal fa-envelope" style="color: white"></i>
+                </a>
+              </td>
+              <td class="td">
+                <a *ngIf="!row.validated" class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed">
+                  <i class="fal fa-exclamation-circle" style="color: white"></i>
+                </a>
+                <a *ngIf="row.validated" class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed">
+                  <i class="fal fa-check" style="color: white"></i>
+                </a>
+              </td>
+              <td class="td">
+                <a class="btn btn-icon btn-sm btn-warning shadow-0 rounded-circle waves-effect waves-themed" data-toggle="modal" data-target="#coauthors-modal"
+                   (click)="fillDataCoauthor(row)">
+                  <i class="fal fa-edit" style="color: black"></i>
+                </a>
+              </td>
+              <td class="td">
+                <a class="btn btn-icon btn-sm btn-primary shadow-0 rounded-circle waves-effect waves-themed" (click)="deleteCoauthor(row.id)">
+                  <i class="fal fa-trash-alt" style="color: white"></i>
+                </a>
+              </td>
+            </tr>
+            </ng-container>
+            </tbody>
+          </table>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="coauthors-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">
+              Nuevo Coautor
+              <small class="m-0 text-muted">
+                Entre los siguientes datos por favor:
+              </small>
+            </h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true"><i class="fal fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+
+            <form>
+              <div class="form-group">
+                <label class="form-label" for="nombre">Nombre</label>
+                <div class="input-group">
+                  <input type="text" id="nombre" (change)="emptyPossibleCoauthors()" class="form-control" placeholder="Nombre" [(ngModel)]="data.nombre" name="nombre" [ngModelOptions]="{standalone: true}">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="getPossibleCoauthors(data.nombre)">
+                      <i class="fal fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+                <br *ngIf="possibleCoauthors.length !== 0">
+                <ul *ngIf="possibleCoauthors.length !== 0" class="list-group">
+                  <li *ngFor="let coauthor of possibleCoauthors | keyvalue" class="list-group-item hover-custom"
+                      (click)="onPossibleAuthorSelected(coauthor.value)">
+                    <div>{{unknownToObject(coauthor.value).nombre_coautor}}</div>
+                    <div>{{unknownToObject(coauthor.value).orcid_id}}</div>
+                    <div [innerHTML]="unknownToObject(coauthor.value).institutions_names_with_country_string"></div>
+                  </li>
+                </ul>
+
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="nombre_afiliacion">Búsqueda de posibles afiliaciones</label>
+                <div class="input-group">
+                  <input id="nombre_afiliacion" class="form-control" placeholder="Nombre Afiliación" [(ngModel)]="textCriteria" [ngModelOptions]="{standalone: true}">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="loadAllRors()"><i class="fal fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="afiliacion">Seleccione afiliación para agregar</label>
+                <select class="form-control" id="afiliacion" name="ror" [(ngModel)]="selectedRor" (change)="addAfiliacion()">
+                  <option [ngValue]="null">Seleccione una afiliación</option>
+                  <option *ngFor="let ror of rors" [ngValue]="ror" (click)="addAfiliacion()">
+                    {{ror.institution_name}}
+                  </option>
+                </select>
+              </div>
+
+              <ul *ngIf="data.rors.length !== 0 && data.rors[0] != null" class="list-group">
+                <li *ngFor="let ror of data.rors" class="list-group-item hover-custom">
+                  <div>{{ror.institution_name}}</div>
+                  <div>{{ (ror.country) ? ror.country : ror.nombre_pais}}</div>
+                  <div class="input-group-append">
+                    <button class="btn btn-danger waves-effect waves-themed" type="button" (click)="deleteAfiliacion(ror.id)">
+                      <i class="fal fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+              <br *ngIf="data.rors.length !== 0 && data.rors[0] != null">
+
+              <div class="form-group">
+                <label class="form-label" for="orcid">Orcid</label>
+                <input type="text" id="orcid" class="form-control" placeholder="Orcid" [(ngModel)]="data.orcid_id" name="orcid_id" [ngModelOptions]="{standalone: true}">
+              </div>
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <ng-container *ngIf="correspondencia">
+                    <input type="checkbox" class="custom-control-input" id="checkedCorrespondencia1" checked=""
+                           (click)="changeCorrespondencia(false)">
+                    <label class="custom-control-label" for="checkedCorrespondencia1">Marcar para correspondencia</label>
+                  </ng-container>
+                  <ng-container *ngIf="!correspondencia">
+                    <input type="checkbox" class="custom-control-input" id="checkedCorrespondencia2"
+                           (click)="changeCorrespondencia(true)">
+                    <label class="custom-control-label" for="checkedCorrespondencia2">Marcar para correspondencia</label>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="defaultChecked" checked="" [(ngModel)]="data.validated" name="validated" [ngModelOptions]="{standalone: true}">
+                  <label class="custom-control-label" for="defaultChecked">Validado</label>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cancelar</button>
+            <button *ngIf="!edit && is_product" type="button" class="btn btn-primary waves-effect waves-themed" (click)="createCoauthorProduct()" data-dismiss="modal">OK</button>
+            <button *ngIf="edit && is_product" type="button" class="btn btn-primary waves-effect waves-themed" (click)="updateCoauthorProduct()" data-dismiss="modal">Salvar cambios</button>
+            <button *ngIf="!edit && !is_product" type="button" class="btn btn-primary waves-effect waves-themed" (click)="createCoauthorQuote()" data-dismiss="modal">OK</button>
+            <button *ngIf="edit && !is_product" type="button" class="btn btn-primary waves-effect waves-themed" (click)="updateCoauthorQuote()" data-dismiss="modal">Salvar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<br>
+
+<div class="row g-3"  *ngIf="is_product">
+  <div class="col">
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Lenguajes <span class="fw-300"></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button type="button" class="btn  btn-sm btn-primary mr-1 shadow-0 waves-effect waves-themed" data-toggle="modal" data-target="#language-modal">
+            Agregar &nbsp;<i class="fas fa-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <table class="table m-0 table-bordered">
+            <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th class="td">Validado</th>
+              <th class="td">Eliminar</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of languagesDS">
+              <th scope="row">{{row.id_639_1}}</th>
+              <td>{{row.nombre}}</td>
+              <td class="td">
+
+                <a *ngIf="!row.pivot.validated" class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed" (click)="validateLanguage(row.id)">
+                  <i class="fal fa-exclamation-circle" style="color: white"></i>
+                </a>
+
+                <a *ngIf="row.pivot.validated" class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed">
+                  <i class="fal fa-check" style="color: white"></i>
+                </a>
+
+              </td>
+              <td class="td">
+                <a class="btn btn-icon btn-sm btn-primary shadow-0 rounded-circle waves-effect waves-themed" (click)="deleteLanguage(row.id)">
+                  <i class="fal fa-trash-alt" style="color: white"></i>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <div class="modal fade" id="language-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    Nuevo Lenguaje
+                    <small class="m-0 text-muted">
+                      Entre los siguientes datos por favor:
+                    </small>
+                  </h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <form>
+                    <div class="form-group">
+                      <label class="form-label" for="afiliacion">Idioma</label>
+                      <select class="form-control" id="language" name="ror" [(ngModel)]="language" [ngModelOptions]="{standalone: true}">
+                        <option *ngFor="let language of languages" [ngValue]="language">
+                          {{language.nombre}}
+                        </option>
+                      </select>
+                    </div>
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="createLanguage()" data-dismiss="modal">OK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="col">
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Tópicos <span class="fw-300"></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button type="button" class="btn  btn-sm btn-primary mr-1 shadow-0 waves-effect waves-themed" data-toggle="modal" data-target="#subject-modal">
+           Agregar &nbsp;<i class="fas fa-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <table class="table m-0 table-bordered">
+            <thead>
+            <tr>
+              <th>Descripción</th>
+              <th class="td">Validado</th>
+              <th class="td">Eliminar</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of subjectsDS">
+              <th scope="row">{{row.subject}}</th>
+              <td class="td">
+
+                <a *ngIf="!row.validated" class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed" (click)="validateSubject(row.id)">
+                  <i class="fal fa-exclamation-circle" style="color: white"></i>
+                </a>
+
+                <a *ngIf="row.validated" class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed">
+                  <i class="fal fa-check" style="color: white"></i>
+                </a>
+
+              </td>
+              <td class="td">
+                <a class="btn btn-icon btn-sm btn-primary shadow-0 rounded-circle waves-effect waves-themed" (click)="deleteSubject(row.id)">
+                  <i class="fal fa-trash-alt" style="color: white"></i>
+                </a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
+          <div class="modal fade" id="subject-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    Nuevo Tópico
+                    <small class="m-0 text-muted">
+                      Entre el siguiente dato por favor:
+                    </small>
+                  </h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <form>
+                    <div class="form-group">
+                      <label class="form-label" for="nombre">Tópico</label>
+                      <input type="text" id="subject" class="form-control" placeholder="Tópico" [(ngModel)]="subject" name="nombre" [ngModelOptions]="{standalone: true}">
+                    </div>
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="createSubject()" data-dismiss="modal">OK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+<br>
+
+
+

@@ -1,0 +1,8 @@
+.panel-hdr{
+  width: 100% !important;
+}
+.panel-hdr > :last-child {
+  padding-right: 0rem !important;
+  margin-right: -1px !important;
+}
+

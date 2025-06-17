@@ -1,0 +1,193 @@
+<div class="row">
+
+  <!-- Producción Científica General -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph1" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 220px">
+            <h2>Producción Científica General</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:200px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm mr-2" [(ngModel)]="selectedColegioGraphOne"
+                    (change)="loadGraph1Data()">
+              <option value="">Colegios</option>
+              <option *ngFor="let item of colleges" [value]="item.id">{{item.nombre}}</option>
+            </select>&nbsp;
+            <select class="custom-select custom-select-sm" [(ngModel)]="selectedCampusGraphOne"
+                    (change)="loadGraph1Data()">
+              <option value="">Campus</option>
+              <option *ngFor="let item of campus" [value]="item.id">{{item.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartOne">
+          <highcharts-chart
+            [Highcharts]="highchartsOne"
+            [options]="optionsChartOne"
+            style="width: 95%; height: 100%; display: block"
+            [(update)]="updateFlagOne">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Línea de investigación -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph2" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 150px">
+            <h2>Línea de investigación</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:200px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm" [(ngModel)]="selectedChartTwo" (change)="loadGraph2Data()">
+              <option *ngFor="let item of lineasInvestigacion" [value]="item.id">{{item.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartTwo">
+          <highcharts-chart
+            [Highcharts]="highchartsTwo"
+            [options]="optionsChartTwo"
+            style="width: 100%; height: 100%; display: block"
+            [(update)]="updateFlagTwo">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Productos por cuartiles Scopus -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph3" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 230px">
+            <h2>Productos cuartiles Scopus</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:200px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm" [(ngModel)]="yearSelected" (change)="onGraph3YearChange()">
+              <option value="">Todos</option>
+              <option *ngFor="let item of anios" [value]="item">{{item}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartThree">
+          <highcharts-chart id="highchartsThree"
+                            [Highcharts]="highchartsThree"
+                            [options]="optionsChartThree"
+                            style="width: 100%; height: 100%; display: block">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Núcleo científico -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph4" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 120px">
+            <h2>Núcleo científico</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:250px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm" [(ngModel)]="collegeSelectedGraph4" (change)="loadGraph4Data()">
+              <option value="">Colegios</option>
+              <option *ngFor="let item of colleges" [value]="item.id">{{item.nombre}}</option>
+            </select>&nbsp;
+            <select class="custom-select custom-select-sm ml-1" [(ngModel)]="campusSelectedGraph4" (change)="loadGraph4Data()">
+              <option value="">Campus</option>
+              <option *ngFor="let item of campus" [value]="item.id">{{item.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartFour">
+          <highcharts-chart
+            [Highcharts]="highchartsFour"
+            [options]="optionsChartFour"
+            style="width: 95%; height: 100%; display: block"
+            [(update)]="updateFlagFour">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visibilidad -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph5" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 70px">
+            <h2>Visibilidad</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:300px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm" [(ngModel)]="selectedColegioGraphFive" (change)="loadGraph5Data()">
+              <option value="">Colegios</option>
+              <option *ngFor="let item of colleges" [value]="item.id">{{item.nombre}}</option>
+            </select>&nbsp;
+            <select class="custom-select custom-select-sm ml-1" [(ngModel)]="selectedCampusGraphFive" (change)="loadGraph5Data()">
+              <option value="">Campus</option>
+              <option *ngFor="let item of campus" [value]="item.id">{{item.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartFive">
+          <highcharts-chart
+            [Highcharts]="highchartsFive"
+            [options]="optionsChartFive"
+            style="width: 90%; height: 100%; display: block"
+            [(update)]="updateFlagFive">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ranking (solo los últimos 3 años) -->
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph6" class="panel">
+      <div class="panel-hdr bg-primary-900">
+        <div class="row" style="width:100% !important;">
+          <div class="col" style="min-width: 70px">
+            <h2>Ranking</h2>
+          </div>
+          <div class="col d-flex flex-row-reverse justify-content-end mt-2 mb-2" style="min-width:300px;margin-right:-1rem">
+            <select class="custom-select custom-select-sm" [(ngModel)]="collegeSelectedGraph6" (change)="loadGraph6Data()">
+              <option value="">Colegios</option>
+              <option *ngFor="let item of colleges" [value]="item.id">{{item.nombre}}</option>
+            </select>&nbsp;
+            <select class="custom-select custom-select-sm ml-1" [(ngModel)]="campusSelectedGraph6" (change)="loadGraph6Data()">
+              <option value="">Campus</option>
+              <option *ngFor="let item of campus" [value]="item.id">{{item.nombre}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartSix">
+          <highcharts-chart
+            [Highcharts]="highchartsSix"
+            [options]="optionsChartSix"
+            style="width: 90%; height: 100%; display: block"
+            [(update)]="updateFlagSix">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

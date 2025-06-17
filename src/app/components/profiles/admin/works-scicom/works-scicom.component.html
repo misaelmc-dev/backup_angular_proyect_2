@@ -1,0 +1,316 @@
+<div class="row">
+  <div class="col-lg-12 col-xl-12">
+    <div id="panel-1" class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Listado de trabajos scicom
+        </h2>
+        <div class="panel-toolbar">
+          <div class="custom-control custom-switch pr-1">
+            <input type="checkbox" class="custom-control-input" id="switchValidados" [(ngModel)]="conSugerencia"
+                   (ngModelChange)="filtrarTrabajos()">
+            <label class="custom-control-label" for="switchValidados">Solo con sugerencias</label>
+          </div>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Collapse"></button>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Fullscreen"></button>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Close"></button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" style="margin-bottom:-20px">
+          <div class="row g-3">
+            <div class="col-4">
+              <div class="input-group input-group-md mb-g">
+                <input type="text" id="filterTitle" class="form-control" placeholder="Filtro por título..."
+                        [(ngModel)]="tituloSearch" (keyup)="filtrarTrabajos()">
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="input-group input-group-md mb-g">
+                <select class="form-control" [(ngModel)]="tipoEventoSelected" (change)="filtrarTrabajos()">
+                  <option value="0">Tipo de evento...</option>
+                  <ng-container *ngFor="let te of tiposEvento">
+                    <option value="{{te.id}}">{{te.nombre}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-calendar-edit"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="input-group input-group-md mb-g">
+                <select class="form-control" [(ngModel)]="institucionSelected" (change)="filtrarTrabajos()">
+                  <option value="0">Institución...</option>
+                  <ng-container *ngFor="let i of instituciones">
+                    <option value="{{i.id}}">{{i.razon_social}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-school"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-1" >
+              <a  class="btn btn-danger" (click)="cleanFilters()"><i class="fa fa-ban" style="color: white"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="row col-10 ml-2 mr-2 mt-6 d-flex justify-content-center" *ngIf="dataSource && dataSource.length == 0">
+          <h3 style="color:#0a70bd">No hay trabajos pendientes de verificación</h3><br><br><br>
+        </div>
+        <div class="row col-10 ml-3" *ngIf="dataSource && dataSource.length != 0">
+          <div class="col-12 panel-hdr">
+            <button class="btn-disabled" *ngIf="pageNumber==1">
+              <i class="fal fa-angle-double-left"></i>&nbsp;&nbsp;&nbsp;Anterior
+            </button>
+            <button class="btn-enabled" *ngIf="pageNumber!=1" (click)="loadPagination('prev')">
+              <i class="fal fa-angle-double-left"></i>&nbsp;&nbsp;&nbsp;Anterior
+            </button>
+            <ng-container *ngFor="let page of pageNumbersArray" >
+              <button [class]="(page.id==pageNumber)?'btn-active-pag':'btn-enabled-pag'"
+                      (click)="loadPagination(page.id)">{{page.id}}
+              </button>
+            </ng-container>
+            <button class="btn-enabled" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next')">
+              Siguiente&nbsp;&nbsp;&nbsp;<i class="fal fa-angle-double-right"></i>
+            </button>
+            <button class="btn-disabled" *ngIf="pageNumber==pageNumbers">
+              Siguiente&nbsp;&nbsp;&nbsp;<i class="fal fa-angle-double-right"></i>
+            </button>
+          </div>
+          <!--<div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite">{{labelPagination}}</div>-->
+        </div>
+        <div class="panel-content">
+          <ng-container *ngFor="let t of dataSource | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: pageNumber,
+                        totalItems: totalItems
+                        };let i = index">
+            <div class="card border mb-3 col-12">
+              <div class="row panel-hdr">
+                <div class="col-12">
+                  <h2>Datos relativos al trabajo</h2>
+                  <button class="btn btn-sm btn-primary btn-icon" title="Certificar manualmente"
+                          (click)="certificarTrabajoManualmente(t.id, t.metadatos)">
+                    <i class="fa fa-stamp"></i>
+                  </button>
+                  <div class="row" *ngIf="t.hasOwnProperty('evento')
+                                       && t.hasOwnProperty('institucion')
+                                       && t.hasOwnProperty('fuente')
+                                       && t.hasOwnProperty('eventoTipo')
+                                       && t.hasOwnProperty('autores')
+                                       && t.hasOwnProperty('metadatos')
+                                       && t.hasOwnProperty('sugerenciasTitulos')">
+                    <div class="col-6">
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-file-signature"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>ID:</b>&nbsp;{{t.id}}
+                        </td>
+                      </table>
+                      <ng-container *ngFor="let metad of t.metadatos; let i = index">
+                        <table *ngIf="metad.titulo">
+                          <td class="width-1">
+                            <i class="fa fa-file"></i>
+                          </td>
+                          <td class="text-justify">
+                            <b>Título:</b>&nbsp;{{metad.titulo}}
+                          </td>
+                        </table>
+                      </ng-container>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-edit"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Nombre del evento:</b>&nbsp;{{t.evento.nombre}}
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-calendar-check"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Institución coordinadora:</b>&nbsp;{{t.institucion.razon_social}}
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-user"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Usuario que registra:</b>&nbsp;{{t.usuarioRegistra.user.name}}&nbsp;&nbsp;({{t.usuarioRegistra.user.email}})
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-book-open"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Fuente seleccionada:</b>&nbsp;{{t.fuente.titulo}}
+                        </td>
+                      </table>
+                    </div>
+                    <div class="col-6">
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-calendar-check"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Tipo de evento:</b>&nbsp;{{t.eventoTipo.nombre}}
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-calendar-day"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Fecha de registro:</b>&nbsp;{{t.create_time | date: 'dd-MM-yyyy'}}
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-users"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>Autores:</b>&nbsp;
+                          <ng-container *ngFor="let ae of t.autores; let i = index">
+                            {{ae.nombre + ((i == t.autores.length - 1) ? '' : ',')}}&nbsp;&nbsp;
+                          </ng-container>
+                        </td>
+                      </table>
+                      <table>
+                        <td class="width-1">
+                          <i class="fa fa-check-square"></i>
+                        </td>
+                        <td class="text-justify">
+                          <b>DOI:</b>&nbsp;<label *ngIf="!t.doi">{{(t.doi!=null)?t.doi:'No registrado'}}</label>
+                        </td>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row panel-hdr" *ngIf="t.hasOwnProperty('sugerenciasTitulos')">
+                <div class="col-12">
+                  <h2 [style]="((t.sugerenciasTitulos.length==0)?'color:#BE4191':'')">
+                    {{(t.sugerenciasTitulos.length!=0)?'Sugerencias para verificación':'Aún no hay sugerencias de Scintra para este artículo'}}
+                  </h2>
+                  <div class="row" *ngIf="t.sugerenciasTitulos.length!=0">
+                    <div class="card mb-g border shadow-0 ml-2 mr-2 w-100 dataTables_scroll">
+                      <div class="card-header p-0 dataTables_scrollHead">
+                        <div class="row no-gutters row-grid align-items-stretch" style="margin-right:0px">
+                          <div class="col">
+                            <div class="text-muted py-2 px-3">Sugerencia</div>
+                          </div>
+                          <div class="col hidden-md-down" style="max-width:130px">
+                            <div class="text-muted py-2 px-3">Estatus</div>
+                          </div>
+                          <div class="col hidden-md-down" style="max-width:150px">
+                            <div class="text-muted py-2 px-3">Acciones</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-body p-0 dataTables_scrollBody" style="position: relative; overflow: auto; width: 100%; max-height: 225px;">
+                        <div class="row no-gutters row-grid">
+                          <div class="col-12">
+                            <div class="row no-gutters row-grid align-items-stretch border-bottom"
+                                 *ngFor="let st of t.sugerenciasTitulos">
+                              <div class="col">
+                                <div class="p-3">
+                                  <div class="d-flex flex-column">
+                                    <a href="javascript:void(0)" class="fw-500 d-flex align-items-start">
+                                      <b>Producto&nbsp;sugerido:&nbsp;</b>
+                                      <ng-container *ngFor="let ts of t.productosScitraSugerencia">
+                                        <ng-container *ngIf="st.id_np==ts.id">
+                                          {{ts.titulo}}
+                                        </ng-container>
+                                      </ng-container>
+                                      <!--
+                                      <span class="badge bg-danger ml-auto text-white">
+                                        <span class="ml-1 hidden-md-down">Baja similitud</span>
+                                      </span>
+                                      -->
+                                      <span class="badge badge-warning ml-auto">
+                                        <span class="ml-1 hidden-md-down">Media similitud</span>
+                                      </span>
+                                      <!--
+                                      <span class="badge bg-success ml-auto" style="color:white">
+                                        <span class="ml-1 hidden-md-down">Alta similitud </span>
+                                      </span>-->
+                                    </a>
+                                    <div class="d-block text-muted fs-sm">
+                                      <ng-container *ngFor="let m of t.metadatos">
+                                        <ng-container *ngIf="m.id==st.id_conj_meta">
+                                          <b>Título Scicom:&nbsp;</b>{{m.titulo}}
+                                        </ng-container>
+                                      </ng-container>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col hidden-md-down" style="max-width:130px">
+                                <div class="p-3 p-md-3">
+                                  <ng-container *ngFor="let ts of t.productosScitraSugerencia">
+                                    <ng-container *ngIf="st.id_np==ts.id">
+                                      <ng-container *ngIf="ts.validated!=null">
+                                        <label style="color:green;"><i class="fa fa-check-square"></i>&nbsp;Validado</label>
+                                      </ng-container>
+                                      <ng-container *ngIf="ts.validated==null">
+                                        <label style="color:grey;"><i class="fa fa-question-circle"></i>&nbsp;Sin validar</label>
+                                      </ng-container>
+                                    </ng-container>
+                                  </ng-container>
+                                </div>
+                              </div>
+                              <div class="col hidden-md-down" style="max-width:150px">
+                                <div class="p-3 p-md-3">
+                                  <div class="d-flex align-items-center">
+                                    <ng-container *ngFor="let ts of t.productosScitraSugerencia">
+                                      <ng-container *ngIf="st.id_np==ts.id">
+                                        <button class="btn btn-sm btn-success btn-icon" title="Validar"
+                                                [disabled]="ts.validated!=null"
+                                                (click)="redirectToBlank('/admin/validation-form/'+st.id_np)">
+                                          <i class="fa fa-check"></i>
+                                        </button>&nbsp;&nbsp;&nbsp;
+                                      </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngFor="let m of t.metadatos">
+                                      <ng-container *ngIf="m.id==st.id_conj_meta">
+                                        <button class="btn btn-sm btn-primary btn-icon" title="Certificar"
+                                                [disabled]="m.productos_count!=0"
+                                                (click)="certificarTrabajo(t.id,st.id_conj_meta,st.id_np)">
+                                          <i class="fa fa-stamp"></i>
+                                        </button>
+                                      </ng-container>
+                                    </ng-container>
+
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

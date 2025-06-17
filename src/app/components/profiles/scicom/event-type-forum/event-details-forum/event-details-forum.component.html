@@ -1,0 +1,371 @@
+<main role="main" class="page-content panel border-10" style="box-shadow: 0 0 15px #002746;">
+  <div class="container mt-6" style="font-size:16px">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="d-flex align-items-center mb-5">
+          <div class="col" style="margin-left:-10px;">
+            <h2 class="keep-print-font display-4 fw-500 mb-0 text-primary flex-1 position-relative" >
+              <label style="margin-left:-2px;">Ficha de configuración</label>
+              <small class="text-muted mb-0" style="font-size:18px">{{institucionNombre}}</small>
+            </h2>
+            <div class="mt-2">
+              <b>Estatus:</b>&nbsp;&nbsp;
+              <ng-container *ngFor="let status of estatusEventos">
+                <ng-container *ngIf="status.id==eventoEstatus">
+                  <span class="badge badge-secondary badge-pill" *ngIf="status.id==5">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="!status.evento_publico"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.evento_publico"></i>
+                  </span>
+                  <span class="badge badge-primary badge-pill" *ngIf="status.id==6">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="!status.evento_publico"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.evento_publico"></i>
+                  </span>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+          <div class="col">
+            <div class="d-flex flex-row-reverse">
+              <img class="ml-2 mt-1 mb-5" [src]="urlLogoEvento" style="margin-top:-40px;width:250px;" alt="Logo evento">
+              <ng-container *ngIf="urlLogoEvento=='assets/img/logo-default.jpg'">
+                <button class="btn btn-default hidden-md-down height-2 ml-1" data-toggle="modal" data-target="#modal-cambiar-logo">
+                  <i class="fa fa-upload"></i>&nbsp;&nbsp;Agregar&nbsp;logo
+                </button>
+              </ng-container>
+              <ng-container *ngIf="urlLogoEvento!='assets/img/logo-default.jpg'">
+                <button class="btn btn-default hidden-md-down height-2 ml-1" data-toggle="modal" data-target="#modal-cambiar-logo">
+                  <i class="fa fa-upload"></i>&nbsp;&nbsp;Cambiar&nbsp;logo
+                </button>
+              </ng-container>
+
+              <button class="btn btn-default hidden-md-down height-2" data-action="app-print" data-toggle="tooltip"
+                      data-placement="left" title="" data-original-title="Print page" aria-describedby="tooltip734707">
+                <i class="fa fa-print"></i>&nbsp;&nbsp;Imprimir
+              </button>
+            </div>
+            <b class="d-flex flex-row-reverse" style="margin-top:-25px">Fecha de impresión:&nbsp;&nbsp;{{nowDate}}</b>
+          </div>
+        </div>
+        <h3>
+          <span class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0"> Nombre:</span>
+          <span class="fw-300 display-5 fw-500 color-secondary-600 keep-print-font pt-4 l-h-n m-0">&nbsp;&nbsp;{{eventoNombre}}</span>
+        </h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 d-flex">
+        <div class="table-responsive">
+          <table class="table table-clean table-sm align-self-end">
+            <tbody>
+            <tr>
+              <td style="width:200px"><strong>Tipo:</strong></td>
+              <td><span class="badge badge-warning badge-pill">Foro UVM - Foro de UVM</span></td>
+            </tr>
+            <tr>
+              <td><strong>Descripción:</strong></td>
+              <td class="text-justify">{{(eventoDescripcion) ? eventoDescripcion : 'Sin descripción'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Lema:</strong></td>
+              <td class="text-justify">{{(eventoLema) ? eventoLema : 'Sin lema'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Objetivos:</strong></td>
+              <td class="text-justify">{{(eventoObjetivos) ? eventoObjetivos : 'Sin objetivos'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Fecha inicio de ciclo:</strong></td>
+              <td>{{fechaInicioEvento | date: 'dd-MM-yyyy'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Fecha final de ciclo:</strong></td>
+              <td>{{fechaFinalEvento | date: 'dd-MM-yyyy'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Nivel de desarrollo:</strong></td>
+              <td class="text-justify">{{(eventoNivel) ? eventoNivel : 'Sin nivel de desarrollo'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Campus asociados</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Campus</th>
+              <th class="border-top-0 table-scale-border-bottom">Institución</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let campus of campusAsing">
+              <td class="text-left strong">{{campus.nombre}}</td>
+              <td class="text-left">{{campus.institucion}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Objetivos de desarrollo sostenible</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Numero</th>
+              <th class="border-top-0 table-scale-border-bottom">Objetivo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let ods of eventoODS">
+              <td class="text-left strong">{{ods.numero}}</td>
+              <td class="text-left strong">{{ods.nombre}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Colaboradores asociados</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Colaborador</th>
+              <th class="border-top-0 table-scale-border-bottom">Campus</th>
+              <th class="border-top-0 table-scale-border-bottom">Rol</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let ec of eventoColaboradores">
+              <td class="text-left strong">{{ec.user.name}}{{(ec.user.email)?' ('+ec.user.email+')':''}}</td>
+              <td class="text-left strong">
+                <ng-container *ngFor="let c of ec.campus;let i=index">
+                  <ng-container *ngIf="i==0">
+                    <ng-container *ngFor="let cl of campusList">
+                      <ng-container *ngIf="c.id==cl.id">
+                        {{cl.nombre}}
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <td class="text-left strong">
+                <ng-container *ngFor="let r of rolesList">
+                  <ng-container *ngIf="ec.id_rol==r.id">
+                    {{r.nombre}}
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!--
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de evaluación permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de evaluación</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Fechas de evaluación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let eval of evaluationAsing">
+              <td class="text-left strong">{{eval.nombre}}</td>
+              <td class="text-left">{{eval.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let fa of fechasAsign">
+                  <label *ngIf="eval.id==fa.id_tipo_evaluacion">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de pagos permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de pago</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Monto</th>
+              <th class="border-top-0 table-scale-border-bottom" style="width:220px">Fechas de ejecución</th>
+              <th class="border-top-0 table-scale-border-bottom" style="width:220px">Fechas de validación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let pay of paymentsAsing">
+              <td class="text-left strong">{{pay.nombre}}</td>
+              <td class="text-left">{{pay.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let tipPay of eventosPagos">
+                  <strong *ngIf="pay.id==tipPay.id_tipo_pago">{{tipPay.monto | currency}} MXN</strong>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let fa of fechasAsign1">
+                  <label *ngIf="fa.id_tipo_rango==5">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let fa of fechasAsign2">
+                  <label *ngIf="fa.id_tipo_rango==6">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de participación permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de participación</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Fechas de registro de participación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let part of participationAsing">
+              <td class="text-left strong">{{part.nombre}}</td>
+              <td class="text-left">{{part.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let fa of fechasAsign3">
+                  <label *ngIf="part.id==1">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de trabajo permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de trabajo</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let work of workAsing">
+              <td>{{work.nombre}}</td>
+              <td>{{work.descripcion}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    -->
+
+
+  </div>
+</main>
+
+<div class="modal fade display-none" id="modal-cambiar-logo" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cargar nuevo logo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label text-muted mt-2 mb-2">Selecciona una imagen:</label>
+        <div class="input-group flex-nowrap mt-2 mb-0">
+          <div class="input-group flex-nowrap">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input"
+                     accept="image/jpg,image/png,image/jpeg"
+                     (change)="extractFileFromEvent($event)"
+                     [(ngModel)]="archivoVacio"
+                     id="validacionLogoInput">
+              <label class="custom-file-label">
+                <ng-container *ngIf="logoEventoArchivo">{{logoEventoArchivo.name}}</ng-container>
+                <ng-container *ngIf="!logoEventoArchivo">Selecciona imagen...</ng-container>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="invalid-feedback" id="validacionLogo" style="display: none;">
+          &nbsp;&nbsp;Archivo no tiene las dimenciones correctas
+        </div>
+        <div class="alert bg-primary-400 text-white fade show mt-3 mb-0" role="alert">
+          <div class="d-flex align-items-center">
+            <div class="alert-icon">
+              <i class="fal fa-info-circle"></i>
+            </div>
+            <div class="flex-1">
+              Nota: el tamaño sugerido de la imagen es de 400 de alto por 1200 de ancho, o ajustar las proporciones de la imagen en 1 de alto por 3 de ancho y sus múltiplos<br> (ejemplo. 200x600, 300x900).
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal" (click)="limpiarFormularioImagen()">Cerrar</button>
+        <div [style.display]="(urlLogoEvento!='assets/img/logo-default.jpg')?'block':'none'">
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  id="btn-guardar-imagen1" disabled="true" style="display: block;">
+            <i class="fa fa-save"></i>&nbsp;Actualizar
+          </button>
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  id="btn-guardar-imagen2" style="display: none;" [disabled]="!this.logoEventoArchivo" (click)="updateFile()">
+            <i class="fa fa-save"></i>&nbsp;Actualizar
+          </button>
+        </div>
+        <div [style.display]="(urlLogoEvento=='assets/img/logo-default.jpg')?'block':'none'">
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  id="btn-guardar-imagen3" disabled="true" style="display: block;">
+            <i class="fa fa-save"></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  id="btn-guardar-imagen4" style="display: none;" [disabled]="!this.logoEventoArchivo" (click)="saveFile()">
+            <i class="fa fa-save"></i>&nbsp;Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

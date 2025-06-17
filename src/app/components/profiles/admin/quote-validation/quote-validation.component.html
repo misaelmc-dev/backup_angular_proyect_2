@@ -1,0 +1,372 @@
+<div class="row">
+  <div class="col-lg-12 col-xl-12">
+    <div id="panel-1" class="panel">
+      <div class="panel-hdr">
+        <h2>
+          {{title}} <span class="fw-300"><i></i></span>
+        </h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="alert bg-warning-500 alert-dismissible fade show mb-3" *ngIf="fuenteDepredadora">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true"><i class="fal fa-times"></i></span>
+            </button>
+            <div class="d-flex align-items-center">
+              <div class="alert-icon">
+                <i class="fa fa-exclamation-triangle"></i>
+              </div>
+              <div class="flex-1">
+                <b>Ha seleccionado una fuente identificada como depredadora.</b>
+              </div>
+            </div>
+          </div>
+          <form [formGroup]="quoteForm" *ngIf="this.quoteData" (ngSubmit)="submit(quoteForm.value)">
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="anio">Año</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.anio_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateAnio()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.anio_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input id="anio" type="text" class="form-control" placeholder="Año" formControlName="anio" [attr.disabled]="this.quoteData.anio_validado">
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="anio">Título</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.titulo_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateTitulo()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.titulo_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Título" formControlName="titulo" [attr.disabled]="this.quoteData.titulo_validado">
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="doi">DOI</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.DOI_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateDOI()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.DOI_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input id="doi" type="text" class="form-control" placeholder="DOI" formControlName="doi" [attr.disabled]="this.quoteData.DOI_validado">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="tipo">Tipo</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.tipo_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateTipo()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.tipo_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+
+                    <select class="form-control" id="tipo" formControlName="tipo" [attr.disabled]="this.quoteData.tipo_validado">
+                      <option [value]="0">Sin tipo - Escoja uno</option>
+                      <option *ngFor="let item of productTypes" [value]="item.id">
+                        {{ item.tipo }}
+                      </option>
+                    </select>
+
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="anio">URL</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.url_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateURL()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.url_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="text" class="form-control" placeholder="URL" formControlName="url" [attr.disabled]="this.quoteData.url_validado">
+                  </div>
+                </div>
+              </div>
+              <!--<div class="col">
+                <div class="form-group">
+                  <label class="form-label">Autocita Autor</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.autocita_autor_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateAutocitaAutor()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.autocita_autor_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="checkmeoutaa" formControlName="autocita_autor" [attr.disabled]="this.quoteData.autocita_autor_validado">
+                          <label class="custom-control-label" for="checkmeoutaa">Autocita Autor</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>-->
+
+            </div>
+            <br>
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="source_title">Fuente</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.fuente_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateSourceTitle()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.fuente_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="text" class="form-control" id="source_title" placeholder="Fuente" formControlName="source_title" data-toggle="modal" data-target="#fuente-modal" [attr.disabled]="this.quoteData.fuente_validated">
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="issne">Fuente ISSNe</label>
+                  <div class="input-group">
+                    <input id="issne" type="text" class="form-control" placeholder="ISSNe" formControlName="issne" name="issne" [attr.disabled]="true">
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="issni">Fuente ISSNi</label>
+                  <div class="input-group">
+                    <input id="issni" type="text" class="form-control" placeholder="ISSNi" formControlName="issni" name="issni" [attr.disabled]="true">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="anio">Fuente Volumen</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.source_volume_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateSourceVolume()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.source_volume_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="number" class="form-control" placeholder="Fuente Volumen" formControlName="source_volume" [attr.disabled]="this.quoteData.source_volume_validado">
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="anio">Fuente Issue</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.source_issue_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateSourceIssue()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.source_issue_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="number" class="form-control mr-3" placeholder="Fuente Issue" formControlName="source_issue" [attr.disabled]="this.quoteData.source_issue_validado">
+                  </div>
+                </div>
+              </div>
+              <div class="col pl-0">
+                <div class="form-group">
+                  <label class="form-label" for="anio">Página Fuente</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.source_page_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateSourcePage()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.source_page_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <input type="text" class="form-control mr-3" placeholder="Página Fuente" formControlName="source_page" [attr.disabled]="this.quoteData.source_page_validado">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <!--<div class="col">
+                <div class="form-group">
+                  <label class="form-label">Autocita Journal</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.autocita_journal_validado" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateAutocitaJournal()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.autocita_journal_validado" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="checkmeoutaj" formControlName="autocita_journal" [attr.disabled]="this.quoteData.autocita_journal_validado">
+                          <label class="custom-control-label" for="checkmeoutaj">Autocita Journal</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>-->
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label">Scopus</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.in_scopus_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateScopus()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.in_scopus_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="checkmeoutaaa" formControlName="in_scopus" [attr.disabled]="this.quoteData.in_scopus_validated">
+                          <label class="custom-control-label" for="checkmeoutaaa">Scopus</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="jcr">JCR</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.in_jcr_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateJcr()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.in_jcr_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="jcr" formControlName="in_jcr" [attr.disabled]="this.quoteData.in_jcr_validated">
+                          <label class="custom-control-label" for="jcr">JCR</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="in_scielo">Scielo</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.in_scielo_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateScielo()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.in_scielo_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-append">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="in_scielo" formControlName="in_scielo" [attr.disabled]="(this.quoteData.scielo_validado) ? true : null">
+                          <label class="custom-control-label" for="in_scielo">Scielo</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="in_conacyt">Conacyt</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.in_conacyt_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateConacyt()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.in_conacyt_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-append">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="in_conacyt" formControlName="in_conacyt" [attr.disabled]="(this.quoteData.conacyt_validado) ? true : null">
+                          <label class="custom-control-label" for="in_conacyt">Conacyt</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="in_doaj">Doaj</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <button *ngIf="!this.quoteData.in_doaj_validated" class="btn btn-danger waves-effect waves-themed" type="button" (click)="validateDoaj()"><i class="fal fa-exclamation-circle"></i></button>
+                      <button *ngIf="this.quoteData.in_doaj_validated" class="btn btn-success waves-effect waves-themed" type="button"><i class="fal fa-check"></i></button>
+                    </div>
+                    <div class="input-group-append">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="in_doaj" formControlName="in_doaj" [attr.disabled]="(this.quoteData.doaj_validado) ? true : null">
+                          <label class="custom-control-label" for="in_doaj">Doaj</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <app-catalogs [id]="quote_id" [is_product]="is_product" [salvar_coautores]="guardarCoautores"></app-catalogs>
+
+            <div class="panel-toolbar">
+              <button type="button" class="btn  btn-sm btn-success mr-1 shadow-0 waves-effect waves-themed" (click)="validateQuote()">
+                Validar &nbsp;<i class="fas fa-check-double"></i>
+              </button>
+              <button type="button" class="btn  btn-sm btn-danger mr-1 shadow-0 waves-effect waves-themed" (click)="cancel()">
+                Cancelar &nbsp;<i class="fas fa-window-close"></i>
+              </button>
+              <button class="btn  btn-sm btn-primary mr-1 shadow-0 waves-effect waves-themed" (click)="salvarCoautores()">
+                Salvar &nbsp;<i class="fas fa-save"></i>
+              </button>
+            </div>
+
+
+          </form>
+
+          <div class="modal fade" id="fuente-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    Fuente
+                    <small class="m-0 text-muted">
+                      Entre los siguientes datos por favor:
+                    </small>
+                  </h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <form>
+                    <div class="form-group">
+                      <label class="form-label" for="nombre_afiliacion">Criterio de Búsqueda</label>
+                      <div class="input-group">
+                        <input id="nombre_afiliacion" class="form-control" placeholder="Criterio de Búsqueda" [(ngModel)]="textCriteria" [ngModelOptions]="{standalone: true}">
+                        <div class="input-group-append">
+                          <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="loadSourcesByCriteria()"><i class="fal fa-search"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="sources">Fuente</label>
+                      <select class="form-control" id="sources" name="sources" [(ngModel)]="selectedSource">
+                        <option *ngFor="let source of sources" [ngValue]="source">
+                          {{formatIssn(source.titulo,source.issn_e,source.issn_i)}}
+                        </option>
+                      </select>
+                    </div>
+
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal" (click)="onSelectSource()">OK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

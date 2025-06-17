@@ -1,0 +1,45 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2>Detalles de la participación</h2>
+  </div>
+  <div class="row mt-3">
+    <ng-container *ngFor="let part of participacion">
+      <div class="col ml-4">
+        <ng-container *ngFor="let pu of participacionUsuario">
+          <ng-container *ngIf="pu.id==part.id_usuario">
+            <label><i class="fa fa-id-card"></i>&nbsp;<b>No. empleado: </b>{{(pu.num_empleado)?pu.num_empleado:'Desconocido'}}</label><br>
+            <label><i class="fa fa-user"></i>&nbsp;<b>Nombre:</b> {{pu.user.name}}</label><br>
+            <label><i class="fa fa-envelope"></i>&nbsp;<b>Correo:</b> {{pu.user.email}}</label>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="col ml-4">
+        <ng-container *ngFor="let tp of typeParticipationAsign">
+          <ng-container *ngIf="tp.id==part.id_tipo_participacion">
+            <label><i class="fa fa-clipboard-user"></i>&nbsp;<b>Tipo:</b> {{tp.nombre}}</label>
+          </ng-container>
+        </ng-container>
+        <br>
+          <ng-container *ngFor="let pe of participationEstatus">
+            <ng-container *ngIf="pe.id==part.id_estatus_participacion">
+              <label><i class="fa fa-star"></i><b>Estatus:</b></label>
+              <button type="button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border:0;background-color: white">
+                <span class="badge badge-secondary badge-pill">{{pe.nombre}}&nbsp;&nbsp;</span>
+              </button>
+            </ng-container>
+          </ng-container>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <ng-container *ngFor="let stat of participationEstatus">
+              <a class="dropdown-item drop" data-toggle="dropdown" (click)="changeEstatus(stat.id)">
+                &nbsp;&nbsp;&nbsp;{{stat.nombre}}
+              </a>
+            </ng-container>
+          </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="m-3">
+    <app-event-work-new [eventoId]="eventoId" [participationId]="participacionId"></app-event-work-new>
+  </div>
+</div>
+

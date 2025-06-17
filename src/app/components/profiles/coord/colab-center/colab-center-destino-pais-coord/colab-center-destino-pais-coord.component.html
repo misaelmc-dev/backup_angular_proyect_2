@@ -1,0 +1,79 @@
+<div *ngIf="showBackButton && showElemList" class="panel-hdr">
+  <h2>
+    {{titulo}} <span class="fw-300"><i></i></span>
+  </h2>
+  <div class="panel-toolbar">
+    <a class="btn" (click)="goBack()">
+      <i class="fal fa-arrow-left fs-xl"></i>&nbsp;Atrás
+    </a>
+  </div>
+</div>
+<br *ngIf="showBackButton && showElemList">
+<div id="elemList" *ngIf="showElemList">
+  <div class="row">
+    <div class="col-lg-4" *ngFor="let pais of paises | paginate : {
+                  id: 'colabDestinoPais',
+                  itemsPerPage: 6,
+                  currentPage: currentPage,
+                  totalItems: paises.length
+                }" (click)="onElementClicked(pais.id, pais.nombre)">
+      <div id="panel-8" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="pais.nombre">
+                {{(pais.nombre) ? pais.nombre : 'Desconocido'}}
+              </p>
+            </div>
+          </div>
+
+        </div>
+        <div class="panel-container show">
+          <div class="panel-content" >
+            <img *ngIf="pais.nombre" [src]="'../../../../../../assets/img/flags3x2/' + pais.codigo + '.svg'" [alt]="'Foto bandera país'">
+            <div class="card-body p-0 collapse show" >
+              <div class="p-3">
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-file"></i><strong class="poppins">&nbsp;Productos en colaboración: </strong>{{pais.prodsColab}}
+                </div>
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-users"></i><strong class="poppins">&nbsp;Coautores: </strong>{{pais.colabsIndividuales}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pagination-controls
+    previousLabel="Anterior"
+    nextLabel="Siguiente"
+    [responsive]="true"
+    [id]="'colabDestinoPais'"
+    (pageChange)="handlePageChange($event)"
+    class="paginationStyle"
+  ></pagination-controls>
+</div>
+<app-colab-center-desglose-destino-seleccion-coord
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo + ((titulo) ? ' / ' : '') + selectedPaisNombre"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="[this.selectedPaisId.toString()]"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+  *ngIf="!showElemList">
+</app-colab-center-desglose-destino-seleccion-coord>
+

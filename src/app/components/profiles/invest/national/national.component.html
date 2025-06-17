@@ -1,0 +1,32 @@
+<div class="row">
+  <div role="alert" class="col-md-12 alert alert-primary">
+    <div class="row">
+      <div class="form-group col-6 mb-2">
+        <div id="datepicker-5" class="input-daterange input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text btn-primary">Años:</span>
+          </div>
+          <select class="custom-select ng-untouched ng-pristine ng-valid" [(ngModel)]="startYear" name="startYear"
+                  (change)="onStartYearChanged()" style="width:100px">
+            <option *ngFor="let year of possibleStartYears" [value]="year">
+              {{year}}
+            </option>
+          </select>
+          <div class="input-group-append input-group-prepend">
+            <span class="input-group-text fs-xl bg-primary text-white"><i class="fal fa-ellipsis-h"></i></span>
+          </div>
+          <select class="custom-select ng-untouched ng-pristine ng-valid" [(ngModel)]="endYear" name="endYear"
+                  (change)="loadMap()" style="width:100px">
+            <option *ngFor="let year of possibleEndYears" [value]="year">
+              {{year}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-6"></div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <iframe width="100%" height="800" [src]="urlWithFilters | safe"></iframe>
+  </div>
+</div>

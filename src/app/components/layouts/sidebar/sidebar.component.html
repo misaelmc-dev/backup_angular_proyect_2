@@ -1,0 +1,1048 @@
+
+<!-- BEGIN Left Aside -->
+<aside class="page-sidebar" style="height: 100%">
+  <div class="page-logo">
+    <a href="#" class="page-logo-link press-scale-down d-flex align-items-center position-relative" data-toggle="modal" data-target="#modal-shortcut">
+      <img src="assets/img/logo.png" alt="Logo Scintra" aria-roledescription="logo">
+      <span class="page-logo-text mr-1 poppins">Scintra</span>
+      <span class="position-absolute text-white opacity-50 small pos-top pos-right mr-2 mt-n2"></span>
+      <i class="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
+    </a>
+  </div>
+  <!-- BEGIN PRIMARY NAVIGATION -->
+  <nav id="js-primary-nav" class="primary-nav" role="navigation" [ngSwitch]="authRole">
+    <!-- NAV FILTER -->
+    <div class="nav-filter">
+      <div class="position-relative">
+        <input type="text" id="nav_filter_input" placeholder="Buscar en menú..." class="form-control" tabindex="0">
+        <a href="#" onclick="return false;" class="btn-primary btn-search-close js-waves-off" data-action="toggle" data-class="list-filter-active" data-target=".page-sidebar">
+          <i class="fal fa-chevron-up"></i>
+        </a>
+      </div>
+    </div>
+    <!-- NAV INFO CARD -->
+    <div class="info-card">
+      <a [href]="(loggedInRole === 'admin') ? '/admin/products' : ((loggedInRole === 'coord') ? ('/coord/' + id_institucion) : '/invest/' + id_investigador)">
+        <img [src]="profilePhotoUrl" (error)="this.profilePhotoUrl = this.profilePhotoPlaceholderUrl" class="profile-image rounded-circle" alt="Foto de perfil">
+        <div class="info-card-text">
+          <a class="d-flex align-items-center text-white">
+            <span class="text-truncate text-truncate-sm d-inline-block" style="color: #444">{{name}}</span>
+          </a>
+          <!--<span class="d-inline-block text-truncate text-truncate-sm" style="color: #444">
+            {{ roleDescription }}
+          </span>
+          <span class="d-inline-block  text-truncate-sm" style="color: #444">
+            {{ email }}
+          </span>
+          <span class="d-inline-block  text-truncate-sm" style="color: #444">
+            {{ institution }}
+          </span>-->
+        </div>
+      </a>
+      <!--<img src="assets/img/card-backgrounds/cover-2-lg.png" class="cover" alt="cover">-->
+      <img src="assets/img/bg_amarillo.png" class="cover" alt="Fondo">
+      <a href="#" onclick="return false;" class="pull-trigger-btn" data-action="toggle" data-class="list-filter-active" data-target=".page-sidebar" data-focus="nav_filter_input">
+        <i class="fal fa-angle-down"></i>
+      </a>
+    </div>
+    <!-- NAV MENU -->
+    <!-- INICIA MENÚ DE COORDINADOR -->
+    <ul id="js-nav-menu" class="nav-menu" *ngSwitchCase="'coord'" appNavigation>
+      <li *ngIf="activeCoordInicio()"
+          [ngClass]="{'active': (this.router.url.includes('/coord/') && !this.router.url.substring(7).includes('/'))}"
+      >
+        <a [routerLink]="'/coord/' + id_institucion" title="Inicio" data-filter-tags="home">
+          <i class="fal fa-home-alt"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.application_intel">Inicio</span>
+        </a>
+      </li>
+      <!-- <li class="nav-title">Tools & Components</li> -->
+      <li *ngIf="activeCoordProduccionCientifica()"
+          [ngClass]="{'active': (this.router.url.startsWith('/coord/') && this.router.url.includes('/research'))}"
+      >
+        <a title="Investigación" data-filter-tags="research">
+          <i class="fal fa-microscope"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.theme_settings">Investigación</span>
+        </a>
+        <ul>
+          <li *ngIf="activeCoordProduccionCientifica()" [ngClass]="{'active': (this.router.url.startsWith('/coord/') && this.router.url.includes('/research'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/research'" title="Producción científica" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Producción científica</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="activeCoordImpacto()" [ngClass]="{'active': (this.router.url.startsWith('/coord/') && this.router.url.includes('/impact-dashboard'))}">
+        <a [routerLink]="'/coord/' + id_institucion + '/impact-dashboard'" title="Impacto" data-filter-tags="impact">
+          <i class="fal fa-chart-bar"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.documentation">Impacto</span>
+        </a>
+      </li>
+      <!--<li>
+        <a title="UI Components" data-filter-tags="coauthor">
+          <i class="fal fa-folder-tree"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Coautoría</span>
+        </a>
+      </li>-->
+      <li *ngIf="activeCoordProyectos()" [ngClass]="{'active': (this.router.url.startsWith('/coord/')
+        && (this.router.url.includes('/projects') || this.router.url.includes('/project/')))}">
+        <a [routerLink]="'/coord/' + id_institucion + '/projects'" title="Proyectos" data-filter-tags="proyect">
+          <i class="fal fa-folders"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.utilities">Proyectos</span>
+        </a>
+      </li>
+      <li *ngIf="activeCoordMapaNacional() || activeCoordMapaInternacional() || activeCoordCentroDeColaboracion()"
+          [ngClass]="{'active': (this.router.url.includes('/national-ad')
+              || this.router.url.includes('/international-ad') || this.router.url.includes('/colab-center'))
+            }"
+      >
+        <a title="Colaboración" data-filter-tags="national">
+          <i class="fal fa-flag"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.font_icons">Colaboración</span>
+        </a>
+        <ul>
+          <li *ngIf="activeCoordMapaNacional()" [ngClass]="{'active': (this.router.url.includes('/national'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/national-ad'"
+               title="Mapa nacional" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Mapa nacional</span>
+            </a>
+          </li>
+          <li *ngIf="activeCoordMapaInternacional()" [ngClass]="{'active': (this.router.url.includes('/international'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/international-ad'"
+               title="Mapa internacional" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Mapa internacional</span>
+            </a>
+          </li>
+          <li *ngIf="activeCoordCentroDeColaboracion()" [ngClass]="{'active': (this.router.url.includes('/colab-center'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/colab-center'"
+               title="Centro de colaboración" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Centro de colaboración</span>
+              <span class="badge badge-primary">¡Nuevo!</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="activeCoordMiProduccion() || activeCoordMiImpacto()" [ngClass]="{'active': (this.router.url.includes('/myzone/production') || this.router.url.includes('/myzone/impact'))}">
+        <a title="Mi zona" data-filter-tags="zona">
+          <i class="fal fa-check-circle"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.font_icons">Mi zona</span>
+        </a>
+        <ul>
+          <li *ngIf="activeCoordMiProduccion()" [ngClass]="{'active': (this.router.url.startsWith('/coord/') && this.router.url.endsWith('/myzone/production'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/myzone/production'" title="Mi zona" data-filter-tags="zone">
+              <i class="fal fa-check-circle"></i>
+              <span class="nav-link-text poppins" data-i18n="nav.form_stuff">Mi producción</span>
+            </a>
+          </li>
+          <li *ngIf="activeCoordMiImpacto()" [ngClass]="{'active': (this.router.url.startsWith('/coord/') && this.router.url.endsWith('/myzone/impact'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/myzone/impact'" title="Mi impacto" data-filter-tags="Mi impacto">
+              <i class="fal fa-broadcast-tower"></i>
+              <span class="nav-link-text poppins" data-i18n="nav.form_stuff">Mi impacto</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li *ngIf="typeEventInstitution.length>0">
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-calendar-alt"></i>
+          <span class="nav-link-text poppins">Mis eventos</span>
+          <span class="badge badge-primary" style="background-color: red">¡Nuevo!</span>
+        </a>
+      </li>
+
+        <li [class]="((this.router.url.includes('/statistics-api'))
+                || (this.router.url.includes('/statistics-encounter'))
+                || (this.router.url.includes('/statistics-forum'))
+                )?'active open':''"
+            [style]="(typeEventInstitution.length>0)?'':'visibility:hidden;display:none;'">
+            <!--se oculto con estilos porque al colocar "*ngIf" se quita la propiedad de abrir y cerrar el menu-->
+          <a title="Estadísticas de eventos" data-filter-tags="Estadísticas de eventos">
+            <i class="fal fa-analytics"></i>
+            <span class="nav-link-text poppins" data-i18n="nav.ui_components">Estadísticas de eventos</span>
+          </a>
+          <ul>
+            <ng-container *ngFor="let tipEvent of typeEventInstitution">
+              <li [ngClass]="{'active': (this.router.url.includes('/statistics-api'))}" *ngIf="tipEvent.codigo_interno=='tipEvApiUvmUnitec'">
+                <a [routerLink]="'/coord/' + id_institucion + '/statistics-api'" title="{{tipEvent.nombre}}">
+                  <!--<i class="fal fa-book-open"></i>-->
+                  <span class="nav-link-text poppins">{{tipEvent.nombre}}</span>
+                </a>
+              </li>
+              <li [ngClass]="{'active': (this.router.url.includes('/statistics-forum'))}" *ngIf="tipEvent.codigo_interno=='tipEvForoUvm'">
+                <a [routerLink]="'/coord/' + id_institucion + '/statistics-forum'" title="{{tipEvent.nombre}}">
+                  <!--<i class="fal fa-book-open"></i>-->
+                  <span class="nav-link-text poppins">{{tipEvent.nombre}}</span>
+                </a>
+              </li>
+              <li [ngClass]="{'active': (this.router.url.includes('/statistics-encounter'))}" *ngIf="tipEvent.codigo_interno=='tipEvEncuentUtec'">
+                <a [routerLink]="'/coord/' + id_institucion + '/statistics-encounter'" title="{{tipEvent.nombre}}">
+                  <!--<i class="fal fa-book-open"></i>-->
+                  <span class="nav-link-text poppins">{{tipEvent.nombre}}</span>
+                </a>
+              </li>
+            </ng-container>
+          </ul>
+        </li>
+
+      <li *ngIf="activeCoordSeleccionDeRevistas() || activeCoordRevistasSimilares() || activeCoordRevistaPorResumen()"
+          [class]="((this.router.url.includes('/tool-source'))
+                || (this.router.url.includes('/tool-similar-source'))
+                || (this.router.url.includes('/tool-sumary-source'))
+                )?'active open':''">
+        <a title="Centro de autores" data-filter-tags="Centro de autores">
+          <i class="fal fa-user"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Centro de autor</span>
+        </a>
+        <ul>
+          <li *ngIf="activeCoordSeleccionDeRevistas()" [ngClass]="{'active': (this.router.url.includes('/tool-source'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/tool-source'" title="Selección de revistas" data-filter-tags="Selección de revistas">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Selección de revistas</span>
+            </a>
+          </li>
+          <li *ngIf="activeCoordRevistasSimilares()" [ngClass]="{'active': (this.router.url.includes('/tool-similar-source'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/tool-similar-source'" title="Revistas similares" data-filter-tags="Revistas similares">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revistas similares</span>
+            </a>
+          </li>
+          <li *ngIf="activeCoordRevistaPorResumen()" [ngClass]="{'active': (this.router.url.includes('/tool-sumary-source'))}">
+            <a [routerLink]="'/coord/' + id_institucion + '/tool-sumary-source'" title="Revista por resumen" data-filter-tags="Revista por resumen">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revista por resumen</span>
+              <span title="Función en desarrollo(Beta)" data-filter-tags="Función en desarrollo(Beta)"
+                    class="badge badge-primary">β
+              </span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a [href]="globals.backend_base_url + '/help'" title="Ayuda" data-filter-tags="help">
+          <i class="fal fa-question-circle"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.plugins">Ayuda</span>
+        </a>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE COORDINADOR -->
+    <!-- INICIA MENÚ DE INVESTIGADOR -->
+    <ul id="js-nav-menu" class="nav-menu" *ngSwitchCase="'invest'" appNavigation>
+      <li *ngIf="activeInvestInicio()" [ngClass]="{'active': matchRegExp('\/invest\/[0-9]+$', this.router.url) }">
+        <a [routerLink]="'/invest/' + id_investigador" title="Inicio" data-filter-tags="home">
+          <i class="fal fa-home-alt"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.application_intel">Inicio</span>
+        </a>
+      </li>
+      <!-- <li class="nav-title">Tools & Components</li> -->
+      <li *ngIf="activeInvestProduccionCientifica()" [ngClass]="{'active': (this.router.url.includes('/sci-prod'))}">
+        <a title="Investigación" data-filter-tags="research">
+          <i class="fal fa-microscope"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.theme_settings">Investigación</span>
+        </a>
+        <ul>
+          <li *ngIf="activeInvestProduccionCientifica()" [ngClass]="{'active': (this.router.url.includes('/sci-prod'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/sci-prod/'" title="Producción científica" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Producción científica</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="activeInvestReporteDeCitas() || activeInvestAnalisisDeCita()" [ngClass]="{'active': (this.router.url.includes('/invest/') && (this.router.url.includes('/quotes-report'))
+        || this.router.url.includes('/analysis'))}">
+        <a title="Impacto" data-filter-tags="impact">
+          <i class="fal fa-chart-bar"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.documentation">Impacto</span>
+        </a>
+        <ul>
+          <li *ngIf="activeInvestReporteDeCitas()" [ngClass]="{'active': (this.router.url.includes('/analysis'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/analysis'" title="Reporte de citas" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Reporte de citas</span>
+            </a>
+          </li>
+          <li *ngIf="activeInvestAnalisisDeCita()" [ngClass]="{'active': ( this.router.url.includes('/quotes-report') )}" >
+            <a [routerLink]="'/invest/' + id_investigador + '/quotes-report'" title="Análisis de citas" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Análisis de citas</span>
+            </a>
+          </li>
+          <li>
+            <a title="Informe de citas" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Informe de citas</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="activeInvestCoautoria()" [ngClass]="{'active': (this.router.url.startsWith('/invest/') && this.router.url.endsWith('/coauthors'))}">
+        <a [routerLink]="'/invest/' + id_investigador + '/coauthors'" title="Coautoría" data-filter-tags="coauthor">
+          <i class="fal fa-folder-tree"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Coautoría</span>
+        </a>
+        <!--<ul>
+          <li>
+            <a title="FontAwesome" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Red</span>
+            </a>
+          </li>
+          <li>
+            <a title="NextGen Icons" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Detalle de coautoría</span>
+            </a>
+          </li>
+        </ul>-->
+      </li>
+      <li hidden>
+        <a title="Proyectos" data-filter-tags="proyect">
+          <i class="fal fa-folders"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.utilities">Proyectos</span>
+        </a>
+      </li>
+      <li *ngIf="activeInvestMapaNacional() || activeInvestMapaInternacional()"
+          [ngClass]="{'active': (this.router.url.includes('/national') || this.router.url.includes('/international'))}">
+        <a title="Colaboración" data-filter-tags="national">
+          <i class="fal fa-flag"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.font_icons">Colaboración</span>
+        </a>
+        <ul>
+          <li *ngIf="activeInvestMapaNacional()" [ngClass]="{'active': (this.router.url.includes('/national'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/national'"
+               title="Mapa nacional" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Mapa nacional</span>
+            </a>
+          </li>
+          <li *ngIf="activeInvestMapaInternacional()" [ngClass]="{'active': (this.router.url.includes('/international'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/international'"
+               title="Mapa internacional" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Mapa internacional</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="activeInvestMiProduccion() || activeInvestMiImpacto()"
+          [ngClass]="{'active': (this.router.url.includes('/myzone/production') || this.router.url.includes('/myzone/impact'))}">
+        <a title="Mi zona" data-filter-tags="zona">
+          <i class="fal fa-check-circle"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.font_icons">Mi zona</span>
+        </a>
+        <ul>
+          <li *ngIf="activeInvestMiProduccion()" [ngClass]="{'active': (this.router.url.includes('/myzone/production'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/myzone/production'"
+               title="Mi zona" data-filter-tags="zone">
+              <i class="fal fa-check-circle"></i>
+              <span class="nav-link-text poppins">Mi producción</span>
+            </a>
+          </li>
+          <li *ngIf="activeInvestMiImpacto()" [ngClass]="{'active': (this.router.url.includes('/myzone/impact'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/myzone/impact'"
+               title="Mi impacto" data-filter-tags="Mi impacto">
+              <i class="fal fa-broadcast-tower"></i>
+              <span class="nav-link-text poppins">Mi impacto</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-calendar-alt"></i>
+          <span class="nav-link-text poppins">Mis eventos</span>
+        </a>
+      </li>
+      <li *ngIf="activeInvestSeleccionDeRevistas() || activeInvestRevistasSimilares() || activeInvestRevistaPorResumen()"
+          [class]="((this.router.url.includes('/tool-source'))
+                || (this.router.url.includes('/tool-similar-source'))
+                || (this.router.url.includes('/tool-sumary-source'))
+                )?'active open':''">
+        <a title="Centro de autores" data-filter-tags="Centro de autores">
+          <i class="fal fa-user"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Centro de autor</span>
+        </a>
+        <ul>
+          <li *ngIf="activeInvestSeleccionDeRevistas()" [ngClass]="{'active': (this.router.url.includes('/tool-source'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/tool-source'" title="Selección de revistas" data-filter-tags="Selección de revistas">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Selección de revistas</span>
+            </a>
+          </li>
+          <li *ngIf="activeInvestRevistasSimilares()" [ngClass]="{'active': (this.router.url.includes('/tool-similar-source'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/tool-similar-source'" title="Revistas similares" data-filter-tags="Revistas similares">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revistas similares</span>
+            </a>
+          </li>
+          <li *ngIf="activeInvestRevistaPorResumen()" [ngClass]="{'active': (this.router.url.includes('/tool-sumary-source'))}">
+            <a [routerLink]="'/invest/' + id_investigador + '/tool-sumary-source'" title="Revista por resumen" data-filter-tags="Revista por resumen">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revista por resumen</span>
+              <span title="Función en desarrollo(Beta)" data-filter-tags="Función en desarrollo(Beta)"
+                    class="badge badge-primary">β
+              </span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a title="Ayuda" data-filter-tags="help">
+          <i class="fal fa-question-circle"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.plugins">Ayuda</span>
+        </a>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE INVESTIGADOR -->
+    <!-- INICIA MENÚ DE ADMINISTRADOR -->
+    <ul id="js-nav-menu" class="nav-menu" *ngSwitchCase="'admin'" appNavigation>
+      <li [ngClass]="{'active open': (this.router.url == '/admin/access-rights' ||
+                                      this.router.url == '/admin/line-research' ||
+                                      this.router.url == '/admin/students' ||
+                                      this.router.url == '/admin/knowledge-areas' ||
+                                      this.router.url == '/admin/university-campus' ||
+                                      this.router.url == '/admin/research-centers' ||
+                                      this.router.url == '/admin/schools' ||
+                                      this.router.url == '/admin/disciplines' ||
+                                      this.router.url == '/admin/languages' ||
+                                      this.router.url == '/admin/countries' ||
+                                      this.router.url == '/admin/types-product' ||
+                                      this.router.url == '/admin/types-project' ||
+                                      this.router.url == '/admin/institution-ror' ||
+                                      this.router.url == '/admin/institution' ||
+                                      this.router.url == '/admin/investigators' ||
+                                      this.router.url == '/admin/sources-list')}">
+        <a title="Registros" data-filter-tags="home">
+          <i class="fal fa-home-alt"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.application_intel">Registros</span>
+        </a>
+        <ul>
+          <li [ngClass]="{'active': (this.router.url == '/admin/access-rights')}">
+            <a routerLink="admin/access-rights" title="Access Rights" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Access Rights</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/students')}">
+            <a routerLink="admin/students" title="Alumnos" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Alumnos</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/knowledge-areas')}">
+            <a routerLink="admin/knowledge-areas" title="Áreas del conocimiento" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Áreas del conocimiento</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/university-campus')}">
+            <a routerLink="admin/university-campus" title="Campus" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Campus</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/research-centers')}">
+            <a routerLink="admin/research-centers" title="Centros investigación" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Centros investigación</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/schools')}">
+            <a routerLink="admin/schools" title="Colegios" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Colegios</span>
+            </a>
+          </li>
+          <!--
+          <li>
+            <a title="Contratos" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Contratos</span>
+            </a>
+          </li>
+          -->
+          <li [ngClass]="{'active': (this.router.url == '/admin/disciplines')}">
+            <a routerLink="admin/disciplines" title="Disciplinas" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Disciplinas</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/sources-list')}">
+            <a routerLink="admin/sources-list" title="Fuentes" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Fuentes</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/languages')}">
+            <a routerLink="admin/languages" title="Idiomas" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Idiomas</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/institution')}">
+            <a routerLink="/admin/institution" title="Instituciones Scintra" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Instituciones Scintra</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/institution-ror')}">
+            <a routerLink="/admin/institution-ror" title="Instituciones ROR" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Instituciones ROR</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/investigators')}">
+            <a routerLink="admin/investigators" title="Investigadores" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Investigadores</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/line-research')}">
+            <a routerLink="admin/line-research" title="Líneas de investigación" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Líneas de investigación</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/countries')}">
+            <a routerLink="admin/countries" title="Países" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Países</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/types-product')}">
+            <a routerLink="admin/types-product" title="Tipos de productos" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Tipos de productos</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/types-project')}">
+            <a routerLink="admin/types-project" title="Tipos de proyectos" data-filter-tags="font icons fontawesome">
+              <!--<i class="fal fa-analytics"></i>-->
+              <span class="nav-link-text poppins">Tipos de proyectos</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- <li class="nav-title">Tools & Components</li> -->
+      <li [ngClass]="{'active open': (this.router.url == '/admin/products'
+        || this.router.url.includes('admin/validation-form/')
+        || this.router.url == '/admin/new-product')
+        || this.router.url.includes('/admin/works-scicom')
+        || this.router.url.includes('admin/quotes/')
+        || this.router.url.includes('admin/new-citation/')
+        || this.router.url.includes('admin/quote-validation/')
+        || (this.router.url.includes('admin/validation/products/') && this.router.url.includes('/similar'))}"
+      >
+        <a title="Validación" data-filter-tags="research">
+          <i class="fal fa-microscope"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.theme_settings">Validación</span>
+        </a>
+        <ul>
+          <li [ngClass]="{'active': (this.router.url == '/admin/products'
+            || this.router.url.includes('admin/validation-form/')
+            || this.router.url.includes('admin/quotes/')
+            || this.router.url.includes('admin/new-citation/')
+            || this.router.url.includes('admin/quote-validation/')
+            || (this.router.url.includes('admin/validation/products/') && this.router.url.includes('/similar')))}">
+            <a routerLink="admin/products" title="Productos" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Productos Scintra</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/works-scicom')}">
+            <a routerLink="/admin/works-scicom" title="Insertar fuente" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Trabajos Scicom</span>
+            </a>
+          </li>
+          <li [ngClass]="{'active': (this.router.url == '/admin/new-product')}">
+            <a routerLink="/admin/new-product" title="Insertar producto" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Insertar producto</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a title="Deploy" data-filter-tags="impact">
+          <i class="fal fa-chart-bar"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.documentation">Deploy</span>
+        </a>
+        <ul>
+          <li>
+            <a title="Investigador específico" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">Investigador específico</span>
+            </a>
+          </li>
+          <li>
+            <a title="Accidente específico" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Accidente específico</span>
+            </a>
+          </li>
+          <li>
+            <a title="Título específico" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Título específico</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a title="Administración" data-filter-tags="coauthor">
+          <i class="fal fa-folder-tree"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Administración</span>
+        </a>
+        <ul>
+          <!--<li>
+            <a title="ROR" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">ROR</span>
+            </a>
+          </li>-->
+        </ul>
+      </li>
+      <li [ngClass]="{'active open': (this.router.url == '/admin/sources')}">
+        <a title="Nomencladores" data-filter-tags="proyect">
+          <i class="fal fa-folders"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.utilities">Nomencladores</span>
+        </a>
+        <ul>
+          <!--<li>
+            <a title="Proyectos" data-filter-tags="font icons nextgen icons">
+              <span class="nav-link-text" data-i18n="nav.font_icons_nextgen_icons">Proyectos</span>
+            </a>
+          </li>-->
+        </ul>
+      </li>
+      <li>
+        <a title="Instituciones" data-filter-tags="coauthor">
+          <i class="fal fa-university"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Instituciones</span>
+        </a>
+        <ul>
+          <li *ngFor="let inst of contractualInstitutions">
+            <a [href]="'coord/' + inst.id" [target]="'_blank'" [title]="inst.razon_social" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">{{inst.razon_social}}</span>
+            </a>
+          </li>
+          <!--<li>
+            <a [routerLink]="'coord/' + '1'" [title]="'inst.razon_social'" data-filter-tags="font icons fontawesome">
+              <span class="nav-link-text" data-i18n="nav.font_icons_fontawesome">{{'inst.razon_social'}}</span>
+            </a>
+          </li>-->
+        </ul>
+      </li>
+      <li *ngIf="activeAdminSeleccionDeRevistas() || activeAdminRevistasSimilares() || activeAdminRevistaPorResumen()"
+          [class]="((this.router.url.includes('/tool-source'))
+                || (this.router.url.includes('/tool-similar-source'))
+                || (this.router.url.includes('/tool-sumary-source'))
+                )?'active open':''">
+        <a title="Centro de autores" data-filter-tags="Centro de autores">
+          <i class="fal fa-user"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Centro de autor</span>
+        </a>
+        <ul>
+          <li *ngIf="activeAdminSeleccionDeRevistas()" [ngClass]="{'active': (this.router.url.includes('/tool-source'))}">
+            <a [routerLink]="'/admin/tool-source'" title="Selección de revistas" data-filter-tags="Selección de revistas">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Selección de revistas</span>
+            </a>
+          </li>
+          <li *ngIf="activeAdminRevistasSimilares()" [ngClass]="{'active': (this.router.url.includes('/tool-similar-source'))}">
+            <a [routerLink]="'/admin/tool-similar-source'" title="Revistas similares" data-filter-tags="Revistas similares">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revistas similares</span>
+
+            </a>
+          </li>
+          <li *ngIf="activeAdminRevistaPorResumen()" [ngClass]="{'active': (this.router.url.includes('/tool-sumary-source'))}">
+            <a [routerLink]="'/admin/tool-sumary-source'" title="Revista por resumen" data-filter-tags="Revista por resumen">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revista por resumen</span>
+              <span title="Función en desarrollo(Beta)" data-filter-tags="Función en desarrollo(Beta)"
+                    class="badge badge-primary">β
+              </span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a title="Ayuda" data-filter-tags="help">
+          <i class="fal fa-question-circle"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.plugins">Ayuda</span>
+        </a>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE ADMINISTRADOR -->
+    <!-- INICIA MENÚ DE SCICOM -->
+    <ul id="js-nav-menu-1" class="nav-menu" *ngSwitchCase="'scicomInicio'" appNavigation>
+      <li [ngClass]="{'active': (this.router.url.includes('/event-list'))}">
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-calendar-alt"></i>
+          <span class="nav-link-text poppins">Mis eventos</span>
+        </a>
+      </li>
+      <li *ngIf="loggedInRole == 'admin' || loggedInRole == 'coord'" [ngClass]="{'active': (this.router.url.includes('/event-new'))}">
+        <a [routerLink]="'/scicom/event-new'" title="Evento" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-calendar-plus"></i>
+          <span class="nav-link-text">Crear nuevo evento</span>
+        </a>
+      </li>
+      <li *ngIf="activeScicomSeleccionDeRevistas() || activeScicomRevistasSimilares() || activeScicomRevistaPorResumen()"
+          [class]="((this.router.url.includes('/tool-source'))
+                || (this.router.url.includes('/tool-similar-source'))
+                || (this.router.url.includes('/tool-sumary-source'))
+                )?'active open':''">
+        <a title="Centro de autores" data-filter-tags="Centro de autores">
+          <i class="fal fa-user"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Centro de autor</span>
+        </a>
+        <ul>
+          <li *ngIf="activeScicomSeleccionDeRevistas()" [ngClass]="{'active': (this.router.url.includes('/tool-source'))}">
+            <a [routerLink]="'/scicom/tool-source'" title="Selección de revistas" data-filter-tags="Selección de revistas">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Selección de revistas</span>
+            </a>
+          </li>
+          <li *ngIf="activeScicomRevistasSimilares()" [ngClass]="{'active': (this.router.url.includes('/tool-similar-source'))}">
+            <a [routerLink]="'/scicom/tool-similar-source'" title="Revistas similares" data-filter-tags="Revistas similares">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revistas similares</span>
+
+            </a>
+          </li>
+          <li *ngIf="activeScicomRevistaPorResumen()" [ngClass]="{'active': (this.router.url.includes('/tool-sumary-source'))}">
+            <a [routerLink]="'/scicom/tool-sumary-source'" title="Revista por resumen" data-filter-tags="Revista por resumen">
+              <!--<i class="fal fa-book-open"></i>-->
+              <span class="nav-link-text poppins">Revista por resumen</span>
+              <span title="Función en desarrollo(Beta)" data-filter-tags="Función en desarrollo(Beta)"
+                    class="badge badge-primary">β
+              </span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="this.permisosScintraService.canVerStatsForoEncuentroUvmUnitecIlimitadamente()
+          || this.permisosScintraService.canVerStatsForoEncuentroUvmUnitecInstitucion(id_institucion)">
+        <a title="Reporte foros/encuentros" data-filter-tags="font icons fontawesome"
+           data-toggle="modal" data-target="#modal-exportar-ciclos-excel">
+          <i class="fal fa-file-export"></i>
+          <span class="nav-link-text">Reporte foros/encuentros</span>
+        </a>
+
+      </li>
+      <li *ngIf="this.permisosScintraService.canVerStatsForoEncuentroUvmUnitecIlimitadamente()
+          || this.permisosScintraService.canVerStatsForoEncuentroUvmUnitecInstitucion(id_institucion)">
+        <a title="Control de metas anuales" data-filter-tags="font icons fontawesome"
+           data-toggle="modal" data-target="#modal-meta-anual">
+          <i class="fal fa-bullseye-arrow"></i>
+          <span class="nav-link-text">Control de metas anuales</span>
+        </a>
+
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE SCICOM -->
+    <!-- INICIA MENÚ DE SCICOM -->
+    <ul id="js-nav-menu-1" class="nav-menu" *ngSwitchCase="'scicomEvent'" appNavigation>
+      <li [ngClass]="{'active': (this.router.url.includes('/event-list'))}">
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-reply"></i>
+          <span class="nav-link-text poppins">Regresar</span>
+        </a>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)
+          || this.permisosScicom.canVerCampusEvento(eventoId)
+          || this.permisosScicom.canVerTiposEvaluacionEvento(eventoId)
+          || this.permisosScicom.canVerTiposPagoEvento(eventoId)
+          || this.permisosScicom.canVerTiposParticipacionEvento(eventoId)
+          || this.permisosScicom.canVerTiposTrabajoEvento(eventoId)
+          || this.permisosScicom.canVerColaboradoresEvento(eventoId)
+          || this.permisosScicom.canVerFichaTecnicaEvento(eventoId)"
+          [ngClass]="{'active open': (this.router.url.includes('/event-update') || this.router.url.includes('/event-details/'))}">
+        <a title="Configuración" data-filter-tags="coauthor">
+          <i class="fal fa-cog"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Configuración</span>
+        </a>
+        <ul>
+          <li *ngIf="this.permisosScicom.canVerFichaTecnicaEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/api/event-details/'))}">
+            <a [routerLink]="'/scicom/api/event-details/'+eventoId" title="Mis eventos" data-filter-tags="event-list">
+              <i class="fal fa-cogs"></i>
+              <span class="nav-link-text poppins">Ficha de configuración</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/datos-generales'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/datos-generales'" title="Datos generales" data-filter-tags="event-list">
+              <i class="fal fa-calendar-check"></i>
+              <span class="nav-link-text poppins">Datos generales</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerCampusEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-campus'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-campus'" title="Campus" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-city"></i>
+              <span class="nav-link-text">Campus</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerTiposEvaluacionEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-evaluation'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-evaluation'" title="Tipos de evaluaciones" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-check"></i>
+              <span class="nav-link-text">Tipos de evaluación</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerTiposPagoEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-payments'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-payments'" title="Tipos de pagos" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-sack-dollar"></i>
+              <span class="nav-link-text">Tipos de pago</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerTiposParticipacionEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-type-participations'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-type-participations'" title="Tipos de participación" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-address-book"></i>
+              <span class="nav-link-text">Tipos de participación</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerTiposTrabajoEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-work'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-work'" title="Tipos de trabajo" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-suitcase"></i>
+              <span class="nav-link-text">Tipos de trabajo</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerColaboradoresEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-collaborators'))}">
+            <a [routerLink]="'/scicom/api/event-update/'+eventoId+'/event-collaborators'" title="Colaboradores" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-users"></i>
+              <span class="nav-link-text">Colaboradores</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerArchivosEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-files'))}">
+        <a [routerLink]="'/scicom/api/'+eventoId+'/event-files'" title="Archivos" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-archive"></i>
+          <span class="nav-link-text">Archivos</span>
+        </a>
+      </li>
+      <li [ngClass]="{'active': ( this.router.url.includes('/event-participations') ||
+                                  this.router.url.includes('/event-participation-details') ||
+                                  this.router.url.includes('/event-participation-new')
+                                  )}">
+        <a [routerLink]="'/scicom/api/'+eventoId+'/event-participations'" title="Participaciones" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-chalkboard-teacher"></i>
+          <span class="nav-link-text">Participaciones</span>
+        </a>
+      </li>
+      <li *ngIf="this.permisosScicom.canAgregarPreevaluacionTrabajoEvento(eventoId)
+          || this.permisosScicom.canAgregarEvaluacionTrabajoEvento(eventoId)"
+          [ngClass]="{'active open': (this.router.url.includes('/work-evaluation') ||
+                                      this.router.url.includes('/evaluation/')
+                                      )}">
+        <a title="Evaluaciones" data-filter-tags="coauthor">
+          <i class="fal fa-user-check"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Evaluaciones</span>
+        </a>
+        <ul>
+          <ng-container *ngFor="let evaluacion of evaluationAsing">
+            <ng-container *ngIf="evaluacion.id==1">
+              <li *ngIf="this.permisosScicom.canAgregarPreevaluacionTrabajoEvento(eventoId)"
+                  [ngClass]="{'active': ( this.router.url.includes('/work-evaluation/1'))}">
+                <a [routerLink]="'/scicom/api/'+eventoId+'/work-evaluation/'+evaluacion.id" title="Preevaluación API" data-filter-tags="font icons fontawesome">
+                  <i class="fal fa-check"></i>
+                  <span class="nav-link-text poppins">Preevaluación API</span>
+                </a>
+              </li>
+            </ng-container>
+            <ng-container *ngIf="evaluacion.id==2">
+              <li *ngIf="this.permisosScicom.canAgregarEvaluacionTrabajoEvento(eventoId)"
+                  [ngClass]="{'active': ( this.router.url.includes('/work-evaluation/2'))}">
+                <a [routerLink]="'/scicom/api/'+eventoId+'/work-evaluation/'+evaluacion.id" title="Aprobación API">
+                  <i class="fal fa-check-double"></i>
+                  <span class="nav-link-text poppins">Aprobación API</span>
+                </a>
+              </li>
+            </ng-container>
+          </ng-container>
+        </ul>
+      </li>
+      <li *ngIf="this.permisosScicom.canAgregarPagoEstimuloApiEvento(eventoId)"
+          [ngClass]="{'active open': (  this.router.url.includes('/work-payments') ||
+                                        this.router.url.includes('/work-pay-detail/')
+                                     )}">
+        <a title="Pagos" data-filter-tags="coauthor">
+          <i class="fal fa-dollar-sign"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Pagos</span>
+        </a>
+        <ul>
+          <ng-container *ngFor="let pay of paymentsAsing">
+            <ng-container *ngIf="pay.id==1">
+              <li *ngIf="this.permisosScicom.canAgregarPagoEstimuloApiEvento(eventoId)"
+                  [ngClass]="{'active': (this.router.url.includes('/work-payments') ||
+                                        this.router.url.includes('/work-pay-detail/'))}">
+                <a [routerLink]="'/scicom/api/'+eventoId+'/work-payments'" title="Estímulo API" data-filter-tags="font icons fontawesome">
+                  <i class="fal fa-sack-dollar"></i>
+                  <span class="nav-link-text poppins">Estímulo API</span>
+                  <!--<span class="nav-link-text poppins">Estímulo API (UVM / UNITEC)</span>-->
+                </a>
+              </li>
+            </ng-container>
+          </ng-container>
+        </ul>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE SCICOM -->
+    <!-- INICIA MENÚ DE SCICOM EVENTO TIPO FORO -->
+    <ul id="js-nav-menu-1" class="nav-menu" *ngSwitchCase="'scicomEventForum'" appNavigation>
+      <li [ngClass]="{'active': (this.router.url.includes('/event-list'))}">
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-reply"></i>
+          <span class="nav-link-text poppins">Regresar</span>
+        </a>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)
+          || this.permisosScicom.canVerColaboradoresEvento(eventoId)
+          || this.permisosScicom.canVerCampusEvento(eventoId)
+          || this.permisosScicom.canVerFichaTecnicaEvento(eventoId)"
+          [ngClass]="{'active open': (this.router.url.includes('/event-update') || this.router.url.includes('/event-details/'))}">
+        <a title="Configuración" data-filter-tags="coauthor">
+          <i class="fal fa-cog"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Configuración</span>
+        </a>
+        <ul>
+          <li *ngIf="this.permisosScicom.canVerFichaTecnicaEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/foro/event-details/'))}">
+            <a [routerLink]="'/scicom/foro/event-details/'+eventoId" title="Mis eventos" data-filter-tags="event-list">
+              <i class="fal fa-cogs"></i>
+              <span class="nav-link-text poppins">Ficha de configuración</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/datos-generales'))}">
+            <a [routerLink]="'/scicom/foro/event-update/'+eventoId+'/datos-generales'" title="Datos generales" data-filter-tags="event-list">
+              <i class="fal fa-calendar-check"></i>
+              <span class="nav-link-text poppins">Datos generales</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerCampusEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-campus'))}">
+            <a [routerLink]="'/scicom/foro/event-update/'+eventoId+'/event-campus'" title="Campus" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-city"></i>
+              <span class="nav-link-text">Campus</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerODSEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-ods'))}">
+            <a [routerLink]="'/scicom/foro/event-update/'+eventoId+'/event-ods'" title="Objetivos de desarrollo sostenible" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-bullseye-arrow"></i>
+              <span class="nav-link-text">ODS del ciclo</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerColaboradoresEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-collaborators'))}">
+            <a [routerLink]="'/scicom/foro/event-update/'+eventoId+'/event-collaborators'" title="Colaboradores" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-users"></i>
+              <span class="nav-link-text">Colaboradores</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerArchivosEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-files'))}">
+        <a [routerLink]="'/scicom/foro/'+eventoId+'/event-files'" title="Archivos" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-archive"></i>
+          <span class="nav-link-text">Archivos</span>
+        </a>
+      </li>
+      <li [class.active]="(this.router.url.includes('/event-participations')) ||
+                          (this.router.url.includes('/event-participation-new')) ||
+                          (this.router.url.includes('/event-participation-details'))">
+        <a [routerLink]="'/scicom/foro/'+eventoId+'/event-participations'" title="Registros" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-chalkboard-teacher"></i>
+          <span class="nav-link-text">Registros</span>
+        </a>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE SCICOM -->
+    <!-- INICIA MENÚ DE SCICOM EVENTO TIPO ENCUENTRO -->
+    <ul id="js-nav-menu-1" class="nav-menu" *ngSwitchCase="'scicomEventEncounter'" appNavigation>
+      <li [ngClass]="{'active': (this.router.url.includes('/event-list'))}">
+        <a [routerLink]="'/scicom/event-list'" title="Mis eventos" data-filter-tags="event-list">
+          <i class="fal fa-reply"></i>
+          <span class="nav-link-text poppins">Regresar</span>
+        </a>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)
+          || this.permisosScicom.canVerColaboradoresEvento(eventoId)
+          || this.permisosScicom.canVerCampusEvento(eventoId)
+          || this.permisosScicom.canVerFichaTecnicaEvento(eventoId)"
+          [ngClass]="{'active open': (this.router.url.includes('/event-update') || this.router.url.includes('/event-details/'))}">
+        <a title="Configuración" data-filter-tags="coauthor">
+          <i class="fal fa-cog"></i>
+          <span class="nav-link-text poppins" data-i18n="nav.ui_components">Configuración</span>
+        </a>
+        <ul>
+          <li *ngIf="this.permisosScicom.canVerFichaTecnicaEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/encuentro/event-details/'))}">
+            <a [routerLink]="'/scicom/encuentro/event-details/'+eventoId" title="Ficha de configuración" data-filter-tags="event-list">
+              <i class="fal fa-cogs"></i>
+              <span class="nav-link-text poppins">Ficha de configuración</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerEdicionDatosGeneralesEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/datos-generales'))}">
+            <a [routerLink]="'/scicom/encuentro/event-update/'+eventoId+'/datos-generales'" title="Datos generales" data-filter-tags="event-list">
+              <i class="fal fa-calendar-check"></i>
+              <span class="nav-link-text poppins">Datos generales</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerCampusEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-campus'))}">
+            <a [routerLink]="'/scicom/encuentro/event-update/'+eventoId+'/event-campus'" title="Campus" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-city"></i>
+              <span class="nav-link-text">Campus</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerODSEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-ods'))}">
+            <a [routerLink]="'/scicom/encuentro/event-update/'+eventoId+'/event-ods'" title="Objetivos de desarrollo sostenible" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-bullseye-arrow"></i>
+              <span class="nav-link-text">ODS del ciclo</span>
+            </a>
+          </li>
+          <li *ngIf="this.permisosScicom.canVerColaboradoresEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-collaborators'))}">
+            <a [routerLink]="'/scicom/encuentro/event-update/'+eventoId+'/event-collaborators'" title="Colaboradores" data-filter-tags="font icons fontawesome">
+              <i class="fal fa-users"></i>
+              <span class="nav-link-text">Colaboradores</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="this.permisosScicom.canVerArchivosEvento(eventoId)" [ngClass]="{'active': (this.router.url.includes('/event-files'))}">
+        <a [routerLink]="'/scicom/encuentro/'+eventoId+'/event-files'" title="Archivos" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-archive"></i>
+          <span class="nav-link-text">Archivos</span>
+        </a>
+      </li>
+      <li [class.active]="(this.router.url.includes('/event-participations')) ||
+                          (this.router.url.includes('/event-participation-new')) ||
+                          (this.router.url.includes('/event-participation-details'))">
+        <a [routerLink]="'/scicom/encuentro/'+eventoId+'/event-participations'" title="Registros" data-filter-tags="font icons fontawesome">
+          <i class="fal fa-chalkboard-teacher"></i>
+          <span class="nav-link-text">Registros</span>
+        </a>
+      </li>
+    </ul>
+    <!-- TERMINA MENÚ DE SCICOM -->
+    <!-- NAV FILTER MESSAGE -->
+    <div class="filter-message js-filter-message bg-success-600"></div>
+  </nav>
+  <!-- END PRIMARY NAVIGATION -->
+  <!-- NAV FOOTER -->
+  <!--<div class="nav-footer shadow-top">
+    <a onclick="return false;" data-action="toggle" data-class="nav-function-minify" class="hidden-md-down">
+      <i class="ni ni-chevron-right"></i>
+      <i class="ni ni-chevron-right"></i>
+    </a>
+    <ul class="list-table m-auto nav-footer-buttons">
+      <li>
+        <a data-toggle="tooltip" data-placement="top" title="Chat logs">
+          <i class="fal fa-comments"></i>
+        </a>
+      </li>
+      <li>
+        <a data-toggle="tooltip" data-placement="top" title="Support Chat">
+          <i class="fal fa-life-ring"></i>
+        </a>
+      </li>
+      <li>
+        <a data-toggle="tooltip" data-placement="top" title="Make a call">
+          <i class="fal fa-phone"></i>
+        </a>
+      </li>
+    </ul>
+  </div>--> <!-- END NAV FOOTER -->
+</aside>
+<!-- END Left Aside -->
+
+<app-modal-report-institution *ngIf="this.router.url.includes('/event-list')
+                 || this.router.url.includes('/tool-source')
+                || this.router.url.includes('/tool-similar-source')
+                || this.router.url.includes('/tool-sumary-source')"></app-modal-report-institution>
+<app-modal-report-anual *ngIf="this.router.url.includes('/event-list')
+                 || this.router.url.includes('/tool-source')
+                || this.router.url.includes('/tool-similar-source')
+                || this.router.url.includes('/tool-sumary-source')"></app-modal-report-anual>

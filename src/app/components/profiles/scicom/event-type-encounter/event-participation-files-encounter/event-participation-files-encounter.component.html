@@ -1,0 +1,388 @@
+<div class="row">
+  <div class="col-12">
+    <div class="panel-hdr">
+      <h2>Archivos obligatorios del evento &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button  type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+                 *ngIf="permisosScicomService.canAgregarArchPartProp(eventoId)"
+                data-toggle="modal" data-target="#file-evento-modal" (click)="openModalFileEvento()">
+          <i class="fal fa-plus"></i>
+        </button>
+      </h2>
+    </div>
+    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+           aria-describedby="dt-basic-example_info" >
+      <thead class="bg-primary-600">
+        <tr role="row">
+          <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Tipo</th>
+          <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Nombre</th>
+          <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+          <th class="sorting border-tr" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="permisosScicomService.canVerArchConvocEvento(eventoId)">
+        <ng-container *ngIf="archivosEvento.length!=0">
+          <tr role="row" class="odd" *ngFor="let ae of archivosEvento| paginate : {
+                    itemsPerPage: pageSizeEvento,
+                    currentPage: pageNumberEvento,
+                    totalItems: totalItemsEvento
+                    }">
+            <td>
+              <ng-container *ngFor="let ta of tiposArchivosEvento">
+                <ng-container *ngIf="ta.id==ae.id_tipo_archivo">
+                  {{ta.real}}
+                </ng-container>
+              </ng-container>
+            </td>
+            <td>{{ae.nombre}}</td>
+            <td>{{ae.descripcion}}</td>
+            <td>
+              <button [disabled]="!permisosScicomService.canVerArchPartProp(eventoId)"
+                      class="btn btn-primary btn-icon" (click)="viewFileEvent(ae.uri)">
+                <i class="fas fa-file" style="color: white;" ></i>
+              </button>&nbsp;
+              <button [disabled]="!permisosScicomService.canEliminarArchPartProp(eventoId)"
+                      class="btn btn-danger btn-icon" (click)="deleteFileEvent(ae,'evento')">
+                <i class="fas fa-trash-alt" style="color: white;" ></i>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="archivosEvento.length==0">
+          <tr class="odd"><td valign="top" colspan="4" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+        </ng-container>
+      </tbody>
+      <tbody *ngIf="!permisosScicomService.canVerArchConvocEvento(eventoId)">
+      <tr class="odd"><td valign="top" colspan="4" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No tiene permisos para visualizarlos archivos</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row" *ngIf="archivosEvento.length!=0">
+  <div class="col-6">
+    <div class="dataTables_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPaginationEvento}}</div>
+  </div>
+  <div class="col-6">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-end">
+        <li class="paginate_button page-item previous disabled" *ngIf="pageNumberEvento==1" >
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item previous" *ngIf="pageNumberEvento!=1" (click)="loadPagination1('prev')">
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <ng-container *ngFor="let page of pageNumbersArrayEvento">
+          <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumberEvento">
+            <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+          </li>
+          <li class="page-item" *ngIf="page.id!=pageNumberEvento">
+            <a class="page-link" (click)="loadPagination1(page.id)">{{page.id}}</a>
+          </li>
+        </ng-container>
+        <li class="paginate_button page-item next" *ngIf="pageNumberEvento!=pageNumbersEvento" (click)="loadPagination1('next')">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item next disabled" *ngIf="pageNumberEvento==pageNumbersEvento">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="panel-hdr">
+      <div class="col-6">
+        <h2>Evidencias &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button  type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+                   *ngIf="permisosScicomService.canAgregarArchPartProp(eventoId) || archivosLimite==true"
+                   data-toggle="modal" data-target="#files-part-modal" (click)="openModalFileParticipacion()">
+            <i class="fal fa-plus"></i>
+          </button>
+        </h2>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <button  type="button" class="btn btn-success rounded waves-effect waves-themed" style="margin-right:-15px"
+                 [disabled]="archivosParticipacion.length==0" (click)="downloadMultiplesArchivos()">
+          <i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Descargar todo
+        </button>
+      </div>
+    </div>
+    <div class="alert alert-primary alert-dismissible fade show mb-1" *ngIf="archivosLimite==true">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true"><i class="fal fa-times"></i></span>
+      </button>
+      <div class="d-flex align-items-center">
+        <div class="alert-icon width-6">
+          <i class="fal fa-info-circle"></i>
+        </div>
+        <div class="flex-1 pl-1">
+          <span class="h5">Se alcanzó el límite de 50 archivos de evidencias.</span>
+        </div>
+      </div>
+    </div>
+    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+           aria-describedby="dt-basic-example_info" >
+      <thead class="bg-primary-600">
+      <tr role="row">
+        <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Imagen</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Nombre</th>
+        <th class="sorting border-tr" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="archivosParticipacion.length!=0">
+        <tr role="row" class="odd" *ngFor="let ap of archivosParticipacion| paginate : {
+                    itemsPerPage: pageSizePart,
+                    currentPage: pageNumberPart,
+                    totalItems: totalItemsPart
+                    }">
+          <td>
+            <img src="assets/img/file.jpeg" width="50px" height="50px" alt="{{ap.nombre}}" title="{{ap.nombre}}">
+          </td>
+          <td>{{ap.nombre}}</td>
+          <td>
+            <button [disabled]="!permisosScicomService.canVerArchPartProp(eventoId)"
+                    class="btn btn-primary btn-icon" (click)="viewFileEvent(ap.uri)">
+              <i class="fas fa-file" style="color: white;" ></i>
+            </button>&nbsp;
+            <button [disabled]="!permisosScicomService.canEliminarArchPartProp(eventoId)"
+                    class="btn btn-danger btn-icon" (click)="deleteFileEvent(ap,'part')">
+              <i class="fas fa-trash-alt" style="color: white;" ></i>
+            </button>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="archivosParticipacion.length==0">
+        <tr class="odd"><td valign="top" colspan="3" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row" *ngIf="archivosParticipacion.length!=0">
+  <div class="col-6">
+    <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPaginationPart}}</div>
+  </div>
+  <div class="col-6">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-end">
+        <li class="paginate_button page-item previous disabled" *ngIf="pageNumberPart==1" >
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item previous" *ngIf="pageNumberPart!=1" (click)="loadPagination2('prev')">
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <ng-container *ngFor="let page of pageNumbersArrayActivePart">
+          <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumberPart">
+            <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+          </li>
+          <li class="page-item" *ngIf="page.id!=pageNumberPart">
+            <a class="page-link" (click)="loadPagination2(page.id)">{{page.id}}</a>
+          </li>
+        </ng-container>
+        <li class="paginate_button page-item next" *ngIf="pageNumberPart!=pageNumbersPart" (click)="loadPagination2('next')">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item next disabled" *ngIf="pageNumberPart==pageNumbersPart">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="modal fade" id="file-evento-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregar archivo</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="paso==1">
+          <div class="form-group row">
+            <label class="form-label col-4">Tipo de archivo:<b class="red">*</b></label>
+            <div class="col-8">
+              <select class="custom-select" [(ngModel)]="archivoTipo" (change)="cambiarTipo()">
+                <option value="0">Selcciona un tipo de archivo...</option>
+                <ng-container *ngFor="let ta of tiposArchivosEvento">
+                  <option value="{{ta.id}}">{{ta.real}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="paso==2">
+          <div class="row mb-3">
+            <label class="form-label col-3">Tipo de archivo:</label>
+            <label class="form-label col-9">&nbsp;&nbsp;
+              <ng-container *ngFor="let ta of tiposArchivosEvento">
+                <ng-container *ngIf="ta.id==archivoTipo">
+                  {{ta.real}}
+                </ng-container>
+              </ng-container>
+            </label>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Nombre:<b class="red">*</b></label>
+            <div class="col-9">
+              <input class="form-control" [(ngModel)]="archivoNombre">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Descripción:</label>
+            <div class="col-9">
+              <textarea class="form-control" [(ngModel)]="archivoDescripcion"></textarea>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Archivo:<b class="red">*</b></label>
+            <div class="col-9">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" [accept]="getValidFileType(archivoTipo)" (change)="extractFileFromEvent($event)">
+                <label class="custom-file-label">
+                  <ng-container *ngIf="eventoArchivo">{{eventoArchivo.name}}</ng-container>
+                  <ng-container *ngIf="!eventoArchivo">Selecciona un archivo...</ng-container>
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorios&nbsp;&nbsp;&nbsp;&nbsp;
+          <ng-container *ngIf="paso==1">
+            <button class="btn btn-primary" (click)="cambiarPaso('siguiente')" [disabled]="archivoTipo==0">
+              Siguiente&nbsp;<i class="fa fa-angle-right"></i>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="paso==2">
+            <button class="btn btn-primary" (click)="cambiarPaso('anterior')">
+              <i class="fa fa-angle-left"></i>&nbsp;Anterior
+            </button>&nbsp;
+            <button type="button" class="btn btn-success" data-dismiss="modal" (click)="saveFile()"
+                    [disabled]="archivoNombre=='' || !eventoArchivo">
+              <i class="fa fa-save"></i>&nbsp;Guardar
+            </button>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="files-part-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregar evidencias</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="custom-file col-12 mb-2" style="height:240px">
+          <input type="file" class="custom-file-input" placeholder="Seleccionar archivos..." [disabled]="archivosLimiteTemp==true"
+                 (change)="extractMultiplesArchivos($event)" accept="image/png,image/jpeg" [(ngModel)]="elArchivo"
+                 style="height:250px;margin-left:30px" multiple="multiple">
+          <label class="custom-file-label">
+            Seleccionar archivos...
+            <form action="/upload" class="dropzone needsclick dz-clickable"
+                  style="margin-top:30px;min-height:7rem;margin-left:-15px;margin-right:-15px;">
+              <div class="dz-message needsclick">
+                <i class="fal fa-cloud-upload text-muted mb-3"></i> <br>
+                <span class="text-uppercase">Suelte los archivos aquí o haga clic para subirlos.</span>
+                <br>
+              </div>
+            </form>
+          </label>
+        </div>
+        <div class="alert alert-primary alert-dismissible fade show mb-3" *ngIf="archivosLimiteTemp==true">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+          <div class="d-flex align-items-center">
+            <div class="alert-icon width-6">
+              <i class="fal fa-info-circle"></i>
+            </div>
+            <div class="flex-1 pl-1">
+              <span class="h5">Se alcanzó el límite de 50 archivos de evidencias.</span>
+            </div>
+          </div>
+        </div>
+        <div style="height:300px;overflow:scroll;border:1px solid #d4d9df;border-radius:5px;">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable no-footer dtr-inline"
+                 role="grid" aria-describedby="dt-basic-example_info" style="width:100%;border-right:1px solid #d4d9df;border-bottom:1px solid #d4d9df;border-top-right-radius:5px;" >
+            <thead>
+            <tr role="row">
+              <th class="sorting" style="width:120px" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending">Imagen</th>
+              <th class="sorting" style="width:160px" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-label="IP Address: activate to sort column ascending">Nombre</th>
+              <th class="sorting" style="width:120px" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-label="Port Number: activate to sort column ascending">Tamaño</th>
+              <th class="sorting" style="width:50px" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-label="Activation Date: activate to sort column ascending">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr role="row" class="odd" *ngFor="let ap of archivosParticipacionTemporal">
+              <td>
+                <!--
+                <img [src]="this.domSanitizer.sanitize(5, 'blob:http://localhost:4200/94f0052f-10c2-4ce1-b95c-645158277c36')" style="width:50px;height:50px;" class="mb-1">
+                <img [src]="limpiarUrl2(ruta)" style="width:50px;height:50px;" class="mb-1">
+                <img [src]="limpiarUrl(ap)" alt="{{ap.name}}" style="width:50px;height:50px;">
+                -->
+                <img src="assets/img/file.jpeg" width="40px" height="40px" alt="{{ap.name}}" title="{{ap.name}}">
+              </td>
+              <td>{{ap.name}}</td>
+              <td>
+                <div class="progress-lg">
+                  <ng-container *ngIf="((ap.size/1024)/1024)>10">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%;border-radius: 10px" aria-valuenow="100" aria-valuemin="0"
+                         aria-valuemax="100"><span style="color:white">{{ap.size/1024 | number:'1.2-2'}}&nbsp;KB</span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="((ap.size/1024)/1024)<=10">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;border-radius: 10px" aria-valuenow="100" aria-valuemin="0"
+                         aria-valuemax="100"><span style="color:black">{{ap.size/1024 | number:'1.2-2'}}&nbsp;KB</span>
+                    </div>
+                  </ng-container>
+                </div>
+              </td>
+              <td>
+                <ng-container *ngIf="((ap.size/1024)/1024)<=10">
+                  <button class="btn btn-primary btn-icon btn-sm" (click)="viewTemporalFile(ap)"><i class="fa fa-eye"></i></button>&nbsp;
+                  <button class="btn btn-danger btn-icon btn-sm" (click)="removeTemporalFile(ap.lastModified)"><i class="fa fa-trash"></i></button>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="saveMultipleFile()">
+          <i class="fa fa-save"></i>&nbsp;Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

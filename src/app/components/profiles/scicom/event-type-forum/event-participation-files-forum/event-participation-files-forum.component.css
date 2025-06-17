@@ -1,0 +1,18 @@
+.red{
+  color:red;
+}
+.border-table{
+  border-radius:5px;
+}
+.border-tl{
+  border-top-left-radius:3px;
+}
+.border-tr{
+  border-top-right-radius:3px;
+}
+.border-bl{
+  border-bottom-left-radius:3px;
+}
+.border-br{
+  border-bottom-right-radius:3px;
+}

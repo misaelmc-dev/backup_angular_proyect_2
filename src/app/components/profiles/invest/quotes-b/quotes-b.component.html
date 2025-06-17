@@ -1,0 +1,90 @@
+<div class="row">
+  <div class="col-xl-12">
+
+    <div class="input-group input-group-lg mb-g">
+      <div class="p-3">
+        <div class="d-flex">
+          <div class="d-flex">
+             <span class="icon-stack display-4 mr-3 flex-shrink-0">
+               <i class="base-7 icon-stack-3x color-primary-500"></i>
+               <i class="fas fa-quote-right icon-stack-1x text-white"></i>
+             </span>
+          </div>
+          <div class="d-inline-flex flex-column">
+            <a class="fs-lg fw-500 d-block">
+              <strong style="color: #2199e8">Título del trabajo citado:</strong>&nbsp; <em>{{ productTitle }}</em>
+            </a>
+            <div class="d-block text-muted fs-sm">
+              <span style="color: #2199e8">Citas B:&nbsp;{{ totalItems }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col">
+        <div class="input-group input-group-md mb-g">
+          <input type="text" id="simpleinput" class="form-control" placeholder="Escriba para filtrar..." [(ngModel)]="filter" (keyup)="loadQuotes()">
+          <div class="input-group-append">
+            <span class="input-group-text"><i class="fal fa-search"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-md mb-g">
+          <div class="btn-group">
+            <span class="input-group-text">Exportar:</span>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToExcel()">Excel&nbsp;
+              <span class="fas fa-file-excel"></span>
+            </button>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToCsv()">CSV&nbsp;
+              <span class="fas fa-file-csv"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-md mb-g">
+          <div class="input-group-append">
+            <pagination-controls
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              [responsive]="responsive"
+              [id]="paginationId"
+              (pageChange)="handlePageChange($event)"
+              class="paginationStyle"
+            ></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- post -->
+    <div class="card mb-g border shadow-0" *ngFor="let item of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+      <div class="card-body ">
+        <p style="text-align:justify;">
+          <strong *ngIf="item.clasif">Clasificación:</strong>{{ item.clasif }}
+          <strong *ngIf="item.anio">({{ item.anio }})</strong>
+          <strong *ngIf="item.tipo">Tipo:</strong> {{ item.tipo }}
+          <strong *ngIf="item.coautores.length">Coautores:</strong> {{ item.coautores.join() }}
+          <strong *ngIf="item.titulo">Título:</strong> {{ item.titulo }}
+          <strong *ngIf="item.fuente">Fuente:</strong> {{ item.fuente }}
+          <strong *ngIf="item.DOI">DOI:<a target="_blank" [href]="'https://www.doi.org/'+item.DOI">{{ item.DOI }}</a></strong>
+          <strong *ngIf="item.url">URL:</strong> {{ item.url }}
+          <strong *ngIf="item.autocita_autor">Autocita autor:</strong>&nbsp;{{ item.autocita_autor }}
+          <strong *ngIf="item.autocita_journal">Autocita journal:</strong>&nbsp;{{ item.autocita_journal }}
+          <strong *ngIf="item.source_title">Source title:</strong>&nbsp;{{ item.source_title }}
+        </p>
+      </div>
+    </div>
+    <!-- post -end -->
+
+  </div>
+</div>

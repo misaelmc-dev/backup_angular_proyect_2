@@ -1,0 +1,184 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2>Crear nuevo registro</h2>
+  </div>
+  <label class="ml-5 " *ngIf="pasoActual==1">Datos del registro</label>
+  <label class="ml-5 " *ngIf="pasoActual==2">Pronósticos</label>
+  <label class="ml-5 " *ngIf="pasoActual==3">Archivos</label>
+  <div class="mt-0">
+    <div *ngIf="pasos.length>0">
+      <div class="bar"></div>
+      <div class="row align-content-center text-center align-items-center justify-content-center">
+        <ul class="swal2-progress-steps">
+          <ng-container *ngFor="let p of pasos">
+            <li class="swal2-progress-step-line" *ngIf="p.paso>1"></li>
+            <li class="swal2-progress-step" [class.swal2-active-progress-step]="pasoActual==p.paso" title="{{p.titulo}}"
+                style="cursor:pointer;">{{p.paso}}</li>
+          </ng-container>
+        </ul>
+      </div>
+      <div class="bar"></div>
+    </div>
+    <div *ngIf="pasoActual==1" class="mt-5">
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3 mb-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Nombre:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <label>{{usuarioNombre}}</label>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3 mb-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Correo:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <label>{{usuarioCorreo}}</label>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Número de celular:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <input type="number" class="form-control" [class.is-invalid]="validNoCelular!=0"
+                 [(ngModel)]="usuarioNoCelular" (keyup)="validarNoCelular()">
+          <div class="invalid-feedback" *ngIf="validNoCelular==1">El campo es obligatorio no puede dejarse en 0 o estar vacio.</div>
+          <div class="invalid-feedback" *ngIf="validNoCelular==2">El número de celular debe tener 10 dígitos.</div>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Número de empleado:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <input type="number" class="form-control" [class.is-invalid]="validNoEmpleado!=0"
+                 [(ngModel)]="usuarioNoEmpleado" (keyup)="validarNoEmpleado()">
+          <div class="invalid-feedback" *ngIf="validNoEmpleado==1">El campo es obligatorio no puede dejarse en 0 o estar vacio.</div>
+          <div class="invalid-feedback" *ngIf="validNoEmpleado==2">El número de empleado no puede ser mayor a 10 dígitos.</div>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Fecha real de inicio:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div class="input-group">
+            <input type="text" class="form-control" [class.is-invalid]="validFechaInicio!=0"
+                   placeholder="Selecciona la fecha..." (cambioFecha)="setFechaInicio($event)"
+                   (focus)="validarFechas()" [(ngModel)]="showFechaInicio" appDateranger readonly>
+            <div class="input-group-append">
+              <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+            </div>
+            <div class="invalid-feedback" *ngIf="validFechaInicio==1">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="validFechaInicio==2">La fecha debe de ser posterior a la fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="validFechaInicio==3">Ingresa una fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="validFechaInicio==4">La fecha inicial debe de estar en el rango del evento.</div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Fecha real final:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div class="input-group">
+            <input type="text" class="form-control" [class.is-invalid]="validFechaFinal!=0"
+                   placeholder="Selecciona la fecha..." (cambioFecha)="setFechaFinal($event)"
+                   (focus)="validarFechas()" [(ngModel)]="showFechaFinal" appDateranger readonly>
+            <div class="input-group-append">
+              <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+            </div>
+          </div>
+          <div class="invalid-feedback" *ngIf="validFechaFinal==1">El campo es obligatorio.</div>
+          <div class="invalid-feedback" *ngIf="validFechaFinal==2">La fecha debe de ser posterior a la fecha inicial.</div>
+          <div class="invalid-feedback" *ngIf="validFechaFinal==3">Ingresa una fecha inicial.</div>
+          <div class="invalid-feedback" *ngIf="validFechaFinal==4">La fecha final debe de estar en el rango del evento.</div>
+        </div>
+      </div>
+      <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+        <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12">
+          <label>Campus:<b class="red">*</b></label>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div class="input-group">
+            <select class="custom-select" [(ngModel)]="campusSelected">
+              <ng-container *ngIf="campusDisponibles.length!=0">
+                <option value="0">Seleccione un campus...</option>
+                <ng-container *ngFor="let p of campusDisponibles">
+                  <option value="{{p.id}}">{{p.nombre}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="campusDisponibles.length==0">
+                <option value="0">No hay campus disponibles...</option>
+              </ng-container>
+            </select>&nbsp;&nbsp;
+            <button class="btn btn-primary" (click)="agregarCampus()">
+              <i class="fa fa-plus"></i>&nbsp;Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngFor="let ca of campus">
+        <div class="row align-self-center align-items-center align-content-center justify-content-center mt-2 ml-4 mr-4">
+          <div class="alert alert-primary alert-dismissible fade show col-6 mb-0" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerCampus(ca.id)">
+              <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+            </button>
+            <strong>{{ca.nombre}}</strong>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="pasoActual==2 && participacionId!=0">
+      <app-event-participation-pronostic-forum [guardar]="guardar" [eventoId]="eventoId" [participacionId]="participacionId"
+                                                   (resultado)="resultadoGuardar($event)"></app-event-participation-pronostic-forum>
+    </div>
+    <div *ngIf="pasoActual==3 && participacionId!=0" class="m-3">
+      <app-event-participation-files-forum [eventoId]="eventoId" [participacionId]="participacionId"></app-event-participation-files-forum>
+    </div>
+  </div>
+  <div class="alert alert-warning alert-dismissible fade show m-4" *ngIf="participacionId==0 && pasoActual==1">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"><i class="fal fa-times"></i></span>
+    </button>
+    <div class="d-flex align-items-center">
+      <div class="alert-icon width-6">
+        <i class="fal fa-exclamation-triangle"></i>
+      </div>
+      <div class="flex-1 pl-1">
+        <span class="h5">-> (<b style="color:red">*</b>) campo obligatorio</span><br>
+        <span class="h5">-> Está a punto de generar un nuevo registro en el evento.</span><br>
+        <span class="h5">-> Recuerde que solo se puede generar un registro por usuario.</span><br>
+        <span class="h5">-> Al dar clic en siguiente se generará el registro.</span>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-success alert-dismissible fade show m-4" *ngIf="participacionId!=0 && pasoActual==1">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true"><i class="fal fa-times"></i></span>
+    </button>
+    <div class="d-flex align-items-center">
+      <div class="alert-icon width-6">
+        <i class="fal fa-check-circle"></i>
+      </div>
+      <div class="flex-1 pl-1">
+        <span class="h5">-> (<b class="red">*</b>) campo obligatorio</span><br>
+        <span class="h5">-> El registro ha sido generado.</span><br>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row align-self-center align-items-center align-content-center justify-content-center">
+    <label *ngIf="pasoActual==2">(<b class="red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <button class="btn btn-primary" [disabled]="pasoActual==1" (click)="changeSeccion('prev')"><i class="fa fa-arrow-left"></i> Anterior </button>&nbsp;&nbsp;
+    <button class="btn btn-primary" *ngIf="pasoActual!=3" (click)="changeSeccion('next')"
+            [disabled]="pasoActual==3 || validNoCelular>0 || validNoEmpleado>0 || validFechaInicio>0 || validFechaFinal>0 || validCampus>0">
+      Siguiente <i class="fa fa-arrow-right"></i>
+    </button>
+    <button class="btn btn-danger" *ngIf="pasoActual==3" [routerLink]="'/scicom/foro/'+eventoId+'/event-participations'" >Finalizar</button>
+  </div>
+  <br>
+  <br>
+</div>
+<app-loading-modal [show]="loadingCount>0"></app-loading-modal>

@@ -1,0 +1,624 @@
+<div class="row">
+  <button class="btn btn-primary m-3 collapsed" data-toggle="collapse"
+          aria-expanded="false" href="#filterBar" (click)="mostrarFiltros()">
+    <i class="fa fa-filter width-1"></i> {{(mostrar)?'Mostrar filtros':'Ocultar filtros'}}
+  </button>
+</div>
+
+<div class="row">
+  <div class="col order-lg-1 order-xl-1 collapse" style="max-width: 330px;" id="filterBar">
+    <div class="sticky-top">
+      <!-- profile summary -->
+      <div id="panel-1" class="panel">
+        <div class="panel-hdr">
+          <h2>Filtros <span class="fw-300"></span></h2>
+          <div class="panel-toolbar">
+            <button type="button" class="btn btn-md btn-success waves-effect waves-themed p-1 m-1" (click)="exportToExcel()">
+              <span class="fas fa-file-excel mr-1"></span>Exportar Excel
+            </button>
+            <button type="button" class="btn btn-primary waves-effect waves-themed p-1 m-1" (click)="clearFilter()">
+              Limpiar Filtros
+            </button>
+          </div>
+        </div>
+        <div class="ml-md-auto">
+          <i>{{totalItems}} registros&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>
+        </div>
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="frame-wrap">
+              <div class="demo">
+                <div class="form-group">
+                  <div class="input-group bg-white shadow-inset-2">
+                    <div class="input-group-prepend">
+                          <span class="input-group-text bg-transparent border-right-0">
+                            <i class="fal fa-search"></i>
+                          </span>
+                    </div>
+                    <input type="text" class="form-control border-left-0 bg-transparent pl-0" placeholder="Filtro..." [(ngModel)]="search" (keyup)="loadData()">
+                  </div>
+                </div>
+                <div class="accordion accordion-hover" id="accordionExample">
+                  <div class="card">
+                    <div class="card-header" id="headingYear">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseYear" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span> </span>Años
+                      </a>
+                    </div>
+                    <div id="collapseYear" class="collapse" aria-labelledby="headingYear"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="custom-control custom-checkbox" *ngFor="let y of years.slice(0,5)">
+                          <input *ngIf="!y.checked" type="checkbox" class="custom-control-input" [id]="y.year" (click)="selectYear(y.year)" />
+                          <input *ngIf="y.checked" type="checkbox" class="custom-control-input" [id]="y.year" (click)="selectYear(y.year)" checked="checked"/>
+                          <label class="custom-control-label" [for]="y.year">{{y.year}}</label>
+                        </div>
+                        <br />
+                        <a *ngIf="years.length>5" href="#" data-toggle="modal" data-target="#modal-years">Ver más >></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingConvoc">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseConvoc" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Convocatorias
+                      </a>
+                    </div>
+                    <div id="collapseConvoc" class="collapse" aria-labelledby="headingConvoc"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="custom-control custom-checkbox"
+                             *ngFor="let item of convocatorias.slice(0,5)">
+                          <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="item.id" (click)="selectConvocatoria(item.id)" />
+                          <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="item.id" (click)="selectConvocatoria(item.id)" checked="checked"/>
+                          <label class="custom-control-label" [for]="item.id">{{item.id}}</label>
+                        </div>
+                        <br />
+                        <a *ngIf="convocatorias.length>5" href="#" data-toggle="modal" data-target="#modal-convoc">Ver más >></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingOne">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseOne" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Presupuesto
+                      </a>
+                    </div>
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample"
+                         style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Desde: &nbsp;<i class="fas fa-dollar-sign"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Desde" [(ngModel)]="presupuestoDesde"
+                                   (keyup)="loadData()" />
+                          </div>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Hasta: &nbsp;&nbsp;<i
+                                class="fas fa-dollar-sign"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Hasta" [(ngModel)]="presupuestoHasta"
+                                   (keyup)="loadData()" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingTwo">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseTwo" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Líneas de investigación
+                      </a>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample"
+                         style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox"
+                               *ngFor="let item of lineasInvestigacion.slice(0, 5)">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'lineaInvest'+item.id" (click)="selectLine(item.id)" />
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'lineaInvest'+item.id" (click)="selectLine(item.id)" checked="checked"/>
+                            <label class="custom-control-label" [for]="'lineaInvest'+item.id">{{item.nombre}}</label>
+                          </div>
+                          <br />
+                          <a *ngIf="lineasInvestigacion.length>5" href="#" data-toggle="modal" data-target="#modal-lineas">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingThree">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseThree" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Investigadores
+                      </a>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of investigadores.slice(0,5)">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'investigadores'+item.id" (click)="selectInvestigadores(item.id)" />
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'investigadores'+item.id" (click)="selectInvestigadores(item.id)" checked="checked"/>
+                            <label class="custom-control-label" [for]="'investigadores' + item.id">{{item.nombre}}</label>
+                          </div>
+                          <br />
+                          <a  *ngIf="investigadores.length>5" href="#" data-toggle="modal" data-target="#modal-investigadores">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingFour">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseFour" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Tipos de Proyecto
+                      </a>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of projectTypes.slice(0, 5)">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'productType'+item.id" (click)="selectProjectType(item.id)" />
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'productType'+item.id" (click)="selectProjectType(item.id)" checked="checked"/>
+                            <label class="custom-control-label" [for]="'productType'+item.id">{{item.tipo}}</label>
+                          </div>
+                          <br />
+                          <a *ngIf="projectTypes.length>5" href="#" data-toggle="modal" data-target="#modal-productTypes">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!--<div class="card">
+                    <div class="card-header" id="headingFive">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseFive" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Instituciones
+                      </a>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of instituciones.slice(0, 5)">
+                            <input type="checkbox" class="custom-control-input" [id]="'intituciones' + item.id"
+                                   (change)="selectInstituciones(item.id)" />
+                            <label class="custom-control-label"
+                                   [for]="'intituciones' + item.id">{{item.razon_social}}</label>
+                          </div>
+                          <br />
+                          <a href="#" data-toggle="modal" data-target="#modal-instituciones">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>-->
+                  <div class="card">
+                    <div class="card-header" id="headingSix">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseSix" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Centros de Investigación
+                      </a>
+                    </div>
+                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample"
+                         style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of centros_investigacion.slice(0,5)">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'centros'+item.id" (click)="selectCentroInvestigacion(item.id)" />
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'centros'+item.id" (click)="selectCentroInvestigacion(item.id)" checked="checked"/>
+                            <label class="custom-control-label" [for]="'centros' + item.id">{{item.nombre}}</label>
+                          </div>
+                          <br />
+                          <a *ngIf="centros_investigacion.length>5" href="#" data-toggle="modal" data-target="#modal-centros">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header" id="headingSeven">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse"
+                         data-target="#collapseSeven" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal"><i class="fal fa-minus fs-xl"></i></span>
+                          <span class="collapsed-hidden"><i class="fal fa-plus fs-xl"></i></span>
+                        </span>
+                        Alumnos
+                      </a>
+                    </div>
+                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven"
+                         data-parent="#accordionExample" style="">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of list_alumnos.slice(0,5)">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'alumno'+item.id" (click)="selectAlumno(item.id)" />
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'alumno'+item.id" (click)="selectAlumno(item.id)" checked="checked"/>
+                            <label class="custom-control-label" [for]="'alumno' + item.id">{{item.nombre}}</label>
+                          </div>
+                          <br />
+                          <a *ngIf="list_alumnos.length>5" href="#" data-toggle="modal" data-target="#modal-alumnos">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col order-lg-1 order-xl-1">
+    <!-- profile summary -->
+    <div *ngIf="dataSource" style="align-items:center;border:25px;">
+      <div *ngIf="showLoadingBar" >
+        <br><br><br><br><br><br><br>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border text-primary" role="status"  style="width:5rem;height:5rem;"></div>
+        </div>
+        <br><br><br><br>
+        <div class="d-flex justify-content-center">
+          <h2 class="text-primary m-0 fw-700">Cargando...</h2>
+        </div>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width:100%"
+               aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+      <div class="panel" *ngFor="let item of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+        <div class="panel-hdr">
+          <h2>
+            <span class="h6 font-weight-bold d-block m-0">
+              <a target="_blank" [routerLink]="['/coord', id, 'project', item.id]">{{ item.nombre }}</a>
+            </span>
+          </h2>
+          <div class="panel-toolbar">
+            <span class="badge mr-2" style="background-color: #6261ab; color: #fff">{{ item.tipo }}</span>
+          </div>
+        </div>
+        <div class="panel-container show">
+          <!-- panel footer with utility classes -->
+          <div
+            class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted">
+            <h5 class="m-0">
+              <span class="badge badge-primary fw-400 l-h-n">
+                Presupuesto: ${{ item.presupuesto }}
+              </span>
+            </h5>
+            <br />
+            <p><strong>Objetivos:</strong> {{ item.objetivos }}</p>
+            <p><strong>Número proyecto:</strong> {{ item.num_proy }}</p>
+            <p>
+              <strong>Tipo de financiamiento:</strong> {{ item.tipo_financ }}
+            </p>
+            <!--<p><strong>Fecha inicio:</strong> {{ item.fecha_inicio }}</p>
+            <p><strong>Fecha fin:</strong> {{ item.fecha_fin }}</p>
+            <p><strong>Duracion en dias:</strong> {{ item.duracion_dias }}</p>
+            <p><strong>Monto beca:</strong> {{ item.monto_beca }}</p>-->
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="dataSource.length>0">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          &nbsp;&nbsp;Total de elementos: {{totalItems}}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-end">
+          <pagination-controls
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]="responsive"
+            [id]="paginationId"
+            (pageChange)="handlePageChange($event)"
+            class="paginationStyle"
+          ></pagination-controls>
+        </div>
+      </div>
+      <div *ngIf="!showLoadingBar">
+        <div *ngIf="dataSource.length==0">
+          <div class="alert border-primary bg-transparent text-primary fade show d-flex align-items-start" role="alert">
+            <div class="d-flex align-items-center">
+              <div class="alert-icon">
+                <i class="fal fa-info-circle"></i>
+              </div>
+              <div class="flex-1">
+                <span class="h5 m-0 fw-700">No se encontraron resultados.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-years" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Años</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-4" *ngFor="let item of years">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'year'+item.year" (click)="selectYear(item.year)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'year'+item.year" (click)="selectYear(item.year)" checked="checked"/>
+                <label class="custom-control-label" [for]="'year'+item.year">{{item.year}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-convoc" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Convocatorias</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-4" *ngFor="let item of convocatorias">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'convocModal'+item.id" (click)="selectConvocatoria(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'convocModal'+item.id" (click)="selectConvocatoria(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'convocModal'+item.id">{{item.id}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-lineas" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Líneas de investigación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of lineasInvestigacion">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalLine'+item.id" (click)="selectLine(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalLine'+item.id" (click)="selectLine(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalLine' + item.id">{{item.nombre}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-investigadores" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Investigadores</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body-countries">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of investigadores">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalInvestigadores'+item.id" (click)="selectInvestigadores(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalInvestigadores'+item.id" (click)="selectInvestigadores(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalInvestigadores' + item.id">{{item.nombre}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-productTypes" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tipos de Proyecto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of projectTypes">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalProductType'+item.id" (click)="selectProjectType(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalProductType'+item.id" (click)="selectProjectType(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalProductType' + item.id">{{item.tipo}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-instituciones" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Intituciones</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of instituciones">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalIntituciones'+item.id" (click)="selectInstituciones(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalIntituciones'+item.id" (click)="selectInstituciones(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalIntituciones' + item.id">{{item.razon_social}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-centros" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Colegios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of centros_investigacion">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalCentros'+item.id" (click)="selectCentroInvestigacion(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalCentros'+item.id" (click)="selectCentroInvestigacion(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalCentros' + item.id">{{item.nombre}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-alumnos" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Investigadores</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6" *ngFor="let item of list_alumnos">
+              <div class="custom-control custom-checkbox">
+                <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalAlumno'+item.id" (click)="selectAlumno(item.id)" />
+                <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalAlumno'+item.id" (click)="selectAlumno(item.id)" checked="checked"/>
+                <label class="custom-control-label" [for]="'modalAlumno' + item.id">{{item.nombre}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

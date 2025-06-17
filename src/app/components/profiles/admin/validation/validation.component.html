@@ -1,0 +1,135 @@
+<div class="row">
+  <div class="col-lg-12 col-xl-12">
+    <!--Basic tables-->
+    <div id="panel-1" class="panel">
+      <div class="panel-hdr">
+        <h2 *ngIf="!muestraValidados">
+          Listado de productos pendientes a validar
+        </h2>
+        <h2 *ngIf="muestraValidados">
+          Listado de productos validados
+        </h2>
+        <div class="panel-toolbar">
+          <div class="custom-control custom-switch pr-1">
+            <input type="checkbox" class="custom-control-input" id="switchValidados" [(ngModel)]="muestraValidados"
+            (change)="loadValidations()">
+            <label class="custom-control-label" for="switchValidados">Validados</label>
+          </div>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Collapse"></button>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Fullscreen"></button>
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Close"></button>
+        </div>
+      </div>
+
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <div class="row g-3">
+
+            <div class="col-4">
+              <div class="input-group input-group-md mb-g">
+                <input type="text" id="filterTitle" class="form-control" placeholder="Filtro Título"
+                       [(ngModel)]="filterTitle" (keyup)="loadValidations()">
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-search"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="input-group input-group-md mb-g">
+                <select class="form-control" [(ngModel)]="filterInvest" (change)="loadValidations()">
+                  <option value="0">Todos...</option>
+                  <option *ngFor="let item of investList" [value]="item.id">
+                    {{ item.nombre }}
+                  </option>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-user"></i></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="input-group input-group-md mb-g">
+                <select class="form-control" [(ngModel)]="filterYear" (change)="loadValidations()">
+                  <option value="">Todos...</option>
+                  <option *ngFor="let year of yearList" [value]="year">
+                    {{ year }}
+                  </option>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-1" *ngIf="!muestraValidados">
+              <a routerLink="/admin/new-product" class="btn btn-primary"><i class="fa fa-plus" style="color: white"></i></a>
+            </div>
+          </div>
+
+          <h5 class="frame-heading">
+
+            <pagination-controls
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              [responsive]="responsive"
+              [id]="paginationId"
+              (pageChange)="handlePageChange($event)"
+              class="paginationStyle"
+            ></pagination-controls>
+
+
+          </h5>
+          <div class="frame-wrap">
+            <table class="table m-0">
+              <thead>
+              <tr>
+                <th>Título</th>
+                <th>Investigador</th>
+                <th>Año</th>
+                <th *ngIf="!muestraValidados">Detalle</th>
+                <th *ngIf="!muestraValidados">Eliminar</th>
+                <th *ngIf="muestraValidados">Desvalidar</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="!showLoadingBar">
+              <tr *ngFor="let row of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                };
+                let i = index">
+                <th scope="row">
+                  {{row.titulo}}
+                </th>
+                <td>{{row.nombreInvest}}</td>
+                <td>{{row.anio}}</td>
+                <td *ngIf="!muestraValidados">
+                  <a class="btn btn-primary btn-icon waves-effect waves-themed" (click)="redirectToForm(row.id)">
+                    <i class="fas fa-eye" style="color: white"></i>
+                  </a>
+                </td>
+                <td *ngIf="!muestraValidados">
+                  <a (click)="deleteProduct(row.id)" class="btn btn-danger btn-icon waves-effect waves-themed">
+                    <i class="fas fa-trash-alt" style="color: white"></i>
+                  </a>
+                </td>
+                <td *ngIf="muestraValidados">
+                  <a (click)="invalidateProduct(row.id)" class="btn btn-warning btn-icon waves-effect waves-themed">
+                    <i class="fas fa-undo" style="color: white"></i>
+                  </a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

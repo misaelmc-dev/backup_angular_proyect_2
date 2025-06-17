@@ -1,0 +1,60 @@
+
+
+<!--<div class="subheader">
+  <h1 class="subheader-title">
+    <i class='subheader-icon fal fa-table'></i> DataTables: <span class='fw-300'>ColReorder</span> <sup class='badge badge-primary fw-500'>ADDON</sup>
+    <small>
+      Create headache free searching, sorting and pagination tables without any complex configuration
+    </small>
+  </h1>
+</div>-->
+<div class="row">
+  <div class="col-xl-12">
+    <div id="panel-1" class="panel">
+
+      <!--Content-->
+
+
+      <div class="panel-hdr">
+        <h2>
+           <span class="fw-300"><i></i></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+          <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+          <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <div class="demo-v-spacing">
+            <nav class="nav nav-pills">
+              <a class="nav-item nav-link btn-lg active" href="#quotesa" data-toggle="pill">&nbsp; Citas A</a>
+              <a class="nav-item nav-link btn-lg" href="#quotesb" data-toggle="pill">&nbsp; Citas B</a>
+            </nav>
+          </div>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="quotesa" role="tabpanel" aria-labelledby="home-tab">
+              <br>
+              <app-quotes-a [researchId]="researchId" [productId]="productId"></app-quotes-a>
+            </div>
+            <div class="tab-pane" id="quotesb" role="tabpanel" aria-labelledby="profile-tab">
+              <br>
+              <app-quotes-b [researchId]="researchId" [productId]="productId"></app-quotes-b>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+

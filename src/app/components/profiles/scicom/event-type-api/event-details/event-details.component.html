@@ -1,0 +1,239 @@
+<main role="main" class="page-content panel border-10" style="box-shadow: 0 0 15px #002746;">
+  <div class="container mt-6" style="font-size:16px">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="d-flex align-items-center mb-5">
+          <h2 class="keep-print-font display-4 fw-500 mb-0 text-primary flex-1 position-relative">
+            Ficha de configuración
+            <small class="text-muted mb-0" style="font-size:18px">{{institucionNombre}}</small>
+          </h2>
+          <div class="pos-top pos-right">
+            <div class="d-flex justify-content-end">
+            <span>
+              <button class="btn btn-default btn-icon hidden-md-down" data-action="app-print" data-toggle="tooltip" data-placement="left" title="" data-original-title="Print page" aria-describedby="tooltip734707"><i class="fa fa-print"></i></button>&nbsp;&nbsp;
+              <!--<button class="btn btn-default btn-icon hidden-md-down"><i class="fa fa-envelope"></i></button>-->&nbsp;&nbsp;&nbsp;&nbsp;
+              <b>Estatus:</b>&nbsp;&nbsp;
+              <ng-container *ngFor="let status of estatusEventos">
+                <ng-container *ngIf="status.id==evento.id_estatus_evento">
+                  <span class="badge badge-secondary badge-pill" *ngIf="status.id==1">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="status.id==1"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.id!=1"></i>
+                  </span>
+                  <span class="badge badge-primary badge-pill" *ngIf="status.id==2">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="status.id==1"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.id!=1"></i>
+                  </span>
+                  <span class="badge badge-info badge-pill" *ngIf="status.id==3">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="status.id==1"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.id!=1"></i>
+                  </span>
+                  <span class="badge badge-success badge-pill" *ngIf="status.id==4">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="status.id==1"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.id!=1"></i>
+                  </span>
+                </ng-container>
+              </ng-container>
+            </span>
+            </div>
+            <div class="d-flex justify-content-end">
+              <b>Fecha de impresión:&nbsp;&nbsp;{{nowDate}}</b>
+            </div>
+          </div>
+        </div>
+        <h3>
+          <span class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0"> Nombre:</span>
+          <span class="fw-300 display-5 fw-500 color-secondary-600 keep-print-font pt-4 l-h-n m-0">&nbsp;&nbsp;{{evento.nombre}}</span>
+        </h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 d-flex">
+        <div class="table-responsive">
+          <table class="table table-clean table-sm align-self-end">
+            <tbody>
+            <tr>
+              <td style="width:150px"><strong>Tipo:</strong></td>
+              <td><span class="badge badge-warning badge-pill">API - Programa de Apoyo a la Publicación de Investigaciones UVM, UNITEC</span></td>
+            </tr>
+            <tr>
+              <td><strong>Fecha&nbsp;de&nbsp;inicio:</strong></td>
+              <td>{{fechaInicioEvento | date: 'dd-MM-yyyy'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Fecha&nbsp;final:</strong></td>
+              <td>{{fechaFinalEvento | date: 'dd-MM-yyyy'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Descripción:</strong></td>
+              <td class="text-justify">{{(evento.descripcion) ? evento.descripcion : 'Sin descripción'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Lema:</strong></td>
+              <td class="text-justify">{{(evento.lema) ? evento.lema : 'Sin lema'}}</td>
+            </tr>
+            <tr>
+              <td><strong>Objetivos:</strong></td>
+              <td class="text-justify">{{(evento.objetivo) ? evento.objetivo : 'Sin objetivos'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Campus asociados</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Campus</th>
+              <th class="border-top-0 table-scale-border-bottom">Institución</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let campus of campusAsing">
+              <td class="text-left strong">{{campus.nombre}}</td>
+              <td class="text-left">{{campus.institucion}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de evaluación permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de evaluación</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Fechas de evaluación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let eval of evaluationAsing">
+              <td class="text-left strong">{{eval.nombre}}</td>
+              <td class="text-left">{{eval.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let fa of fechasAsign">
+                  <label *ngIf="eval.id==fa.id_tipo_evaluacion">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de pagos permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de pago</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Monto</th>
+              <th class="border-top-0 table-scale-border-bottom" style="width:220px">Fechas de ejecución</th>
+              <th class="border-top-0 table-scale-border-bottom" style="width:220px">Fechas de validación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let pay of paymentsAsing">
+              <td class="text-left strong">{{pay.nombre}}</td>
+              <td class="text-left">{{pay.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let tipPay of eventosPagos">
+                  <strong *ngIf="pay.id==tipPay.id_tipo_pago">{{tipPay.monto | currency}} MXN</strong>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let fa of fechasAsign1">
+                  <label *ngIf="fa.id_tipo_rango==5">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+              <td>
+                <ng-container *ngFor="let fa of fechasAsign2">
+                  <label *ngIf="fa.id_tipo_rango==6">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de participación permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de participación</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+              <th class="border-top-0 table-scale-border-bottom">Fechas de registro de participación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let part of participationAsing">
+              <td class="text-left strong">{{part.nombre}}</td>
+              <td class="text-left">{{part.descripcion}}</td>
+              <td class="text-left">
+                <ng-container *ngFor="let fa of fechasAsign3">
+                  <label *ngIf="part.id==1">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+                </ng-container>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Tipos de trabajo permitidos</h3>
+          <table class="table mt-5">
+            <thead>
+            <tr>
+              <th class="border-top-0 table-scale-border-bottom">Tipo de trabajo</th>
+              <th class="border-top-0 table-scale-border-bottom">Descripción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let work of workAsing">
+              <td>{{work.nombre}}</td>
+              <td>{{work.descripcion}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!--
+    <div class="row">
+      <div class="col-sm-12 mt-2">
+        <h4 class="py-5 text-primary mt-2" style="margin-bottom: -20px">
+          Gestionado gracias a SCINTRA.
+        </h4>
+      </div>
+    </div>
+    -->
+  </div>
+</main>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+
+

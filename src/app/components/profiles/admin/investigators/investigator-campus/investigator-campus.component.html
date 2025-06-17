@@ -1,0 +1,74 @@
+<div *ngIf="modal=='ver'">
+  <div class="row mb-2">
+    <h5 class="col-12 pr-2">
+      <i class="fa fa-university width-1"></i>Campus asociados al investigador
+    </h5>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12">
+      <ng-container *ngFor="let lc of listaItems">
+        <ng-container *ngIf="lc.accion=='agregado'">
+          <li class="m-0 p-0 ml-2">{{lc.nombre}}</li>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemsGuardados">
+        <label class="ml-4">No hay campus asociadas.</label>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="modal=='crear' || modal=='editar'">
+  <div class="row mb-2">
+    <label class="form-label col-3 mt-2 mb-0 p-0">
+      <i class="fa fa-university width-1"></i>Campus:
+    </label>
+    <select class="form-control col-5 pr-0" [(ngModel)]="itemSeleccionado">
+      <ng-container *ngIf="idInstitucion!=0">
+        <option value="0">Selecciona un campus...</option>
+        <ng-container *ngFor="let lc of listaItems">
+          <ng-container *ngIf="lc.accion=='no agregado' || lc.accion=='eliminar'">
+            <ng-container *ngIf="lc.id_institucion==idInstitucion">
+              <option value="{{lc.id}}">{{lc.nombre}}</option>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="idInstitucion==0">
+        <option value="0">Selecciona una institución...</option>
+      </ng-container>
+    </select>
+    <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+      <button class="btn btn-primary" (click)="agregarItem()"
+              [disabled]="itemSeleccionado==0">
+        <i class="fa fa-plus"></i> Agregar
+      </button>
+    </div>
+    <label class="col-1"></label>
+  </div>
+  <div class="row" *ngFor="let lc of listaItems">
+    <ng-container *ngIf="lc.accion=='agregado' || lc.accion=='agregar'">
+      <label class="col-3"></label>
+      <div class="alert alert-dismissible fade show col-8 m-0 mt-1" role="alert"
+           [ngClass]="(lc.id_institucion==idInstitucion)?'alert-primary':'alert-warning'">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerItem(lc.id)">
+          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+        </button>
+        <div class="d-flex align-items-center">
+          <div class="alert-icon width-3" *ngIf="lc.id_institucion!=idInstitucion">
+            <i class="fa fa-exclamation-triangle"></i>
+          </div>
+          <div class="flex-1">
+            <span class="h5">{{lc.nombre}}</span>
+          </div>
+        </div>
+        <ng-container *ngIf="lc.id_institucion!=idInstitucion">
+          <br>El campus no pertenece a la institución elegida
+        </ng-container>
+      </div>
+      <label class="col-1"></label>
+    </ng-container>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

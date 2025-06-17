@@ -1,0 +1,251 @@
+<div class="panel-hdr">
+  <h2>
+    {{titulo}} <span class="fw-300"><i></i></span>
+  </h2>
+  <div class="panel-toolbar">
+    <a class="btn" (click)="goBack()">
+      <i class="fal fa-arrow-left fs-xl"></i>&nbsp;Atrás
+    </a>
+  </div>
+</div>
+<div class="panel-container show">
+  <div class="panel-content">
+    <div class="accordion accordion-hover" id="js_demo_accordion-5">
+      <div class="card">
+        <div class="card-header">
+          <a href="javascript:void(0);"
+             class="card-title"
+             data-toggle="collapse"
+             data-target="#js_demo_accordion-5a"
+             aria-expanded="true"
+          >
+            <i class="fal fa-flag-alt width-2 fs-xl"></i>
+            Países colaboradores
+            <span class="ml-auto">
+              <span class="collapsed-reveal">
+                <i class="fal fa-chevron-up fs-xl"></i>
+              </span>
+              <span class="collapsed-hidden">
+                <i class="fal fa-chevron-down fs-xl"></i>
+              </span>
+            </span>
+          </a>
+        </div>
+        <div id="js_demo_accordion-5a" class="collapse show" data-parent="#js_demo_accordion-5">
+          <div class="card-body">
+            <app-colab-center-destino-pais-coord
+              [tipoElementoOrigen]="tipoElementoOrigen"
+              [tiposElementosDestino]="[]"
+              [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+              [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+              [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+              [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+              [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+              [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+              [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+              [aniosDestino]="newObjectReference(aniosDestino)"
+              [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+              [searchTermProductosDestino]="searchTermProductosDestino"
+              [soloDestinoNacional]="soloDestinoNacional"
+              [soloDestinoInternacional]="soloDestinoInternacional"
+              [soloDestinoInstitucional]="soloDestinoInstitucional"
+              [filterSearchTerm]="filterSearchTerm"
+              [showBackButton]="false"
+            >
+            </app-colab-center-destino-pais-coord>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <a href="javascript:void(0);"
+             class="card-title collapsed"
+             data-toggle="collapse"
+             data-target="#js_demo_accordion-5b"
+             aria-expanded="false"
+             (click)="showInstitucion()"
+          >
+            <i class="fal fa-university width-2 fs-xl"></i>
+            Instituciones colaboradoras
+            <span class="ml-auto">
+              <span class="collapsed-reveal">
+                <i class="fal fa-chevron-up fs-xl"></i>
+              </span>
+              <span class="collapsed-hidden">
+                <i class="fal fa-chevron-down fs-xl"></i>
+              </span>
+            </span>
+          </a>
+        </div>
+        <div id="js_demo_accordion-5b" class="collapse" data-parent="#js_demo_accordion-5">
+          <div class="card-body">
+            <app-colab-center-destino-institucion-coord
+              *ngIf="shouldshowInstitucion"
+              [tipoElementoOrigen]="tipoElementoOrigen"
+              [tiposElementosDestino]="[]"
+              [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+              [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+              [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+              [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+              [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+              [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+              [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+              [aniosDestino]="newObjectReference(aniosDestino)"
+              [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+              [searchTermProductosDestino]="searchTermProductosDestino"
+              [soloDestinoNacional]="soloDestinoNacional"
+              [soloDestinoInternacional]="soloDestinoInternacional"
+              [soloDestinoInstitucional]="soloDestinoInstitucional"
+              [filterSearchTerm]="filterSearchTerm"
+              [showBackButton]="false"
+            >
+            </app-colab-center-destino-institucion-coord>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <a href="javascript:void(0);"
+             class="card-title collapsed"
+             data-toggle="collapse"
+             data-target="#js_demo_accordion-5c"
+             aria-expanded="false"
+             (click)="showInvestigador()"
+          >
+            <i class="fal fa-users width-2 fs-xl"></i>
+            Investigadores colaboradores
+            <span class="ml-auto">
+              <span class="collapsed-reveal">
+                <i class="fal fa-chevron-up fs-xl"></i>
+              </span>
+              <span class="collapsed-hidden">
+                <i class="fal fa-chevron-down fs-xl"></i>
+              </span>
+            </span>
+          </a>
+        </div>
+        <div id="js_demo_accordion-5c" class="collapse" data-parent="#js_demo_accordion-5">
+          <div class="card-body">
+            <app-colab-center-destino-investigador-coord
+              *ngIf="shouldshowInvestigador"
+              [tipoElementoOrigen]="tipoElementoOrigen"
+              [tiposElementosDestino]="[]"
+              [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+              [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+              [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+              [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+              [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+              [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+              [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+              [aniosDestino]="newObjectReference(aniosDestino)"
+              [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+              [searchTermProductosDestino]="searchTermProductosDestino"
+              [soloDestinoNacional]="soloDestinoNacional"
+              [soloDestinoInternacional]="soloDestinoInternacional"
+              [soloDestinoInstitucional]="soloDestinoInstitucional"
+              [filterSearchTerm]="filterSearchTerm"
+              [showBackButton]="false"
+            >
+            </app-colab-center-destino-investigador-coord>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <a href="javascript:void(0);"
+             class="card-title collapsed"
+             data-toggle="collapse"
+             data-target="#js_demo_accordion-5d"
+             aria-expanded="false"
+             (click)="showAnio()"
+          >
+            <i class="fal fa-calendar width-2 fs-xl"></i>
+            Años de colaboración
+            <span class="ml-auto">
+              <span class="collapsed-reveal">
+                <i class="fal fa-chevron-up fs-xl"></i>
+              </span>
+              <span class="collapsed-hidden">
+                <i class="fal fa-chevron-down fs-xl"></i>
+              </span>
+            </span>
+          </a>
+        </div>
+        <div id="js_demo_accordion-5d" class="collapse" data-parent="#js_demo_accordion-5">
+          <div class="card-body">
+            <app-colab-center-destino-anio-coord
+              *ngIf="shouldshowAnio"
+              [tipoElementoOrigen]="tipoElementoOrigen"
+              [tiposElementosDestino]="[]"
+              [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+              [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+              [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+              [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+              [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+              [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+              [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+              [aniosDestino]="newObjectReference(aniosDestino)"
+              [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+              [searchTermProductosDestino]="searchTermProductosDestino"
+              [soloDestinoNacional]="soloDestinoNacional"
+              [soloDestinoInternacional]="soloDestinoInternacional"
+              [soloDestinoInstitucional]="soloDestinoInstitucional"
+              [filterSearchTerm]="filterSearchTerm"
+              [showBackButton]="false"
+            >
+            </app-colab-center-destino-anio-coord>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <a href="javascript:void(0);"
+             class="card-title collapsed"
+             data-toggle="collapse"
+             data-target="#js_demo_accordion-5e"
+             aria-expanded="false"
+             (click)="showProducto()"
+          >
+            <i class="fal fa-file width-2 fs-xl"></i>
+            Productos en colaboración
+            <span class="ml-auto">
+              <span class="collapsed-reveal">
+                <i class="fal fa-chevron-up fs-xl"></i>
+              </span>
+              <span class="collapsed-hidden">
+                <i class="fal fa-chevron-down fs-xl"></i>
+              </span>
+            </span>
+          </a>
+        </div>
+        <div id="js_demo_accordion-5e" class="collapse" data-parent="#js_demo_accordion-5">
+          <div class="card-body">
+            <app-colab-center-destino-producto-coord
+              *ngIf="shouldshowProducto"
+              [tipoElementoOrigen]="tipoElementoOrigen"
+              [tiposElementosDestino]="[]"
+              [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+              [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+              [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+              [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+              [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+              [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+              [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+              [aniosDestino]="newObjectReference(aniosDestino)"
+              [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+              [searchTermProductosDestino]="searchTermProductosDestino"
+              [soloDestinoNacional]="soloDestinoNacional"
+              [soloDestinoInternacional]="soloDestinoInternacional"
+              [soloDestinoInstitucional]="soloDestinoInstitucional"
+              [filterSearchTerm]="filterSearchTerm"
+              [showBackButton]="false"
+            >
+            </app-colab-center-destino-producto-coord>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

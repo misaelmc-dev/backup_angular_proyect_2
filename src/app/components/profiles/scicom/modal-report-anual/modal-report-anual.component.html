@@ -1,0 +1,59 @@
+<div class="modal fade display-none" id="modal-meta-anual" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Control de metas anuales</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label class="form-label col-4 mt-1">Año</label>
+          <select class="form-control col-7" [(ngModel)]="selectYearAnual"
+                  (change)="loadDatosMetas()">
+            <option value="0">Selecciona un año</option>
+            <ng-container *ngFor="let a of listaYears">
+              <option value="{{a.year}}">{{a.year}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group row">
+          <label class="form-label col-4 mt-1">Institución</label>
+          <select class="form-control col-7" [(ngModel)]="selectInstitucionesAnual"
+                  (change)="loadDatosMetas()">
+            <option value="0">Selecciona una institución</option>
+            <ng-container *ngFor="let i of listaInstitucionesAnual">
+              <option value="{{i.id}}">{{i.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <ng-container *ngIf="listaMetasCompleta.length != 0">
+          <div class="form-group row">
+            <label class="form-label col-4"></label>
+            <label class="form-label col-4">Estudiantes</label>
+            <label class="form-label col-4">Carteles</label>
+          </div>
+          <div class="form-group row">
+            <ng-container *ngFor="let c of listaMetasCompleta">
+              <label class="form-label col-4 mt-1">{{c.nombre}}</label>
+              <input type="number" class="form-control col-3" value="{{c.metaEstValor}}" *ngIf="c.hasOwnProperty('metaEstId')" (keyup)="actualizarMeta(c.metaEstId,$event,c.id,1)" >
+              <input type="number" class="form-control col-3" *ngIf="!c.hasOwnProperty('metaEstId')" (keyup)="crearMeta($event,c.id,1)">
+              <label class="form-label col-1"></label>
+              <input type="number" class="form-control col-3" value="{{c.metaCartValor}}" *ngIf="c.hasOwnProperty('metaCartId')" (keyup)="actualizarMeta(c.metaCartId,$event,c.id,2)">
+              <input type="number" class="form-control col-3" *ngIf="!c.hasOwnProperty('metaCartId')" (keyup)="crearMeta($event,c.id,2)">
+              <label class="form-label col-1"></label>
+            </ng-container>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal" (click)="limpiarFormularioReporteAnual()"><i class="fa fa-times"></i>&nbsp;&nbsp;Cerrar</button>
+        <button type="button" class="btn btn-success waves-effect waves-themed"
+                data-dismiss="modal" [disabled]="selectInstitucionesAnual==0 || selectYearAnual==0" (click)="confirmarMetas()">
+          <i class="fa fa-save"></i>&nbsp;&nbsp;Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,747 @@
+<div class="row">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12" style="max-width:320px">
+
+    <div class="sticky-top">
+      <div id="panel-1" class="panel">
+
+        <div class="panel-hdr">
+          <h2>Filtros</h2>
+          <div class="panel-toolbar">
+            <div class="d-flex justify-content-end mr-1">
+              <button href="#" data-toggle="modal" data-target="#modal-excel"
+                      type="button" class="btn btn-sm btn-success waves-effect waves-themed p-1 m-1">
+                <span class="fas fa-file-excel mr-1"></span>Exportar Excel
+              </button>
+              <button type="button" class="btn btn-sm btn-primary waves-effect waves-themed p-1 m-1" (click)="clearFilters()">
+                Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="frame-wrap">
+              <div class="demo">
+                <div class="form-group">
+                  <div class="input-group bg-white shadow-inset-2">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="fal fa-search"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control border-left-0 bg-transparent pl-0"
+                           placeholder="Filtro..." [(ngModel)]="filterSearchTerm">
+                    <div class="input-group-append">
+                      <button (click)="filterBySearchTerm()" class="btn btn-primary" type="button">
+                        <i class="fal fa-search mr-lg-2"></i>
+                        <span class="hidden-md-down"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="accordion accordion-hover" id="accordionExample">
+                  <div class="card">
+                    <div class="card-header" id="headingYear">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseYear" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Años
+                      </a>
+                    </div>
+                    <div id="collapseYear" class="collapse" aria-labelledby="headingYear" data-parent="#accordionExample" *ngIf="filterPossibleYears.length>0">
+                      <div class="card-body">
+                        <div class="custom-control custom-checkbox" *ngFor="let year of filterPossibleYears.slice(0,5)">
+                          <input *ngIf="year.checked" type="checkbox" class="custom-control-input" [id]="'year'+year.anio" (click)="onYearSelectedForFiltering(year.anio, $event)" checked="checked">
+                          <input *ngIf="!year.checked" type="checkbox" class="custom-control-input" [id]="'year'+year.anio" (click)="onYearSelectedForFiltering(year.anio, $event)">
+                          <label class="custom-control-label" [for]="'year'+year.anio">{{year.anio}}</label>
+                        </div>
+                        <br>
+                        <a href="#" data-toggle="modal" data-target="#modal-years"
+                           *ngIf="filterPossibleYears.length>5">Ver más >></a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" id="headingTwo">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Líneas de investigación
+                      </a>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let item of filterPossibleLineas.slice(0, 5)">
+                            <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'lineaInvest'+item.id" (change)="onLineaSelectedForFiltering(item.id, $event)" checked="checked">
+                            <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'lineaInvest'+item.id" (change)="onLineaSelectedForFiltering(item.id, $event)">
+                            <label class="custom-control-label" [for]="'lineaInvest'+item.id">{{item.nombre}}</label>
+                          </div>
+                          <br>
+                          <a *ngIf="filterPossibleLineas.length>5" href="#" data-toggle="modal" data-target="#modal-lineas">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" id="headingThree">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Países
+                      </a>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let pais of filterPossiblePaises.slice(0,5)">
+                            <input *ngIf="pais.checked" type="checkbox" class="custom-control-input" [id]="'country'+pais.id"  (change)="onPaisSelectedForFiltering(pais.id, $event)" checked="checked">
+                            <input *ngIf="!pais.checked" type="checkbox" class="custom-control-input" [id]="'country'+pais.id"  (change)="onPaisSelectedForFiltering(pais.id, $event)">
+                            <label class="custom-control-label" [for]="'country'+pais.id">{{pais.nombre}}</label>
+                          </div>
+                          <br>
+                          <a href="#" data-toggle="modal" data-target="#modal-countries"
+                             *ngIf="filterPossiblePaises.length>5">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" id="headingFive">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Instituciones
+                      </a>
+                    </div>
+                    <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let institucion of filterPossibleInstitucionesDest.slice(0, 5)">
+                            <input *ngIf="institucion.checked" type="checkbox" class="custom-control-input"
+                                   [id]="'intituciones' + institucion.id" checked="checked"
+                                   (change)="onInstitucionDestinoSelectedForFiltering(institucion.id, $event)">
+                            <input *ngIf="!institucion.checked" type="checkbox" class="custom-control-input"
+                                   [id]="'intituciones' + institucion.id"
+                                   (change)="onInstitucionDestinoSelectedForFiltering(institucion.id, $event)">
+                            <label class="custom-control-label" [for]="'intituciones' + institucion.id">{{institucion.nombre + ' (' + institucion.pais + ')'}}</label>
+                          </div>
+                          <br>
+                          <a href="#" data-toggle="modal" data-target="#modal-instituciones"
+                             *ngIf="filterPossibleInstitucionesDest.length>5">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="filterPossibleColegios.length > 0" class="card">
+                    <div class="card-header" id="headingSix">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Colegios
+                      </a>
+                    </div>
+                    <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let colegio of filterPossibleColegios.slice(0,5)">
+                            <input *ngIf="colegio.checked" type="checkbox" class="custom-control-input" [id]="'colegio' + colegio.id" (change)="onColegioSelectedForFiltering(colegio.id, $event)" checked="checked">
+                            <input *ngIf="!colegio.checked" type="checkbox" class="custom-control-input" [id]="'colegio' + colegio.id" (change)="onColegioSelectedForFiltering(colegio.id, $event)">
+                            <label class="custom-control-label" [for]="'colegio' + colegio.id">{{colegio.nombre}}</label>
+                          </div>
+                          <br>
+                          <a href="#" data-toggle="modal" data-target="#modal-colegios"
+                             *ngIf="filterPossibleColegios.length>5">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="filterPossibleCampus.length > 0" class="card">
+                    <div class="card-header" id="headingSeven">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false">
+                        <span class="mr-2">
+                          <span class="collapsed-reveal">
+                            <i class="fal fa-minus fs-xl"></i>
+                          </span>
+                          <span class="collapsed-hidden">
+                            <i class="fal fa-plus fs-xl"></i>
+                          </span>
+                        </span>
+                        Campus
+                      </a>
+                    </div>
+                    <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+
+                          <div class="custom-control custom-checkbox" *ngFor="let campus of filterPossibleCampus.slice(0,5)">
+                            <input *ngIf="campus.checked" type="checkbox" class="custom-control-input" [id]="'campus' + campus.id"  (change)="onCampusSelectedForFiltering(campus.id, $event)" checked="checked">
+                            <input *ngIf="!campus.checked" type="checkbox" class="custom-control-input" [id]="'campus' + campus.id"  (change)="onCampusSelectedForFiltering(campus.id, $event)">
+                            <label class="custom-control-label" [for]="'campus' + campus.id">{{campus.nombre}}</label>
+                          </div>
+                          <br>
+                          <a href="#" data-toggle="modal" data-target="#modal-campus"
+                             *ngIf="filterPossibleCampus.length>5">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" id="headingEight">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseEight" aria-expanded="false">
+                            <span class="mr-2">
+                              <span class="collapsed-reveal">
+                                <i class="fal fa-minus fs-xl"></i>
+                              </span>
+                              <span class="collapsed-hidden">
+                                <i class="fal fa-plus fs-xl"></i>
+                              </span>
+                            </span>
+                        Investigadores
+                      </a>
+                    </div>
+                    <div id="collapseEight" class="collapse" aria-labelledby="headingEight" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox" *ngFor="let investigador of filterPossibleInvestigadoresOrig.slice(0,5)">
+                            <input *ngIf="investigador.checked" type="checkbox" class="custom-control-input"
+                                   [id]="'investigador' + investigador.id" checked="checked"
+                                   (change)="onInvestigadorOrigenSelectedForFiltering(investigador.id, $event)">
+                            <input *ngIf="!investigador.checked" type="checkbox" class="custom-control-input"
+                                   [id]="'investigador' + investigador.id"
+                                   (change)="onInvestigadorOrigenSelectedForFiltering(investigador.id, $event)">
+                            <label class="custom-control-label" [for]="'investigador' + investigador.id">
+                              {{investigador.nombre}}
+                            </label>
+                          </div>
+                          <br>
+                          <a href="#" data-toggle="modal" data-target="#modal-researchers"
+                             *ngIf="filterPossibleInvestigadoresOrig.length>5">Ver más >></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <div class="card-header" id="headingNine">
+                      <a href="javascript:void(0);" class="card-title collapsed" data-toggle="collapse" data-target="#collapseNine" aria-expanded="false">
+                            <span class="mr-2">
+                              <span class="collapsed-reveal">
+                                <i class="fal fa-minus fs-xl"></i>
+                              </span>
+                              <span class="collapsed-hidden">
+                                <i class="fal fa-plus fs-xl"></i>
+                              </span>
+                            </span>
+                        Alcance
+                      </a>
+                    </div>
+                    <div id="collapseNine" class="collapse" aria-labelledby="headingNine" data-parent="#accordionExample">
+                      <div class="card-body">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" [id]="'soloNacional'" (change)="onSoloNacionalSelectedForFiltering($event)">
+                            <label class="custom-control-label" [for]="'soloNacional'">Solo Nacional</label>
+                          </div>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" [id]="'soloInternacional'" (change)="onSoloInternacionalSelectedForFiltering($event)">
+                            <label class="custom-control-label" [for]="'soloInternacional'">Solo Internacional</label>
+                          </div>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" [id]="'soloInstitucional'" (change)="onSoloInstitucionalSelectedForFiltering($event)">
+                            <label class="custom-control-label" [for]="'soloInstitucional'">Solo Institucional</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-years" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Años</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4" *ngFor="let item of filterPossibleYears">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'year'+item.anio" (click)="onYearSelectedForFiltering(item.anio, $event)" checked="checked">
+                  <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'year'+item.anio" (click)="onYearSelectedForFiltering(item.anio, $event)">
+                  <label *ngIf="item.anio!=null" class="custom-control-label" [for]="'year'+item.anio">{{item.anio}}</label>
+                  <label *ngIf="item.anio==null" class="custom-control-label" [for]="'year'+item.anio">Desconocido</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-lineas" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Líneas de investigación</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let item of filterPossibleLineas; let i = index">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="item.checked" type="checkbox" class="custom-control-input" [id]="'modalLine'+item.id" (click)="onLineaSelectedForFiltering(item.id, $event)" checked="checked">
+                  <input *ngIf="!item.checked" type="checkbox" class="custom-control-input" [id]="'modalLine'+item.id" (click)="onLineaSelectedForFiltering(item.id, $event)">
+                  <label *ngIf="item.nombre!=null" class="custom-control-label" [for]="'modalLine'+item.id">{{item.nombre}}</label>
+                  <label *ngIf="item.nombre==null" class="custom-control-label" [for]="'modalLine'+item.id">Desconocido</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-countries" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Países</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body-countries">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let pais of filterPossiblePaises">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="pais.checked" type="checkbox" class="custom-control-input" [id]="'countryModal'+pais.id"  (change)="onPaisSelectedForFiltering(pais.id, $event)" checked="checked">
+                  <input *ngIf="!pais.checked" type="checkbox" class="custom-control-input" [id]="'countryModal'+pais.id"  (change)="onPaisSelectedForFiltering(pais.id, $event)">
+                  <label *ngIf="pais.nombre!=null" class="custom-control-label" [for]="'countryModal'+pais.id">{{pais.nombre}}</label>
+                  <label *ngIf="pais.nombre==null" class="custom-control-label" [for]="'countryModal'+pais.id">Desconocido</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-instituciones" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Intituciones destino</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let institucion of filterPossibleInstitucionesDest">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="institucion.checked" type="checkbox" class="custom-control-input"
+                         [id]="'modalIntituciones' + institucion.id" checked="checked"
+                         (change)="onInstitucionDestinoSelectedForFiltering(institucion.id, $event)">
+                  <input *ngIf="!institucion.checked" type="checkbox" class="custom-control-input"
+                         [id]="'modalIntituciones' + institucion.id"
+                         (change)="onInstitucionDestinoSelectedForFiltering(institucion.id, $event)">
+                  <label *ngIf="institucion.nombre!=null" class="custom-control-label" [for]="'modalIntituciones' + institucion.id">{{institucion.nombre}}</label>
+                  <label *ngIf="institucion.nombre==null" class="custom-control-label" [for]="'modalIntituciones' + institucion.id">Desconocido</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-colegios" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Colegios</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let colegio of filterPossibleColegios">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="colegio.checked" type="checkbox" class="custom-control-input" [id]="'modalColegios'+colegio.id" (change)="onColegioSelectedForFiltering(colegio.id, $event)" checked="checked">
+                  <input *ngIf="!colegio.checked" type="checkbox" class="custom-control-input" [id]="'modalColegios'+colegio.id" (change)="onColegioSelectedForFiltering(colegio.id, $event)">
+                  <label class="custom-control-label" [for]="'modalColegios'+colegio.id">{{colegio.nombre}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-campus" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Campus</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let campus of filterPossibleCampus">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="campus.checked" type="checkbox" class="custom-control-input" [id]="'modalCampus' + campus.id" (change)="onCampusSelectedForFiltering(campus.id, $event)" checked="checked">
+                  <input *ngIf="!campus.checked" type="checkbox" class="custom-control-input" [id]="'modalCampus' + campus.id" (change)="onCampusSelectedForFiltering(campus.id, $event)">
+                  <label class="custom-control-label" [for]="'modalCampus' + campus.id">{{campus.nombre}}</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade display-none" id="modal-researchers" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Investigadores</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body-researchers">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-6" *ngFor="let investigador of filterPossibleInvestigadoresOrig">
+                <div class="custom-control custom-checkbox">
+                  <input *ngIf="investigador.checked" type="checkbox" class="custom-control-input"
+                         [id]="'researcherModal'+investigador.id" checked="checked"
+                         (change)="onInvestigadorOrigenSelectedForFiltering(investigador.id, $event)">
+                  <input *ngIf="!investigador.checked" type="checkbox" class="custom-control-input"
+                         [id]="'researcherModal'+investigador.id"
+                         (change)="onInvestigadorOrigenSelectedForFiltering(investigador.id, $event)">
+                  <label class="custom-control-label" [for]="'researcherModal'+investigador.id">
+                    {{investigador.nombre}}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade display-none" id="modal-excel" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Armado de Excel</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <h3>Seleccione un desglose origen de la información</h3>
+            <div class="row demo" (change)="onExcelOrigenSelectionChange($event)">
+              <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" value="instituciones" id="defaultUncheckedRadio" name="defaultExampleRadios" checked="">
+                <label class="custom-control-label" for="defaultUncheckedRadio">Por institución</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" value="investigadores" id="defaultCheckedRadio" name="defaultExampleRadios">
+                <label class="custom-control-label" for="defaultCheckedRadio">Por investigador</label>
+              </div>
+              <div *ngIf="filterPossibleColegios.length > 0" class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" value="colegios" id="defaultUncheckedRadio2" name="defaultExampleRadios">
+                <label class="custom-control-label" for="defaultUncheckedRadio2">Por colegio</label>
+              </div>
+              <div *ngIf="filterPossibleCampus.length > 0" class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" value="campus" id="defaultUncheckedRadio4" name="defaultExampleRadios">
+                <label class="custom-control-label" for="defaultUncheckedRadio4">Por campus</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" value="lineas" id="defaultUncheckedRadio3" name="defaultExampleRadios">
+                <label class="custom-control-label" for="defaultUncheckedRadio3">Por línea de investigación</label>
+              </div>
+            </div>
+            <hr>
+            <h3>Seleccione los desgloses destino (opcional)</h3>
+            <div class="row demo" (change)="onExcelDestinoSelectionChange($event)">
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" value="paises" id="defaultInline1">
+                <label class="custom-control-label" for="defaultInline1">Por país (1ra prioridad)</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" value="instituciones" id="defaultInline2">
+                <label class="custom-control-label" for="defaultInline2">Por institución (2da prioridad)</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" value="investigadores" id="defaultInline3">
+                <label class="custom-control-label" for="defaultInline3">Por investigador (3ra prioridad)</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" value="anios" id="defaultInline4">
+                <label class="custom-control-label" for="defaultInline4">Por año (4ta prioridad)</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" value="productos" id="defaultInline5">
+                <label class="custom-control-label" for="defaultInline5">Por producto (5ta prioridad)</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button (click)="exportAsExcel()" type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">Exportar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--main area of colab center -->
+  <div *ngIf="shouldshowMain" class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-xs-12">
+      <div id="panel-2" class="panel">
+        <div class="panel-hdr">
+          <h2>
+            Centro de colaboración<span class="fw-300"><i>Scintra</i></span>
+          </h2>
+          <div class="panel-toolbar">
+            <!--<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>-->
+            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Pantalla completa"></button>
+            <!--<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>-->
+          </div>
+        </div>
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="demo-v-spacing">
+              <ul class="nav nav-tabs nav-justified" role="tablist">
+                <li class="nav-item active">
+                  <a class="nav-link active" data-toggle="tab" href="#tab_instituciones" role="tab">
+                    <i class="fal fa-university text-success"></i>
+                    <span class="hidden-sm-down ml-1">Por institución</span>
+                  </a>
+                </li>
+                <li *ngIf="filterPossibleColegios.length > 0" class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#tab_colegios" role="tab" (click)="showColegio()">
+                    <i class="fal fa-school text-primary"></i>
+                    <span class="hidden-sm-down ml-1">Por colegio</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#tab_lineas" role="tab" (click)="showLinea()">
+                    <i class="fal fa-industry text-danger"></i>
+                    <span class="hidden-sm-down ml-1">Por línea de investigación</span>
+                  </a>
+                </li>
+                <li *ngIf="filterPossibleCampus.length > 0" class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#tab_campus" role="tab" (click)="showCampus()">
+                    <i class="fal fa-building text-primary"></i>
+                    <span class="hidden-sm-down ml-1">Por campus</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#tab_investigadores" role="tab" (click)="showInvestigador()">
+                    <i class="fal fa-user text-primary"></i>
+                    <span class="hidden-sm-down ml-1">Por investigador</span>
+                  </a>
+                </li>
+              </ul>
+              <div class="tab-content p-3">
+                <div class="tab-pane fade show active" id="tab_instituciones" role="tabpanel">
+                  <app-colab-center-origen-institucion-coord
+                    [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+                    [titulo]="'Instituciones'"
+                    [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+                    [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+                    [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+                    [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+                    [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+                    [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+                    [aniosDestino]="newObjectReference(aniosDestino)"
+                    [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+                    [searchTermProductosDestino]="searchTermProductosDestino"
+                    [soloDestinoNacional]="soloDestinoNacional"
+                    [soloDestinoInternacional]="soloDestinoInternacional"
+                    [soloDestinoInstitucional]="soloDestinoInstitucional"
+                    [filterSearchTerm]="filterSearchTerm"
+                  >
+
+                  </app-colab-center-origen-institucion-coord>
+                </div>
+                <div *ngIf="shouldshowColegio" class="tab-pane fade" id="tab_colegios" role="tabpanel">
+                  <app-colab-center-origen-colegio-coord
+                    [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+                    [titulo]="'Colegios'"
+                    [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+                    [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+                    [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+                    [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+                    [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+                    [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+                    [aniosDestino]="newObjectReference(aniosDestino)"
+                    [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+                    [searchTermProductosDestino]="searchTermProductosDestino"
+                    [soloDestinoNacional]="soloDestinoNacional"
+                    [soloDestinoInternacional]="soloDestinoInternacional"
+                    [soloDestinoInstitucional]="soloDestinoInstitucional"
+                    [filterSearchTerm]="filterSearchTerm"
+                  >
+
+                  </app-colab-center-origen-colegio-coord>
+                </div>
+                <div *ngIf="shouldshowCampus" class="tab-pane fade" id="tab_campus" role="tabpanel">
+                  <app-colab-center-origen-campus-coord
+                    [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+                    [titulo]="'Campus'"
+                    [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+                    [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+                    [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+                    [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+                    [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+                    [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+                    [aniosDestino]="newObjectReference(aniosDestino)"
+                    [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+                    [searchTermProductosDestino]="searchTermProductosDestino"
+                    [soloDestinoNacional]="soloDestinoNacional"
+                    [soloDestinoInternacional]="soloDestinoInternacional"
+                    [soloDestinoInstitucional]="soloDestinoInstitucional"
+                    [filterSearchTerm]="filterSearchTerm"
+                  >
+
+                  </app-colab-center-origen-campus-coord>
+                </div>
+                <div *ngIf="shouldshowLinea" class="tab-pane fade" id="tab_lineas" role="tabpanel">
+                  <app-colab-center-origen-linea-coord
+                    [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+                    [titulo]="'Líneas de investigación'"
+                    [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+                    [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+                    [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+                    [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+                    [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+                    [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+                    [aniosDestino]="newObjectReference(aniosDestino)"
+                    [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+                    [searchTermProductosDestino]="searchTermProductosDestino"
+                    [soloDestinoNacional]="soloDestinoNacional"
+                    [soloDestinoInternacional]="soloDestinoInternacional"
+                    [soloDestinoInstitucional]="soloDestinoInstitucional"
+                    [filterSearchTerm]="filterSearchTerm"
+                  >
+                  </app-colab-center-origen-linea-coord>
+                </div>
+                <div *ngIf="shouldshowInvestigador" class="tab-pane fade" id="tab_investigadores" role="tabpanel">
+                  <app-colab-center-origen-investigador-coord
+                    [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+                    [titulo]="'Investigadores'"
+                    [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+                    [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+                    [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+                    [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+                    [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+                    [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+                    [aniosDestino]="newObjectReference(aniosDestino)"
+                    [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+                    [searchTermProductosDestino]="searchTermProductosDestino"
+                    [soloDestinoNacional]="soloDestinoNacional"
+                    [soloDestinoInternacional]="soloDestinoInternacional"
+                    [soloDestinoInstitucional]="soloDestinoInstitucional"
+                    [filterSearchTerm]="filterSearchTerm"
+                  >
+                  </app-colab-center-origen-investigador-coord>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>

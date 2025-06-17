@@ -1,0 +1,255 @@
+<div class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-typewriter mr-2'></i>Catálogo de tipos de productos <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-2">
+          <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button" (click)="filtrarListaColegios()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroProducto($event)"
+              [iconFilter]="'fal fa-edit'"
+              [placeholder]="'Solo con producto Scintra'"
+              [numberOption]="1"
+              [update]="update1">
+            </app-filtro-checkbox>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroCita($event)"
+              [iconFilter]="'fal fa-book'"
+              [placeholder]="'Solo con cita'"
+              [numberOption]="2"
+              [update]="update2">
+            </app-filtro-checkbox>
+          </div>
+        </div>
+
+        <!--
+        <div class="row mb-2">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-avanzado
+              (backFilter)="recuperarSeleccionFiltro($event)"
+              [optionStringSize]="30"
+              [dataLoadFunction]="filtroDataLoad"
+              [pageSize]="25"
+              [iconFilter]="'fal fa-edit'">
+            </app-filtro-avanzado>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <select class="select2 form-control w-100" appSelect2>
+              <option value="0">
+                <span class="sr-only">Selecciona...</span>
+              </option>
+              <ng-container *ngFor="let ltp of listaTiposProducto">
+                <option value="{{ltp.tipo}}">{{ltp.tipo}}</option>
+              </ng-container>
+              <ng-container>
+                <option value="zzz" style="background-color:#0a19a3;">
+                  <span class="sr-only"><b>Cargando...</b></span>
+                </option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+        -->
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 80%;" aria-sort="ascending">Tipo</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let ltp of listaTiposProducto | paginate : {
+                          id: 'tiposProductoPagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: listaTiposProducto.length
+            };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{ltp.tipo}}</td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal" data-target="#consultar-modal" type="button" (click)="consultar(ltp)"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal" data-target="#editar-modal" type="button" (click)="abrirModalActualizar(ltp)"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button" (click)="eliminar(ltp)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{listaTiposProducto.length}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="tiposProductoPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="pageNumber = $event">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles del tipo de producto
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-university width-1"></i>Tipo:</label>
+          <label class="col-8">{{tipoProductoTipo}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-text-width width-1"></i>Descripción:</label>
+          <label class="col-8">{{tipoProductoDescripcion}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-text-height width-1"></i>Id openaire:</label>
+          <label class="col-8">{{tipoProductoOpenaire}}</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos del tipo de producto
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Tipo:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un tipo..." [(ngModel)]="tipoProductoTipo">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Descripción:</label>
+          <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa una descripción..." [(ngModel)]="tipoProductoDescripcion"></textarea>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Id openaire:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un id openaire..."
+                 [(ngModel)]="tipoProductoOpenaire" [ngClass]="(tipoProductoOpenaire.length>4)?'is-invalid':''">
+          <ng-container *ngIf="tipoProductoOpenaire.length>4">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El id openaire no debe de ser mayor a 4 digitos</div>
+          </ng-container>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal" (click)="crear()"
+                  [disabled]="tipoProductoTipo=='' || !tipoProductoOpenaire || tipoProductoOpenaire.length>4">
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos del tipo de producto
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-body">
+          <div class="row m-2">
+            <label class="col-3 mt-1">Tipo:<b style="color:red">*</b></label>
+            <input type="text" class="form-control col-8" placeholder="Ingresa un tipo..." [(ngModel)]="tipoProductoTipo">
+          </div>
+          <div class="row m-2">
+            <label class="col-3 mt-1">Descripción:</label>
+            <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa una descripción..." [(ngModel)]="tipoProductoDescripcion"></textarea>
+          </div>
+          <div class="row m-2">
+            <label class="col-3 mt-1">Id openaire:<b style="color:red">*</b></label>
+            <input type="text" class="form-control col-8" placeholder="Ingresa un id openaire..."
+                   [(ngModel)]="tipoProductoOpenaire" [ngClass]="(tipoProductoOpenaire.length>4)?'is-invalid':''">
+            <ng-container *ngIf="tipoProductoOpenaire.length>4">
+              <label class="col-3 mt-1"></label>
+              <div class="invalid-feedback col-8">El id openaire no debe de ser mayor a 4 digitos</div>
+            </ng-container></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizar()" [disabled]="tipoProductoTipo=='' || !tipoProductoOpenaire">
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

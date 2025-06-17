@@ -1,0 +1,66 @@
+<div id="elemList" *ngIf="showElemList">
+  <h1>Campus</h1>
+  <div class="row">
+    <div class="col-lg-4" *ngFor="let campus of internalColabsData | paginate : {
+                  id: 'colabOrigenCampus',
+                  itemsPerPage: 6,
+                  currentPage: currentPage,
+                  totalItems: internalColabsData.length
+                }" (click)="onElementClicked(campus.id, campus.nombre)">
+      <div id="panel-8" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="campus.nombre">
+                {{campus.nombre}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="card-body p-0 collapse show">
+              <div class="p-3">
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-file"></i><strong class="poppins">&nbsp;Productos en colaboración: </strong>{{campus.desglose[0].prods_en_colab}}
+                </div>
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-users"></i><strong class="poppins">&nbsp;Coautores: </strong>{{campus.desglose[0].colabs_individuales}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pagination-controls
+    previousLabel="Anterior"
+    nextLabel="Siguiente"
+    [responsive]="true"
+    [id]="'colabOrigenCampus'"
+    (pageChange)="handlePageChange($event)"
+    class="paginationStyle"
+  ></pagination-controls>
+</div>
+<app-colab-center-destino-seleccion-coord
+  (backEvent)="onBackEventReceived()"
+  [titulo]="this.titulo"
+  [tipoElementoOrigen]="'campus'"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsCampusOrigen]="[this.selectedElemId]"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+  *ngIf="!showElemList">
+</app-colab-center-destino-seleccion-coord>
+

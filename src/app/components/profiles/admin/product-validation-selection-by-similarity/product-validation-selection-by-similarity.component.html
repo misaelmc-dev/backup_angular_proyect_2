@@ -1,0 +1,56 @@
+<div>
+<!--<div class="col-lg-6 col-xl-9 order-lg-1 order-xl-1">-->
+  <!-- profile summary -->
+  <div class="col-12">
+    <div class="progress" *ngIf="pageLoading">
+      <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <div *ngIf="!pageLoading">
+      Scintra ha detectado los siguientes productos que podrían validarse conjuntamente, revíselos con cuidado y marque los que desee validar
+    </div>
+    <div *ngIf="pageLoading">
+      Buscando posibles productos para validación conjunta, por favor espere ...
+    </div>
+    <div *ngIf="!pageLoading">
+      <button type="button" class="btn  btn-sm btn-success mr-1 shadow-0 waves-effect waves-themed" (click)="validateProducts()">
+        Validar selección &nbsp;<i class="fas fa-check-double"></i>
+      </button>
+    </div>
+    <hr>
+    <div class="panel" *ngFor="let product of products">
+      <div class="panel-hdr">
+        <h2>
+          <a [routerLink]="'/admin/validation-form/' + product.id">{{ product.titulo }}</a>
+        </h2>
+        <div class="panel-toolbar">
+
+          <!--<span class="badge mr-2" style="background-color: #6261ab;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.doaj">Doaj</span>
+          <span class="badge mr-2" style="background-color: #0e9187;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.jcr">JCR</span>
+          <span class="badge mr-2" style="background-color: #e69627;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scopus">Scopus</span>
+          <span class="badge mr-2" style="background-color: #154896;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.conacyt">Conacyt</span>
+          <span class="badge mr-2" style="background-color: #86011f;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scielo">Scielo</span>-->
+          <span class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" [id]="product.id" [checked]="product.id == mainProductId" (change)="onValidationCheckBoxChanged($event.target, product.id)">
+            <label class="custom-control-label" [for]="product.id">Validar</label>
+          </span>
+
+        </div>
+      </div>
+      <div class="panel-container show">
+        <!-- panel footer with utility classes -->
+        <div class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted">
+          <h5 class="m-0">
+            <span *ngIf="product.nombreTipo" class="badge badge-primary fw-400 l-h-n">
+              {{ product.nombreTipo }}
+            </span>
+          </h5>
+          <br>
+          <p *ngIf="product.anio">{{ product.anio }} <span *ngIf="product.fuente">* Fuente: {{ getFuenteName(product.fuente) }}</span></p>
+          <p *ngIf="product.coautores.join() || product.nombreInvest">Autores: {{ product.nombreInvest + ', ' + getCoautoresNames(product.coautores).join(', ') }}</p>
+          <p *ngIf="product.DOI"><span class="font-weight-bold">DOI:&nbsp;</span><a target="_blank" [href]="'https://www.doi.org/'+product.DOI">{{ product.DOI }}</a></p>
+          <!--<p *ngIf="product.DOI">DOI: {{ product.DOI }}</p>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

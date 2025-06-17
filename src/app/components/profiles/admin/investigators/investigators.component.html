@@ -1,0 +1,932 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-school mr-2'></i>Catálogo de investigadores <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="filtroSearch">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button"
+                          (click)="filtrarInvestigadores()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button"
+                    (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroInstitucionSc($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadInstitucionSc"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-school'"
+            [textoSinFiltroSeleccionado]="'Filtrar por institución Scintra...'"
+            [update]="update1">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroInstitucionRor($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadInstitucionRor"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-school'"
+            [textoSinFiltroSeleccionado]="'Filtrar por institucion ROR...'"
+            [update]="update2">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroPaises($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadPaises"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-flag'"
+            [textoSinFiltroSeleccionado]="'Filtrar por pais...'"
+            [update]="update3">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroCampus($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadCampus"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-university'"
+            [textoSinFiltroSeleccionado]="'Filtrar por campus...'"
+            [update]="update4">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroColegios($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadColegios"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-city'"
+            [textoSinFiltroSeleccionado]="'Filtrar por colegio...'"
+            [update]="update5">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroCentros($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadCentros"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-fireplace'"
+            [textoSinFiltroSeleccionado]="'Filtrar por centro de investigación...'"
+            [update]="update6">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-3">
+          <app-filtro-checkbox
+            (backFilter)="cambiarFiltroProducto($event)"
+            [iconFilter]="'fal fa-edit'"
+            [placeholder]="'Solo con producto Scintra'"
+            [numberOption]="1"
+            [update]="update7">
+          </app-filtro-checkbox>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-3">
+          <app-filtro-checkbox
+            (backFilter)="cambiarFiltroCita($event)"
+            [iconFilter]="'fal fa-book'"
+            [placeholder]="'Solo con citas'"
+            [numberOption]="2"
+            [update]="update8">
+          </app-filtro-checkbox>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-3"></div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 25%;" aria-sort="ascending">Nombre</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 25%;">Correo</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 30%;">Institución</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let li of listaInvestigadores | paginate : {
+                          id: 'investigadoresPagination',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">
+                  {{(li.nomb_accident.length!=0)?li.nomb_accident[0].nombre_accidente:""}}
+                </td>
+                <td class="sorting_1 dtr-control">{{li.correo}}</td>
+                <td class="sorting_1 dtr-control">
+                  <ng-container *ngFor="let lis of listaInstitucionesSc">
+                    <ng-container *ngIf="li.id_institucion==lis.id">{{lis.razon_social}}</ng-container>
+                  </ng-container>
+                </td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#consultar-modal" type="button" (click)="obtenerInvestigadorVer(li.id)"
+                  ><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#editar-modal" type="button" (click)="obtenerInvestigadorActualizar(li.id)">
+                    <i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button"
+                          (click)="eliminar(li)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="investigadoresPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Detalles del investigador</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="row">
+              <div class="col-auto">
+                <div class="nav flex-column nav-pills" id="pills-tab-consult" role="tablist" aria-orientation="vertical">
+                  <a class="nav-link active" id="tab-perfil-consult" data-toggle="pill" href="#consult-tab-perfil" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                    <i class="fal fa-user"></i><span class="hidden-sm-down ml-1"> Datos generales</span>
+                  </a>
+                  <a class="nav-link" id="tab-campus-consult" data-toggle="pill" href="#consult-tab-campus" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                    <i class="fal fa-university"></i><span class="hidden-sm-down ml-1"> Campus</span>
+                  </a>
+                  <a class="nav-link" id="tab-centros-consult" data-toggle="pill" href="#consult-tab-centros" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                    <i class="fal fa-fireplace"></i><span class="hidden-sm-down ml-1"> Centros de investigación</span>
+                  </a>
+                  <a class="nav-link" id="tab-colegios-consult" data-toggle="pill" href="#consult-tab-colegios" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-school"></i><span class="hidden-sm-down ml-1"> Colegios</span>
+                  </a>
+                  <a class="nav-link" id="tab-redes-consult" data-toggle="pill" href="#consult-tab-redes" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-share-alt"></i><span class="hidden-sm-down ml-1"> Redes sociales</span>
+                  </a>
+                  <a class="nav-link" id="tab-lineas-consult" data-toggle="pill" href="#consult-tab-lineas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-analytics"></i><span class="hidden-sm-down ml-1"> Líneas de investigación</span>
+                  </a>
+                  <a class="nav-link" id="tab-areas-consult" data-toggle="pill" href="#consult-tab-areas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-barcode"></i><span class="hidden-sm-down ml-1"> Áreas SNI</span>
+                  </a>
+                  <a class="nav-link" id="tab-niveles-consult" data-toggle="pill" href="#consult-tab-niveles" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-align-left"></i><span class="hidden-sm-down ml-1"> Niveles SNI</span>
+                  </a>
+                  <a class="nav-link" id="tab-scopus-consult" data-toggle="pill" href="#consult-tab-scopus" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                    <i class="fal fa-scroll"></i><span class="hidden-sm-down ml-1"> Scopus IDs</span>
+                  </a>
+                </div>
+              </div>
+              <div class="col">
+                <div class="tab-content" id="v-pills-tabContent">
+                  <div class="tab-pane fade show active" id="consult-tab-perfil" role="tabpanel" aria-labelledby="tab-perfil-consult">
+                    <div class="d-flex flex-column align-items-center justify-content-center p-4">
+                      <img [src]="investImagenRuta"
+                           class="rounded-circle shadow-2 img-thumbnail picture-institution" alt=""
+                           (error)="notFoudImage()">
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-key width-1"></i>ID:</label>
+                      <label class="col-8">{{investId}}</label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-user width-1"></i>Nombre/Accidente(s):</label>
+                      <label class="col-8">
+                        <ng-container *ngFor="let ip of investNombAccident">
+                          <li class="m-0 p-0">{{ip.nombre_accidente}}</li>
+                        </ng-container>
+                      </label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-envelope width-1"></i>Correo:</label>
+                      <label class="col-8">{{investCorreo}}</label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-flag-alt width-1"></i>País:</label>
+                      <label class="col-8">
+                        <ng-container *ngFor="let la of listaPaises">
+                          <ng-container *ngIf="la.ISO_3166_1_num==investIdPais">{{la.nombre}}</ng-container>
+                        </ng-container>
+                      </label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-school width-1"></i>Institución:</label>
+                      <label class="col-8">
+                        <ng-container *ngFor="let lis of listaInstitucionesSc">
+                          <ng-container *ngIf="investIdInstitucion==lis.id">
+                            {{lis.razon_social}}
+                          </ng-container>
+                        </ng-container>
+                      </label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-address-book width-1"></i>Cargo:</label>
+                      <label class="col-8">{{investCargo}}</label>
+                    </div>
+                    <div class="row mb-2">
+                      <label class="col-4 pr-2"><i class="fa fa-address-book width-1"></i>OrcID:</label>
+                      <label class="col-8">{{investOrcid}}</label>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-campus" role="tabpanel" aria-labelledby="tab-campus-consult">
+                    <app-investigator-campus *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-campus>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-centros" role="tabpanel" aria-labelledby="tab-centros-consult">
+                    <app-investigator-centers *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-centers>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-colegios" role="tabpanel" aria-labelledby="tab-colegios-consult">
+                    <app-investigator-schools *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-schools>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-redes" role="tabpanel" aria-labelledby="tab-redes-consult">
+                    <app-investigator-redes *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-redes>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-lineas" role="tabpanel" aria-labelledby="tab-lineas-consult">
+                    <app-investigator-lines *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-lines>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-areas" role="tabpanel" aria-labelledby="tab-areas-consult">
+                    <app-investigator-sni-areas *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-sni-areas>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-niveles" role="tabpanel" aria-labelledby="tab-niveles-consult">
+                    <app-investigator-sni-levels *ngIf="tipoModal=='ver'" [id]="investId" [modal]="tipoModal" [salvar]="0"></app-investigator-sni-levels>
+                  </div>
+                  <div class="tab-pane fade" id="consult-tab-scopus" role="tabpanel" aria-labelledby="tab-scopus-consult">
+                    <div class="row mb-2">
+                      <h5 class="col-12 pr-2">
+                        <i class="fa fa-scroll width-1"></i>IDs scopus asociados al investigador
+                      </h5>
+                    </div>
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <ng-container *ngFor="let s of investScopusIds">
+                          <li class="m-0 p-0">{{s.id}}</li>
+                        </ng-container>
+                        <ng-container *ngIf="investScopusIds.length==0">
+                          <label class="ml-3">No hay IDs scopus asociadas a el investigador</label>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos del investigador
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-auto">
+            <div class="nav flex-column nav-pills" id="pills-tab-create" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active" id="tab-perfil-create" data-toggle="pill" href="#create-tab-perfil" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                <i class="fal fa-user"></i><span class="hidden-sm-down ml-1"> Datos generales</span>
+              </a>
+              <a class="nav-link" id="tab-campus-create" data-toggle="pill" href="#create-tab-campus" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-university"></i><span class="hidden-sm-down ml-1"> Campus</span>
+              </a>
+              <a class="nav-link" id="tab-centros-create" data-toggle="pill" href="#create-tab-centros" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                <i class="fal fa-fireplace"></i><span class="hidden-sm-down ml-1"> Centros de investigación</span>
+              </a>
+              <a class="nav-link" id="tab-colegios-create" data-toggle="pill" href="#create-tab-colegios" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-school"></i><span class="hidden-sm-down ml-1"> Colegios</span>
+              </a>
+              <a class="nav-link" id="tab-redes-create" data-toggle="pill" href="#create-tab-redes" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-share-alt"></i><span class="hidden-sm-down ml-1"> Redes sociales</span>
+              </a>
+              <a class="nav-link" id="tab-lineas-create" data-toggle="pill" href="#create-tab-lineas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-analytics"></i><span class="hidden-sm-down ml-1"> Líneas de investigación</span>
+              </a>
+              <a class="nav-link" id="tab-areas-create" data-toggle="pill" href="#create-tab-areas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-barcode"></i><span class="hidden-sm-down ml-1"> Áreas SNI</span>
+              </a>
+              <a class="nav-link" id="tab-niveles-create" data-toggle="pill" href="#create-tab-niveles" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-align-left"></i><span class="hidden-sm-down ml-1"> Niveles SNI</span>
+              </a>
+              <a class="nav-link" id="tab-scopus-create" data-toggle="pill" href="#create-tab-scopus" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-scroll"></i><span class="hidden-sm-down ml-1"> Scopus IDs</span>
+              </a>
+            </div>
+          </div>
+          <div class="col">
+            <div class="tab-content" id="content-create">
+              <div class="tab-pane fade show active" id="create-tab-perfil" role="tabpanel" aria-labelledby="tab-perfil">
+                <div class="row mt-2">
+                  <div class="col-4">
+                    <label class="form-label mt-1" style="margin-right: -10px !important;">
+                      <i class="fa fa-user width-1"></i>Nombre/Accidente(s):<b style="color:red">*</b>
+                    </label>
+                  </div>
+                  <div class="col-8">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Ingresa un nombre/accidente(s)..."
+                             [(ngModel)]="nombAccident">
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" (click)="agregarNombre()" [disabled]="nombAccident==''">
+                          <i class="fa fa-plus"></i> Agregar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <ng-container *ngFor="let ina of investNombAccident; let i = index">
+                    <ng-container *ngIf="ina.acccion!='eliminar'">
+                    <label class="col-4"></label>
+                    <div class="col-8 mt-2">
+                      <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerNombre(ina)">
+                          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                        </button>
+                        <b>{{i+1}}.-</b> {{ina.nombre_accidente}}
+                      </div>
+                    </div>
+                    </ng-container>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-envelope width-1"></i>Correo:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                    <input type="text" class="form-control" placeholder="Ingresa un correo electrónico..."
+                           [(ngModel)]="investCorreo"
+                           (keyup)="validarCorreo()" [ngClass]="(validCorreo!=0)?'is-invalid':''">
+                    <ng-container *ngIf="validCorreo==1">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El campo correo es obligatorio</div>
+                    </ng-container>
+                    <ng-container *ngIf="validCorreo==2">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El formato del correo es inválido</div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-flag width-1"></i>País:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="investIdPais">
+                      <option value="0">Selecciona un país</option>
+                      <ng-container *ngFor="let lpt of listaPaisesTotal">
+                        <option value="{{lpt.ISO_3166_1_num}}">{{lpt.nombre}}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-school width-1"></i>Institución:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                  <select class="custom-select" [(ngModel)]="investIdInstitucion">
+                    <option value="0">Selecciona una institución</option>
+                    <ng-container *ngFor="let list of listaInstitucionesScTotal">
+                      <option value="{{list.id}}">{{list.razon_social}}</option>
+                    </ng-container>
+                  </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1 ml-0">
+                    <i class="fa fa-book-user width-1"></i>OrcID:
+                  </label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un OrcID..." [(ngModel)]="investOrcid"
+                           [ngClass]="(validOrcid==1)?'is-invalid':''" (keyup)="validarOrcid()">
+                    <ng-container *ngIf="validOrcid==1">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El formato del orcid es incorrecto</div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-book-user width-1"></i>Cargo:
+                  </label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un cargo..." [(ngModel)]="investCargo">
+                  </div>
+                </div>
+                <div class="row mt-2 mb-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-image width-1"></i>Foto de la institución:
+                  </label>
+                  <div class="col-8">
+                    <div class="input-group flex-nowrap">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input"
+                               accept="image/jpg,image/png,image/jpeg"
+                               (change)="extractFileFromEvent1($event)"
+                               [(ngModel)]="archivoVacio"
+                               id="validacionLogoInput1">
+                        <label class="custom-file-label">
+                          <ng-container *ngIf="investImagenName!=''">
+                            {{investImagenName}}
+                          </ng-container>
+                          <ng-container *ngIf="investImagenName==''">
+                            Selecciona imagen...
+                          </ng-container>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 invalid-feedback text-center" id="validacionLogo1" style="display: none;">
+                    &nbsp;&nbsp;Archivo no tiene las dimenciones correctas
+                  </div>
+                </div>
+                <div class="alert alert-secondary d-flex justify-content-center align-content-center" role="alert">
+                  <img [src]="investImagenRuta" class="picture-institution-form" alt="Imagen del investigador">
+                </div>
+                <div class="alert bg-primary-400 text-white fade show mt-3 mb-0" role="alert">
+                  <div class="d-flex align-items-center">
+                    <div class="alert-icon">
+                      <i class="fal fa-info-circle"></i>
+                    </div>
+                    <div class="flex-1">
+                      Nota: el tamaño sugerido de la imagen es de 800 de alto por 800 de ancho, o ajustar las proporciones de la imagen en 1 de alto por 1 de ancho y sus múltiplos<br> (ejemplo. 100x100, 800x800).
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="create-tab-campus" role="tabpanel" aria-labelledby="tab-campus-create">
+                <app-investigator-campus *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal"
+                                         [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                         (backNotList)="desabilitarGuardadoCampus($event)"></app-investigator-campus>
+              </div>
+              <div class="tab-pane fade" id="create-tab-centros" role="tabpanel" aria-labelledby="tab-centros-create">
+                <app-investigator-centers *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal"
+                                          [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                          (backNotList)="desabilitarGuardadoCentros($event)"></app-investigator-centers>
+              </div>
+              <div class="tab-pane fade" id="create-tab-colegios" role="tabpanel" aria-labelledby="tab-colegios-create">
+                <app-investigator-schools *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal"
+                                          [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                          (backNotList)="desabilitarGuardadoColegios($event)"></app-investigator-schools>
+              </div>
+              <div class="tab-pane fade" id="create-tab-redes" role="tabpanel" aria-labelledby="tab-redes-create">
+                <app-investigator-redes *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-redes>
+              </div>
+              <div class="tab-pane fade" id="create-tab-lineas" role="tabpanel" aria-labelledby="tab-lineas-create">
+                <app-investigator-lines *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal"
+                                        [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                        (backNotList)="desabilitarGuardadoLineas($event)"></app-investigator-lines>
+              </div>
+              <div class="tab-pane fade" id="create-tab-areas" role="tabpanel" aria-labelledby="tab-areas-create">
+                <app-investigator-sni-areas *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-sni-areas>
+              </div>
+              <div class="tab-pane fade" id="create-tab-niveles" role="tabpanel" aria-labelledby="tab-niveles-create">
+                <app-investigator-sni-levels *ngIf="tipoModal=='crear'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-sni-levels>
+              </div>
+              <div class="tab-pane fade" id="create-tab-scopus" role="tabpanel" aria-labelledby="tab-scopus-create">
+                <div class="row m-2">
+                  <label class="form-label col-3 mt-1 mb-0 p-0">
+                    <i class="fa fa-scroll width-1"></i>Scopus id:
+                  </label>
+                  <input type="number" class="form-control col-5" placeholder="Ingresa un id scopus..."
+                         [(ngModel)]="idScopus" [ngClass]="(validScopus==1)?'is-invalid':''"
+                         (keyup)="validarScopus()">
+                  <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+                    <button class="btn btn-primary" (click)="agregarScopus()" [disabled]="idScopus=='' || validScopus==1">
+                      <i class="fa fa-plus"></i> Agregar
+                    </button>
+                  </div>
+                  <label class="col-1"></label>
+                  <ng-container *ngIf="validScopus==1">
+                    <label class="col-3 mt-1"></label>
+                    <div class="invalid-feedback col-8">El id scopus debe tener 11 digitos.</div>
+                  </ng-container>
+                </div>
+                <div class="row m-2">
+                  <ng-container *ngFor="let ina of investScopusIds">
+                    <ng-container *ngIf="ina.acccion!='eliminar'">
+                      <label class="form-label col-3 mt-1"></label>
+                      <div class="alert alert-primary alert-dismissible fade show col-8 mt-2" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerScopus(ina)">
+                          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                        </button>
+                        <ng-container *ngIf="ina.accion=='nuevo'">
+                          {{ina.id_scopus}}
+                        </ng-container>
+                        <ng-container *ngIf="ina.accion!='nuevo'">
+                          {{ina.id}}
+                        </ng-container>
+                      </div>
+                      <label class="col-1"></label>
+                    </ng-container>
+                  </ng-container>
+                </div>
+                <div class="row m-2">
+                  <div class="alert bg-primary-400 text-white fade show col-11" role="alert">
+                    <div class="d-flex align-items-center">
+                      <div class="alert-icon">
+                        <i class="fal fa-info-circle"></i>
+                      </div>
+                      <div class="flex-1">
+                        Nota: El ID Scopus es un identificador único de 11 dígitos que la base datos Scopus vincula a un autor y no se puede ingresar nuevamente a otro investigador.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="crear()"
+                  [disabled]="investCorreo=='' ||
+                              investIdInstitucion==0 ||
+                              investIdPais==0 ||
+                              validCorreo!=0 ||
+                              investNombAccident.length==0 ||
+                              guardadoCampus ||
+                              guardadoCentros ||
+                              guardadoColegios ||
+                              guardadoLineas">
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Editar los datos del investigador
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-auto">
+            <div class="nav flex-column nav-pills" id="pills-tab-update" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active" id="tab-perfil-update" data-toggle="pill" href="#update-tab-perfil" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                <i class="fal fa-user"></i><span class="hidden-sm-down ml-1"> Datos generales</span>
+              </a>
+              <a class="nav-link" id="tab-campus-update" data-toggle="pill" href="#update-tab-campus" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-university"></i><span class="hidden-sm-down ml-1"> Campus</span>
+              </a>
+              <a class="nav-link" id="tab-centros-update" data-toggle="pill" href="#update-tab-centros" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                <i class="fal fa-analytics"></i><span class="hidden-sm-down ml-1"> Centros de investigación</span>
+              </a>
+              <a class="nav-link" id="tab-colegios-update" data-toggle="pill" href="#update-tab-colegios" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-school"></i><span class="hidden-sm-down ml-1"> Colegios</span>
+              </a>
+              <a class="nav-link" id="tab-redes-update" data-toggle="pill" href="#update-tab-redes" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-share-alt"></i><span class="hidden-sm-down ml-1"> Redes sociales</span>
+              </a>
+              <a class="nav-link" id="tab-lineas-update" data-toggle="pill" href="#update-tab-lineas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-analytics"></i><span class="hidden-sm-down ml-1"> Líneas de investigación</span>
+              </a>
+              <a class="nav-link" id="tab-areas-update" data-toggle="pill" href="#update-tab-areas" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-barcode"></i><span class="hidden-sm-down ml-1"> Áreas SNI</span>
+              </a>
+              <a class="nav-link" id="tab-niveles-update" data-toggle="pill" href="#update-tab-niveles" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-align-left"></i><span class="hidden-sm-down ml-1"> Niveles SNI</span>
+              </a>
+              <a class="nav-link" id="tab-scopus-update" data-toggle="pill" href="#update-tab-scopus" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-scroll"></i><span class="hidden-sm-down ml-1"> Scopus IDs</span>
+              </a>
+            </div>
+          </div>
+          <div class="col">
+            <div class="tab-content" id="content-update">
+              <div class="tab-pane fade show active" id="update-tab-perfil" role="tabpanel" aria-labelledby="tab-perfil">
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-envelope width-1"></i>ID:
+                  </label>
+                  <div class="col-8">
+                    <input type="text" class="form-control" [(ngModel)]="investId" disabled readonly>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-4">
+                    <label class="form-label mt-1" style="margin-right: -10px !important;">
+                      <i class="fa fa-user width-1"></i>Nombre/Accidente(s):<b style="color:red">*</b>
+                    </label>
+                  </div>
+                  <div class="col-8">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Ingresa un nombre/accidente(s)..."
+                             [(ngModel)]="nombAccident">
+                      <div class="input-group-append">
+                        <button class="btn btn-primary" (click)="agregarNombre()" [disabled]="nombAccident==''">
+                          <i class="fa fa-plus"></i> Agregar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <ng-container *ngFor="let ina of investNombAccident; let i = index">
+                    <ng-container *ngIf="ina.acccion!='eliminar'">
+                      <label class="col-4"></label>
+                      <div class="col-8 mt-2">
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerNombre(ina)">
+                            <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                          </button>
+                          <b>{{i+1}}.-</b> {{ina.nombre_accidente}}
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-envelope width-1"></i>Correo:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                    <input type="text" class="form-control" placeholder="Ingresa un correo electrónico..."
+                           [(ngModel)]="investCorreo"
+                           (keyup)="validarCorreo()" [ngClass]="(validCorreo!=0)?'is-invalid':''">
+                    <ng-container *ngIf="validCorreo==1">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El campo correo es obligatorio</div>
+                    </ng-container>
+                    <ng-container *ngIf="validCorreo==2">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El formato del correo es inválido</div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-flag width-1"></i>País:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="investIdPais">
+                      <option value="0">Selecciona un país</option>
+                      <ng-container *ngFor="let lpt of listaPaisesTotal">
+                        <option value="{{lpt.ISO_3166_1_num}}">{{lpt.nombre}}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-school width-1"></i>Institución:<b style="color:red">*</b>
+                  </label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="investIdInstitucion">
+                      <option value="0">Selecciona una institución</option>
+                      <ng-container *ngFor="let list of listaInstitucionesScTotal">
+                        <option value="{{list.id}}">{{list.razon_social}}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1 ml-0">
+                    <i class="fa fa-book-user width-1"></i>OrcID:
+                  </label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un OrcID..." [(ngModel)]="investOrcid"
+                           [ngClass]="(validOrcid==1)?'is-invalid':''" (keyup)="validarOrcid()">
+                    <ng-container *ngIf="validOrcid==1">
+                      <label class="col-4 mt-1"></label>
+                      <div class="invalid-feedback col-8">El formato del orcid es incorrecto</div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-book-user width-1"></i>Cargo:
+                  </label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un cargo..." [(ngModel)]="investCargo">
+                  </div>
+                </div>
+                <div class="row mt-2 mb-2">
+                  <label class="form-label col-4 mt-1">
+                    <i class="fa fa-image width-1"></i>Foto de la institución:
+                  </label>
+                  <div class="col-8">
+                    <div class="input-group flex-nowrap">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input"
+                               accept="image/jpg,image/png,image/jpeg"
+                               (change)="extractFileFromEvent2($event)"
+                               [(ngModel)]="archivoVacio"
+                               id="validacionLogoInput2">
+                        <label class="custom-file-label">
+                          <ng-container *ngIf="investImagenName!=''">
+                            {{investImagenName}}
+                          </ng-container>
+                          <ng-container *ngIf="investImagenName==''">
+                            Selecciona imagen...
+                          </ng-container>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 invalid-feedback text-center" id="validacionLogo2" style="display: none;">
+                    &nbsp;&nbsp;Archivo no tiene las dimenciones correctas
+                  </div>
+                </div>
+                <div class="alert alert-secondary d-flex justify-content-center align-content-center" role="alert">
+                  <img [src]="investImagenRuta" class="picture-institution-form" alt="Imagen del investigador">
+                </div>
+                <div class="alert bg-primary-400 text-white fade show mt-3 mb-0" role="alert">
+                  <div class="d-flex align-items-center">
+                    <div class="alert-icon">
+                      <i class="fal fa-info-circle"></i>
+                    </div>
+                    <div class="flex-1">
+                      Nota: el tamaño sugerido de la imagen es de 800 de alto por 800 de ancho, o ajustar las proporciones de la imagen en 1 de alto por 1 de ancho y sus múltiplos<br> (ejemplo. 100x100, 800x800).
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="update-tab-campus" role="tabpanel" aria-labelledby="tab-campus-update">
+                <app-investigator-campus *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal"
+                                         [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                         (backNotList)="desabilitarGuardadoCampus($event)"></app-investigator-campus>
+              </div>
+              <div class="tab-pane fade" id="update-tab-centros" role="tabpanel" aria-labelledby="tab-centros-update">
+                <app-investigator-centers *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal"
+                                          [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                          (backNotList)="desabilitarGuardadoCentros($event)"></app-investigator-centers>
+                </div>
+                <div class="tab-pane fade" id="update-tab-colegios" role="tabpanel" aria-labelledby="tab-colegios-update">
+                  <app-investigator-schools *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal"
+                                            [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                            (backNotList)="desabilitarGuardadoColegios($event)"></app-investigator-schools>
+              </div>
+              <div class="tab-pane fade" id="update-tab-redes" role="tabpanel" aria-labelledby="tab-redes-update">
+                <app-investigator-redes *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-redes>
+              </div>
+              <div class="tab-pane fade" id="update-tab-lineas" role="tabpanel" aria-labelledby="tab-lineas-update">
+                <app-investigator-lines *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal"
+                                        [salvar]="guardarTodo" [idInstitucion]="investIdInstitucion"
+                                        (backNotList)="desabilitarGuardadoLineas($event)"></app-investigator-lines>
+              </div>
+              <div class="tab-pane fade" id="update-tab-areas" role="tabpanel" aria-labelledby="tab-areas-update">
+                <app-investigator-sni-areas *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-sni-areas>
+              </div>
+              <div class="tab-pane fade" id="update-tab-niveles" role="tabpanel" aria-labelledby="tab-niveles-update">
+                <app-investigator-sni-levels *ngIf="tipoModal=='editar'" [id]="investId" [modal]="tipoModal" [salvar]="guardarTodo"></app-investigator-sni-levels>
+              </div>
+              <div class="tab-pane fade" id="update-tab-scopus" role="tabpanel" aria-labelledby="tab-scopus-update">
+                <div class="row m-2">
+                  <label class="form-label col-3 mt-1 mb-0 p-0">
+                    <i class="fa fa-scroll width-1"></i>Scopus id:
+                  </label>
+                  <input type="number" class="form-control col-5" placeholder="Ingresa un id scopus..."
+                         [(ngModel)]="idScopus" [ngClass]="(validScopus==1)?'is-invalid':''"
+                         (keyup)="validarScopus()">
+                  <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+                    <button class="btn btn-primary" (click)="agregarScopus()" [disabled]="idScopus=='' || validScopus==1">
+                      <i class="fa fa-plus"></i> Agregar
+                    </button>
+                  </div>
+                  <label class="col-1"></label>
+                  <ng-container *ngIf="validScopus==1">
+                    <label class="col-3 mt-1"></label>
+                    <div class="invalid-feedback col-8">El id scopus debe tener 11 digitos.</div>
+                  </ng-container>
+                </div>
+                <div class="row m-2">
+                  <ng-container *ngFor="let ina of investScopusIds">
+                    <ng-container *ngIf="ina.acccion!='eliminar'">
+                      <label class="form-label col-3 mt-1"></label>
+                      <div class="alert alert-primary alert-dismissible fade show col-8 mt-2" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerScopus(ina)">
+                          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                        </button>
+                        <ng-container *ngIf="ina.accion=='nuevo'">
+                          {{ina.id_scopus}}
+                        </ng-container>
+                        <ng-container *ngIf="ina.accion!='nuevo'">
+                          {{ina.id}}
+                        </ng-container>
+                      </div>
+                      <label class="col-1"></label>
+                    </ng-container>
+                  </ng-container>
+                </div>
+                <div class="row m-2">
+                  <div class="alert bg-primary-400 text-white fade show col-11" role="alert">
+                    <div class="d-flex align-items-center">
+                      <div class="alert-icon">
+                        <i class="fal fa-info-circle"></i>
+                      </div>
+                      <div class="flex-1">
+                        Nota: El ID Scopus es un identificador único de 11 dígitos que la base datos Scopus vincula a un autor y no se puede ingresar nuevamente a otro investigador.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizar()"
+                  [disabled]="investCorreo=='' ||
+                              investIdInstitucion==0 ||
+                              investIdPais==0 ||
+                              validCorreo!=0 ||
+                              investNombAccident.length==0 ||
+                              guardadoCampus ||
+                              guardadoCentros ||
+                              guardadoColegios ||
+                              guardadoLineas">
+            <i class="fal fa-check mr-2"></i>Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

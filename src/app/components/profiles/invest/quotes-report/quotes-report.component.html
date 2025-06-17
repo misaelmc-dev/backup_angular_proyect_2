@@ -1,0 +1,71 @@
+<div class="row">
+
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph1" class="panel">
+      <div class="panel-hdr bg-primary-900 bg-primary-gradient" role="heading">
+        <h2>Tipología Citante</h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartOne">
+          <highcharts-chart
+            [Highcharts] = "highchartsOne"
+            [options] = "optionsOne"
+            style="width: 100%; height: 100%; display: block">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph3" class="panel">
+      <div class="panel-hdr bg-primary-900 bg-primary-gradient" role="heading">
+        <h2>Citas A</h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartThree">
+          <highcharts-chart
+            [Highcharts] = "highchartsThree"
+            [options] = "optionsThree"
+            style="width: 100%; height: 100%; display: block">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph2" class="panel">
+      <div class="panel-hdr bg-primary-900 bg-primary-gradient" role="heading">
+        <h2>Documentos/Citas por año</h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartTwo">
+          <highcharts-chart
+            [Highcharts] = "highchartsTwo"
+            [options] = "optionsTwo"
+            style="width: 100%; height: 100%; display: block">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+    <div id="graph4" class="panel">
+      <div class="panel-hdr bg-primary-900 bg-primary-gradient" role="heading">
+        <h2>Citas B</h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content" *ngIf="showChartFour">
+          <highcharts-chart
+            [Highcharts] = "highchartsFour"
+            [options] = "optionsFour"
+            style="width: 100%; height: 100%; display: block">
+          </highcharts-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

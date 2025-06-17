@@ -1,0 +1,213 @@
+<div class="row align-items-start" *ngIf="projectData">
+  <div class="col-xl-12">
+    <div id="panel-main" class="panel">
+      <div class="panel-hdr">
+        <h2>
+          {{projectData.nombre}} <span class="fw-300"><i></i></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" (click)="navigateBack()">Regresar
+          </button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <div class="panel-tag">
+            <strong>Objetivo:</strong> {{projectData.objetivos}}
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Número Proyecto</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in1" style="width: 100%">{{ projectData.num_proy }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Tipo de Proyecto</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in2" style="width: 100%">{{ projectData.tipo }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Tipo de Financiamiento</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in3" style="width: 100%">{{ projectData.tipo_financ }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Fecha inicio</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in4" style="width: 100%">{{ projectData.fecha_inicio }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Fecha fin</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in5" style="width: 100%">{{ projectData.fecha_fin }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Duración en días</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in6" style="width: 100%">{{ projectData.duracion_dias }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Monto beca</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in7" style="width: 100%">{{ projectData.monto_beca }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Responsable técnico del proyecto</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in8" style="width: 100%">{{ responsable_tecnico }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Institución financiadora</label>
+              <div class="input-group">
+                <div class="input-group-prepend" style="width: 100%">
+                  <span class="input-group-text" id="in9" style="width: 100%">{{ institucion_financiera }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-xl-6">
+    <div id="panel-2" class="panel" *ngIf="colaboradores.length > 0">
+      <div class="panel-hdr">
+        <h2>
+          Colaboradores <span class="fw-300"><i></i></span>
+        </h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="frame-wrap">
+            <table class="table table-sm m-0">
+              <thead class="bg-primary-500">
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Institución</th>
+                <th>País</th>
+                <th class="td">Es responsable Tec.</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of colaboradores; let i = index;">
+                <th scope="row">{{i + 1}}</th>
+                <td>{{item.nombre}}</td>
+                <td>{{item.institucion}}</td>
+                <td>{{item.pais}}</td>
+                <td class="td">
+                  <a *ngIf="item.es_respons_tec" class="waves-effect waves-themed">
+                    <i class="fas fa-check-circle" style="color: green"></i>
+                  </a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div id="panel-1" class="panel" *ngIf="projectData.alumnos.length > 0">
+      <div class="panel-hdr">
+        <h2>
+          Alumnos participantes <span class="fw-300"><i></i></span>
+        </h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="frame-wrap">
+            <table class="table table-sm m-0">
+              <thead class="bg-primary-500">
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Número</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of projectData.alumnos; let i = index;">
+                <th scope="row">{{i + 1}}</th>
+                <td>{{item.nombre}}</td>
+                <td>{{item.num_alumno}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="panel-4" class="panel" *ngIf="productos.length > 0">
+      <div class="panel-hdr">
+        <h2>
+          Productos <span class="fw-300"><i></i></span>
+        </h2>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="frame-wrap">
+            <table class="table table-sm m-0">
+              <thead class="bg-primary-500">
+              <tr>
+                <th>#</th>
+                <th>Id</th>
+                <th>Título</th>
+                <th>Año</th>
+                <th>Tipo</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of productos; let i = index;">
+                <th scope="row">{{i + 1}}</th>
+                <td>{{item.id}}</td>
+                <td>{{item.titulo}}</td>
+                <td>{{item.anio}}</td>
+                <td>{{item.tipo}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+

@@ -1,0 +1,30 @@
+<div *ngIf="modal=='ver'">
+  <div class="row mb-2">
+    <h5 class="col-12 pr-2">
+      <i class="fal fa-share-alt width-1"></i>Redes sociales asociadas al investigador
+    </h5>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12">
+      <ng-container *ngFor="let lig of listaItemsGuardados">
+        <label class="m-0 p-0 ml-2 mt-3">{{lig.nombre}}</label><br>
+        <label class="m-0 p-0 ml-2"><a href="{{lig.url}}" target="_blank">{{lig.url}}</a></label><br>
+      </ng-container>
+      <ng-container *ngIf="listaItemsGuardados.length==0">
+        <label class="ml-4">No hay redes sociales asociadas.</label>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="modal=='crear' || modal=='editar'">
+  <div class="row mb-2" *ngFor="let li of listaItems;let i=index">
+    <label class="form-label col-12">{{li.nombre}}</label>
+    <input type="text" class="ml-2 form-control col-11"
+           [(ngModel)]="valorItems[i]" value="{{li.url}}"
+           (keyup)="editarRedSocial(i,li.id)">
+    <label class="form-label col-1"></label>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

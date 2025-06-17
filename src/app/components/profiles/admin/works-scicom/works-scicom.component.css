@@ -1,0 +1,42 @@
+.btn-disabled{
+  background-color: white;
+  color: rgb(193,183,176);
+  border:0px;
+  width: 100px;
+}
+.btn-enabled{
+  background-color: white;
+  color: black;
+  border:0px;
+  width: 100px;
+  font-weight: bold;
+}
+.btn-enabled:hover{
+  background-color: rgb(236,237,237);
+  color: grey;
+  border:0px;
+  font-weight: 100;
+}
+.btn-enabled-pag{
+  background-color: white;
+  color: black;
+  border:0px;
+  width: 28px;
+  height: 23px;
+  font-weight: bold;
+}
+.btn-enabled-pag:hover{
+  background-color: rgb(236,237,237);
+  color: grey;
+  border:0px;
+  font-weight: 100;
+}
+.btn-active-pag{
+  background-color: rgb(33,153,232);
+  color: white;
+  border:0px;
+  width: 28px;
+  height: 23px;
+  font-weight: bold;
+}
+

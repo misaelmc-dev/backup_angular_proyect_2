@@ -1,0 +1,160 @@
+<div class="dataTables_wrapper dt-bootstrap4">
+  <div class="row mb-2">
+    <h5 class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pt-2">
+      <i class="fa fa-border-all width-1"></i>Cuartiles por año
+    </h5>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+      <button class="btn btn-primary bg-green waves-effect waves-themed" type="button"
+              (click)="mostrar('nuevo')" *ngIf="modal!='ver'">
+        <i class="fal fa-plus mr-2"></i> Agregar
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12" style="overflow-y: auto">
+    <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+      <thead class="bg-primary-600 b-top-l b-top-r">
+      <tr role="row">
+        <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">Año</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Cuartil Scintra</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Cuartil Scimago</th>
+        <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 90px;" *ngIf="modal!='ver'">Acciones</th>
+      </tr>
+      </thead>
+      <tbody class="b-bot-l b-bot-r">
+      <ng-container *ngFor="let item of listaItems | paginate : {
+                          id: 'items2Pagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+        <tr role="row" class="odd b-bot-l b-bot-r" *ngIf="item.accion!='eliminar'">
+          <td>{{item.anio}}</td>
+          <td>{{item.cuartil_scintra}}</td>
+          <td>{{item.cuartil_scimago}}</td>
+          <td class="sorting_1 dtr-control b-bot-r" *ngIf="modal!='ver'">
+            <button class="btn btn-sm btn-icon btn-primary waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('ver',item)"
+            ><i class="fa fa-eye"></i></button>
+            <button class="btn btn-sm btn-icon btn-success bg-green waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('editar',item)">
+              <i class="fa fa-edit"></i></button>
+            <button class="btn btn-sm btn-icon btn-danger bg-red waves-effect waves-themed mr-1" type="button"
+                    (click)="removerItem(item.id)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-5 mt-2 mb-2">
+    <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+  </div>
+  <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+    <pagination-controls
+      id="items2Pagination"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]=true
+      (pageChange)="cambiarPagina($event)">
+    </pagination-controls>
+  </div>
+</div>
+
+<div class="modal fade {{(visualizar)?'show':''}}" id="default-example-modal-center" tabindex="1" role="dialog"
+     style="{{(visualizar)?'display:block;':'display:none;'}}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{similar_titulo_modal}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="mostrar('limpiar')">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="similar_btn_modal=='ver'">
+          <div class="row">
+            <label class="col-4"><b>Año:</b></label>
+            <label class="col-8"> {{datosQuartil.anio}}</label>
+          </div>
+          <div class="row">
+            <label class="col-4"><b>Cuartil Scintra:</b></label>
+            <label class="col-8"> {{datosQuartil.cuartil_scintra}}</label>
+          </div>
+          <div class="row">
+            <label class="col-4"><b>Cuartil Scimago:</b></label>
+            <label class="col-8"> {{datosQuartil.cuartil_scimago}}</label>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal!='ver'">
+          <div class="row mb-2">
+            <label class="col-4"><b>Año:<b style="color:red">*</b></b></label>
+            <div class="col-8">
+              <select class="form-control" [(ngModel)]="q_anio">
+                <option value="0">Selecciona un año...</option>
+                <ng-container *ngIf="q_anio_save!=0">
+                  <option value="{{q_anio_save}}">{{q_anio_save}}</option>
+                </ng-container>
+                <ng-container *ngFor="let la of listaAnios">
+                  <option value="{{la}}">{{la}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="col-4"><b>Cuartil Scintra:</b></label>
+            <div class="col-8">
+              <select class="form-control" [(ngModel)]="q_scintra">
+                <option value="">Selecciona un cuartil Scintra...</option>
+                <option value="Q1">Q1</option>
+                <option value="Q2">Q2</option>
+                <option value="Q3">Q3</option>
+                <option value="Q4">Q4</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="col-4"><b>Cuartil Scimago:</b></label>
+            <div class="col-8">
+            <select class="form-control" [(ngModel)]="q_scimago">
+              <option value="">Selecciona un cuartil Scintra...</option>
+              <option value="Q1">Q1</option>
+              <option value="Q2">Q2</option>
+              <option value="Q3">Q3</option>
+              <option value="Q4">Q4</option>
+            </select>
+          </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <ng-container *ngIf="similar_btn_modal!='editar' && similar_btn_modal!='nuevo'">
+          <button type="button" class="btn btn-secondary waves-effect waves-themed"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='editar' || similar_btn_modal=='nuevo'" >
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed ml-1"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>&nbsp;
+          <ng-container *ngIf="similar_btn_modal=='nuevo'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed"
+                    (click)="mostrar('agregar')" [disabled]="q_anio==0 || q_scintra=='' || q_scimago==''">
+              <i class="fa fa-save mr-2"></i>Guardar</button>
+          </ng-container>
+          <ng-container *ngIf="similar_btn_modal=='editar'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed"
+                    (click)="mostrar('actualizar')" [disabled]="q_anio==0 || q_scintra=='' || q_scimago==''">
+              <i class="fa fa-save mr-2"></i> Actualizar</button>
+          </ng-container>
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

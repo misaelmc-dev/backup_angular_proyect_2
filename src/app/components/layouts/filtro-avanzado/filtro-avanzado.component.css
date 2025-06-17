@@ -1,0 +1,107 @@
+.b-top-l{ border-top-left-radius: 5px !important; }
+.b-top-r{ border-top-right-radius: 5px !important; }
+.b-bot-l{ border-bottom-left-radius: 5px !important; }
+.b-bot-r{ border-bottom-right-radius: 5px !important; }
+.filter-dropdown{
+  height:200px;
+  overflow-y:scroll;
+  margin-bottom:100px;
+  margin: 15px;
+  margin-top: 0px;
+}
+.item{
+  list-style: none !important;
+  text-decoration: none !important;
+  width: 200% !important;
+  height: 34px !important;
+  padding: 7px !important;
+  float: left !important;
+  color: #000 !important;
+}
+.item:hover{
+  background-color: #8B8B8B;
+  color: #fff !important;
+}
+.active{
+  background-color: #0a6ebd;
+  color: #fff !important;
+}
+.filter-msg{
+  background-color: #E3F2FD;
+  color: #777 !important;
+  width:100%;
+  height:34px;
+  padding-top:7px;
+}
+
+.search-filter{
+  border: solid 1px #339EF0;
+  border-left: solid 0px #339EF0 !important;
+  margin-bottom: 0px;
+}
+
+.search-filter-icon{
+  border: solid 1px #339EF0;
+  border-right: solid 0px #339EF0;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.search-filter-opt{
+  border: solid 1px #E5E5E5;
+  border-left: solid 0px #E5E5E5 !important;
+  margin-bottom: 0px;
+}
+
+.search-filter-icon-opt{
+  border: solid 1px #E5E5E5;
+  border-right: solid 0px #E5E5E5;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.custom-select:active,.custom-select:focus,.custom-select:hover,.custom-select:before,.custom-select:after{
+  border: solid 1px #339EF0;
+}
+
+.menu {
+  display: block !important;
+  flex-direction: column;
+  position: relative;
+  list-style: none;
+}
+
+.item-menu{
+  list-style: none !important;
+  text-decoration: none !important;
+  width: 100% !important;
+  height: 34px !important;
+  padding: 0px !important;
+  float: left !important;
+  color: #000 !important;
+}
+
+.submenu {
+  position: absolute;
+  background-color: white;
+  z-index: 2001;
+  width: 100%;
+  margin-top: 35px;
+  border: solid 1px #339EF0;
+  border-top: solid 0px #339EF0;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.list-options{
+  height:200px;
+  overflow-y:scroll;
+  margin: 15px;
+  margin-top: 0px;
+  border: solid 1px #E5E5E5;
+  border-radius: 5px;
+}
+
+
+
+

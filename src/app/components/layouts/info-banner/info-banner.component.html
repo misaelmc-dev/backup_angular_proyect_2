@@ -1,0 +1,232 @@
+<!-- BEGIN Shortcuts -->
+<div *ngIf="authRole == 'invest' || authRole == 'coord'" class="modal fade modal-backdrop-transparent" id="modal-shortcut" tabindex="-1" role="dialog" aria-labelledby="modal-shortcut" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-top modal-transparent" role="document">
+    <div class="modal-content" *ngIf="data !== undefined">
+      <div class="modal-body" [ngSwitch]="authRole">
+
+        <!-- INICIA INFO BANNER DE COORDINADOR -->
+        <ul class="app-list w-auto h-auto p-0 flex-list text-center" *ngSwitchCase="'coord'">
+          <li>
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-primary-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-primary-300 "></i>
+                <img src="../../../../assets/img/icons/ic_campus0-09.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h4>{{data.total_campus}} Campus</h4></b></span>
+            </a>
+          </li>
+          <li *ngIf="data !== null">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-success-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-success-300 "></i>
+                <img src="../../../../assets/img/icons/ic_colegio0-10.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h4>{{data.total_colegios}} Colegios</h4></b></span>
+            </a>
+          </li>
+          <li *ngIf="data !== null">
+            <a class="app-list-item text-white border-0">
+              <span class="icon-stack">
+                <i class="base base-7 icon-stack-2x opacity-100 color-primary-300 "></i>
+                <img src="../../../../assets/img/icons/ic_centro-investigacion0-11.svg" class="icon-stack-1x opacity-100 color-white">
+              </span>
+              <span class="app-list-name poppins"><b><h4>{{data.total_centros}} Centros</h4></b></span>
+            </a>
+          </li>
+          <li *ngIf="data && data.total_prod" style="border-left: 1px solid rgba(240,240,240,0.85);">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.total_prod}}</p>
+              </div>
+              <span class="app-list-name poppins">PRODUCTOS</span>
+            </a>
+          </li>
+          <li *ngIf="data && data.h_index">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.h_index}}</p>
+              </div>
+              <span class="app-list-name poppins">ÍNDICE-H</span>
+            </a>
+          </li>
+          <li *ngIf="data && data.total_citas" style="border-right: 1px solid rgba(240,240,240,0.85);">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.total_citas}}</p>
+              </div>
+              <span class="app-list-name poppins">CITAS</span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Articulos">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_article-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h2>{{articulos}}</h2></b></span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Libros">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_book-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins main-text-banner"><b><h2>{{libros}}</h2></b></span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Objetos conferencia">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_conference-object-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h2>{{objetos_conferencia}}</h2></b></span>
+            </a>
+          </li>
+          <!--<li>
+            <a href="#" class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="auto" data-original-title="Tesis doctorales">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-success-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-success-300 "></i>
+                <img src="../../../../assets/img/icons/ic_doctoral-thesis0-07.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins">{{tesis_doctorales}}</span>
+            </a>
+          </li>-->
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Capítulos Libros">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_part-book-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins" ><b><h2>{{capitulos_libro}}</h2></b></span>
+            </a>
+          </li>
+
+        </ul>
+        <!-- TERMINA INFO BANNER DE COORDINADOR -->
+
+        <!-- INICIA INFO BANNER DE INVESTIGADOR -->
+        <ul class="app-list w-auto h-auto p-0 flex-list text-center" *ngSwitchCase="'invest'">
+          <li>
+            <a class="app-list-item text-white border-0" *ngIf="data && data.campus">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-primary-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-primary-300 "></i>
+                <img src="../../../../assets/img/icons/ic_campus0-09.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins" *ngIf="data && data.campus && data.campus[0]">{{data.campus[0].nombre}}</span>
+              <span class="app-list-name poppins" *ngIf="!data.campus">Sin Campus</span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" *ngIf="data && data.colegios">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-success-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-success-300 "></i>
+                <img src="../../../../assets/img/icons/ic_colegio0-10.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins" *ngIf="data && data.colegios && data.colegios[0]">{{data.colegios[0].nombre}}</span>
+              <span class="app-list-name poppins" *ngIf="!data.colegios">Sin colegios</span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" *ngIf="data && data.centros">
+              <span class="icon-stack">
+                <i class="base base-7 icon-stack-2x opacity-100 color-primary-300 "></i>
+                <img src="../../../../assets/img/icons/ic_centro-investigacion0-11.svg" class="icon-stack-1x opacity-100 color-white">
+              </span>
+              <span class="app-list-name poppins" *ngIf="data && data.centros && data.centros[0]">{{data.centros[0].nombre}}</span>
+              <span class="app-list-name poppins" *ngIf="!data.centros">Sin centros</span>
+            </a>
+          </li>
+          <li style="border-left: 1px solid rgba(240,240,240,0.85);" *ngIf="data && data.productos_count">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.productos_count}}</p>
+              </div>
+              <span class="app-list-name poppins">PRODUCTOS</span>
+            </a>
+          </li>
+          <li *ngIf="data && data.indice_h">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.indice_h}}</p>
+              </div>
+              <span class="app-list-name poppins">ÍNDICE-H</span>
+            </a>
+          </li>
+          <li *ngIf="data && data.citas_count" style="border-right: 1px solid rgba(240,240,240,0.85);">
+            <a class="app-list-item text-white border-0">
+              <div class="icon-stack">
+                <p class="top-text-banner icon-stack text-white poppins">{{data.citas_count}}</p>
+              </div>
+              <span class="app-list-name poppins">CITAS</span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Artículos">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_article-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h2>{{articulos}}</h2></b></span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Libros">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_book-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins main-text-banner"><b><h2>{{libros}}</h2></b></span>
+            </a>
+          </li>
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Objetos conferencia">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_conference-object-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins"><b><h2>{{objetos_conferencia}}</h2></b></span>
+            </a>
+          </li>
+          <!--<li>
+            <a href="#" class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="auto" data-original-title="Tesis doctorales">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100 color-success-500 "></i>
+                <i class="base base-7 icon-stack-2x opacity-100 color-success-300 "></i>
+                <img src="../../../../assets/img/icons/ic_doctoral-thesis0-07.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins">{{tesis_doctorales}}</span>
+            </a>
+          </li>-->
+          <li>
+            <a class="app-list-item text-white border-0" data-toggle="tooltip" data-placement="bottom" data-original-title="Capítulos Libro">
+              <div class="icon-stack">
+                <i class="base base-7 icon-stack-3x opacity-100" style="color: #64c0b9"></i>
+                <i class="base base-7 icon-stack-2x opacity-100" style="color: #64c0b9"></i>
+                <img src="../../../../assets/img/icons/ic_part-book-name.svg" class="icon-stack-1x opacity-100 color-white">
+              </div>
+              <span class="app-list-name poppins" ><b><h2>{{capitulos_libro}}</h2></b></span>
+            </a>
+          </li>
+
+        </ul>
+        <!-- TERMINA INFO BANNER DE INVESTIGADOR -->
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END Shortcuts -->

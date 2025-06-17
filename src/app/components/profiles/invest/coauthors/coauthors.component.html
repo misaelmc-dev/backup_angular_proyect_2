@@ -1,0 +1,112 @@
+<div class="row">
+  <div class="col-12">
+    <div id="graph2" class="panel">
+      <!--<div class="panel-hdr"><h2><span class="fw-300"></span></h2></div>-->
+      <div class="panel-container show">
+        <div class="panel-content">
+          <table id="general" class="table table-bordered m-0">
+            <tr>
+              <th colspan="4">Tabla de colaboración del autor</th>
+            </tr>
+            <tr>
+              <td><strong>Nombre del autor</strong></td>
+              <td colspan="4">{{nombre}}</td>
+            </tr>
+            <tr>
+              <td><strong>Total de productos</strong></td>
+              <td>{{total_prod}}</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><strong>Productos en colaboración</strong></td>
+              <td>{{total_prod_colab}}</td>
+              <td><strong>Valor en (%)</strong></td>
+              <td>{{percent | number : '1.2-2' }}</td>
+            </tr>
+          </table>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-end pt-2 pb-2">
+              <button type="button" class="btn btn-success waves-effect waves-themed"
+                      (click)="exportToExcel()">
+                <span class="fas fa-file-excel mr-1"></span>
+                Exportar a Excel
+              </button>
+            </div>
+          </div>
+          <table class="table border-table m-0">
+            <thead class="bg-primary-900">
+              <tr>
+                <th class="th border-tl" (click)="sort('nombre_inv_dest')">Colaborador&nbsp;<i class="fas fa-sort"></i></th>
+                <th class="td th" (click)="sort('prods_en_colab')">Colaboraciones&nbsp;<i class="fas fa-sort"></i></th>
+                <th class="th" (click)="sort('nombre_institucion')">Institución&nbsp;<i class="fas fa-sort"></i></th>
+                <th class="th border-tr" (click)="sort('nombre_pais')">País&nbsp;<i class="fas fa-sort"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of dataSource | orderBy: orderHeader: isDescending | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+              <th scope="row">{{row.desglose[0].nombre_inv_dest}}</th>
+              <td class="td">{{row.desglose[0].prods_en_colab}}</td>
+              <td>{{row.desglose[0].nombre_institucion}}</td>
+              <td>{{row.desglose[0].nombre_pais}}</td>
+            </tr>
+            </tbody>
+          </table>
+          <br>
+          <div class="row" *ngIf="dataSource.length>0">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              &nbsp;&nbsp;Total de elementos: {{total_prod}}
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-end">
+              <pagination-controls
+                previousLabel="Anterior"
+                nextLabel="Siguiente"
+                [responsive]="responsive"
+                [id]="paginationId"
+                (pageChange)="handlePageChange($event)"
+                class="paginationStyle"
+              ></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="panel" *ngIf="!fullScreen">
+      <div class="panel-hdr">
+        <h2>Coautoría</h2>
+        <div class="panel-toolbar">
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Fullscreen" (click)="fullScreen=true"></button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <highcharts-chart [Highcharts] = "highcharts"
+                          [options] = "options"
+                          style = "width: 100%; height: 100%; display: block;">
+        </highcharts-chart>
+      </div>
+    </div>
+    <div class="panel panel-fullscreen" *ngIf="fullScreen">
+      <div class="panel-hdr">
+        <h2>Coautoría</h2>
+        <div class="panel-toolbar">
+          <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip"
+                  data-offset="0,10" data-original-title="Fullscreen" (click)="fullScreen=false"></button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <highcharts-chart [Highcharts] = "highcharts"
+                          [options] = "options"
+                          style = "width: 100%; height: 100%; display: block;">
+        </highcharts-chart>
+      </div>
+    </div>
+  </div>
+</div>

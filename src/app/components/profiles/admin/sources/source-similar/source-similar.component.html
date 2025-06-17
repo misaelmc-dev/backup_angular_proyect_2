@@ -1,0 +1,337 @@
+<div class="dataTables_wrapper dt-bootstrap4">
+  <div class="row mb-2">
+    <h5 class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pt-2">
+      <i class="fa fa-books width-1"></i> Fuentes similares
+    </h5>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+      <button class="btn btn-primary bg-green waves-effect waves-themed" type="button"
+              (click)="mostrar('nuevo')" *ngIf="modal!='ver'">
+        <i class="fal fa-plus mr-2"></i> Agregar
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12" style="overflow-y: auto">
+    <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+      <thead class="bg-primary-600 b-top-l b-top-r">
+      <tr role="row">
+        <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">ID</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Título</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >ISSN</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Similitud</th>
+        <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;" *ngIf="modal!='ver'">Acciones</th>
+      </tr>
+      </thead>
+      <tbody class="b-bot-l b-bot-r">
+      <ng-container *ngFor="let item of listaItems | paginate : {
+                          id: 'items1Pagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: listaItems.length };let i = index">
+        <tr role="row" class="odd b-bot-l b-bot-r" *ngIf="item.accion!='eliminar'">
+          <td class="sorting_1 dtr-control b-bot-l">{{item.id}}</td>
+          <td class="sorting_1 dtr-control b-bot-l">{{item.titulo}}</td>
+          <td class="sorting_1 dtr-control">
+            {{item.issn_e}}{{(item.issn_e && item.issn_i)?' - ':''}}{{item.issn_i}}
+          </td>
+          <td class="sorting_1 dtr-control">
+            <span *ngIf="(item.similarity * 100)>=0 && (item.similarity * 100) <= 59">
+              <p class="badge badge-danger badge-pill" style="background-color: red;font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+              {{item.similarity * 100 | number:'1.0-0'}}%
+            </span>
+            <span *ngIf="(item.similarity * 100)>=60 && (item.similarity * 100) <= 84">
+              <p class="badge badge-warning badge-pill" style="font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+              {{item.similarity * 100 | number:'1.0-0'}}%
+            </span>
+            <span *ngIf="(item.similarity * 100)>=85 && (item.similarity * 100) <= 100">
+              <p class="badge bg-success badge-pill" style="font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+              {{item.similarity * 100 | number:'1.0-0'}}%
+            </span>
+          </td>
+          <td class="sorting_1 dtr-control b-bot-r" *ngIf="modal!='ver'">
+            <button class="btn btn-sm btn-icon btn-primary waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('ver',item)"
+            ><i class="fa fa-eye"></i></button>
+            <!--<button class="btn btn-sm btn-icon btn-success bg-green waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('editar',item)">
+              <i class="fa fa-edit"></i></button>-->
+            <button class="btn btn-sm btn-icon btn-danger bg-red waves-effect waves-themed mr-1" type="button"
+                    (click)="removerItem(item.id)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-5 mt-2 mb-2">
+    <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{listaItems.length}} </div>
+  </div>
+  <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+    <pagination-controls
+      id="items1Pagination"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]=true
+      (pageChange)="pageNumber = $event">
+    </pagination-controls>
+  </div>
+</div>
+
+<div class="modal fade {{(visualizar)?'show':''}}" id="default-example-modal-center" tabindex="1" role="dialog"
+     style="{{(visualizar)?'display:block;':'display:none;'}}">
+  <div class="modal-dialog {{(similar_btn_modal=='ver')?'modal-lg':''}}" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{similar_titulo_modal}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="mostrar('limpiar')">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="similar_btn_modal=='ver'">
+          <div class="row mr-2">
+            <div class="col-6">
+              <div class="row">
+                <h5>Datos generales</h5>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Título:</b></label
+                ><label class="col-6"> {{datosFuente.titulo}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>ISSN-e:</b></label
+                ><label class="col-6"> {{datosFuente.issn_e}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>ISSN-i:</b></label
+                ><label class="col-6"> {{datosFuente.issn_i}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>ISBN:</b></label
+                ><label class="col-6"> {{datosFuente.isbn}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Frecuencia:</b></label
+                ><label class="col-6"> {{datosFuente.frecuencia}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Publisher:</b></label
+                ><label class="col-6"> {{datosFuente.publisher}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Scopus Quartil:</b></label>
+                <label class="col-6"> {{datosFuente.scopus_q}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Acceso abierto:</b></label>
+                <label class="col-6"> {{datosFuente.acceso_abierto}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Acceso abieto autor:</b></label>
+                <label class="col-6"> {{(datosFuente.aa_autor)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Acceso abieto lector:</b></label>
+                <label class="col-6"> {{(datosFuente.aa_lector)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>URL normas:</b></label>
+                <label class="col-6">
+                  <a href="{{datosFuente.url_normas}}" *ngIf="datosFuente.url_normas!==null && datosFuente.url_normas!=''">
+                    {{datosFuente.url_normas | slice:0:25}}
+                  </a>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>APC costo:</b></label>
+                <label class="col-6"> {{datosFuente.apc_costo}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Licencias:</b></label
+                ><label class="col-6"> {{datosFuente.license_condition}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Clasificación CONACYT:</b></label
+                ><label class="col-6"> {{datosFuente.clasif_conacyt}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Rights uri:</b></label>
+                <label class="col-6">
+                  <a href="{{datosFuente.rights_uri}}" *ngIf="datosFuente.rights_uri!==null && datosFuente.rights_uri!=''">
+                    {{datosFuente.rights_uri | slice:0:25}}
+                  </a>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Tipo:</b></label
+                ><label class="col-6"> {{datosFuente.tipo}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Scimago Source Id:</b></label
+                ><label class="col-6"> {{datosFuente.scimago_source_id}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Depredadora:</b></label
+                ><label class="col-6"> {{(datosFuente.depredadora)?'sí':'no'}}</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <h5>Indicadores relevantes</h5>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Factor de impacto:</b></label
+                ><label class="col-6"> {{datosFuente.fi}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Cite score:</b></label>
+                <label class="col-6"> {{datosFuente.cites_score}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Cite Score año:</b></label
+                ><label class="col-6"> {{datosFuente.cites_score_year}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Cite Score tendencia:</b></label
+                ><label class="col-6"> {{datosFuente.cites_score_track}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Cite Score año de tendencia:</b></label
+                ><label class="col-6"> {{datosFuente.cites_score_track_year}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>SJR:</b></label
+                ><label class="col-6"> {{datosFuente.sjr}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b> SJR año:</b></label
+                ><label class="col-6"> {{datosFuente.sjr_year}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Snip:</b></label
+                ><label class="col-6"> {{datosFuente.snip}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Snip año:</b></label
+                ><label class="col-6"> {{datosFuente.snip_year}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Índice H:</b></label
+                ><label class="col-6"> {{datosFuente.h_index}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>URL:</b></label>
+                <label class="col-6">
+                  <a href="{{datosFuente.url}}" *ngIf="datosFuente.url!==null && datosFuente.url!=''">
+                    {{datosFuente.url | slice:0:25}}
+                  </a>
+                </label>
+              </div>
+              <br>
+              <div class="row">
+                <h5>Visibilidad del último año</h5>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>DOAJ:</b></label
+                ><label class="col-6"> {{(datosFuente.doaj)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>JCR:</b></label
+                ><label class="col-6"> {{(datosFuente.jcr)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>SCOPUS:</b></label
+                ><label class="col-6"> {{(datosFuente.scopus_alguna_vez)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>CONACYT:</b></label
+                ><label class="col-6"> {{(datosFuente.conacyt)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>SCIELO:</b></label
+                ><label class="col-6"> {{(datosFuente.scielo)?'sí':'no'}}</label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>WOSCC:</b></label
+                ><label class="col-6"> {{(datosFuente.woscc)?'sí':'no'}}</label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='nuevo' || similar_btn_modal=='editar'">
+          <div class="row mb-2">
+            <label class="form-label col-3 mt-2">
+              <i class="fa fa-search width-1"></i>Buscar:
+            </label>
+            <input type="text" class="form-control col-5 pr-0" [(ngModel)]="criterioBusqueda"
+                   placeholder="Buscar fuentes...">
+            <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+              <button class="btn btn-primary" (click)="buscarItems()"
+                      [disabled]="criterioBusqueda==''">
+                <i class="fa fa-search"></i> Buscar
+              </button>
+            </div>
+            <label class="col-1"></label>
+          </div>
+          <br>
+          <div class="row mb-2">
+            <label class="form-label col-3 mt-2">
+              <i class="fa fa-book width-1"></i>Fuentes:<b style="color:red">*</b>
+            </label>
+            <select class="custom-select col-8 pr-0" [(ngModel)]="itemSeleccionado">
+              <option value="0">Selecciona una fuente similar...</option>
+              <ng-container *ngFor="let item of listaItemsFiltrados">
+                <option [value]="item.id">{{item.titulo}}</option>
+              </ng-container>
+            </select>
+            <label class="col-1"></label>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3 mt-2">
+              <i class="fa fa-percent width-1"></i>Similitud:<b style="color:red">*</b>
+            </label>
+            <input type="number" class="form-control col-8 pr-0" [(ngModel)]="similitud"
+                   placeholder="ingresa un porcetaje de similitud..."
+                   [ngClass]="(similitud>=100)?'is-invalid':''"/>
+            <ng-container *ngIf="similitud>=100">
+              <label class="col-4 mt-1"></label>
+              <div class="invalid-feedback col-8">la similitud debe de estar en un rango de 1 a 100.</div>
+            </ng-container>
+            <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+              <label class="col-1"></label>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <ng-container *ngIf="similar_btn_modal!='editar' && similar_btn_modal!='nuevo'">
+          <button type="button" class="btn btn-secondary waves-effect waves-themed"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='editar' || similar_btn_modal=='nuevo'" >
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed ml-1"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>&nbsp;
+          <ng-container *ngIf="similar_btn_modal=='nuevo'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed" [disabled]="itemSeleccionado==0 || similitud==''"
+                    (click)="mostrar('agregar')">
+                    <i class="fa fa-save mr-2"></i>Guardar</button>
+          </ng-container>
+          <ng-container *ngIf="similar_btn_modal=='editar'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed" [disabled]="similitud==''"
+                    (click)="mostrar('actualizar')">
+                    <i class="fa fa-save mr-2"></i> Actualizar</button>
+          </ng-container>
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

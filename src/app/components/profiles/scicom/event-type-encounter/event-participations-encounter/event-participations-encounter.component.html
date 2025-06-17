@@ -1,0 +1,605 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <div>
+      <h2>{{(titulo)?'Registros del evento :':'Agregue un registro'}}&nbsp;&nbsp;&nbsp;&nbsp;
+        <!--"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+        <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+                data-toggle="modal" *ngIf="this.permisosScicomService.canAgregarParticipacionEvento(this.eventoId) ||
+                                           this.permisosScicomService.canAgregarParticipacionPropia(this.eventoId)"
+                [attr.data-target]="this.permisosScicomService.canAgregarParticipacionEvento(this.eventoId)
+                ? '#participation-modal'
+                : '#nombreDeModalInvalido'
+              " (click)="onNewParticipationButtonClick()">
+          <i class="fal fa-plus"></i>
+        </button>
+      </h2>
+    </div>
+    <div class="ml-auto mt-1" style="margin-right:-5px">
+      <button data-toggle="modal" data-target="#modal-exportar-excel" [disabled]="participations.length==0"
+         type="button" class="btn btn-success waves-effect waves-themed" *ngIf="participations.length!=0" (click)="exportToExcel()">
+        <i class="fas fa-file-excel mr-1"></i>Exportar Excel
+      </button>
+    </div>
+  </div>
+  <div class="col-12 mt-2 mb-2">
+    <div class="input-group bg-white shadow-inset-2">
+      <input type="text" placeholder="Buscar registros..." class="form-control ng-pristine ng-valid ng-touched" [(ngModel)]="searchUser" >
+      <div class="input-group-append" >
+        <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="searchUsuarios()">
+          <i class="fal fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:10px">
+    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+           aria-describedby="dt-basic-example_info" >
+      <thead class="bg-primary-600 ">
+      <tr role="row">
+        <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-user"></i>&nbsp;&nbsp;Registrador</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width:80px"><i class="fa fa-phone"></i>&nbsp;&nbsp;Celular</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width:110px"><i class="fa fa-id-card"></i>&nbsp;&nbsp;No. empleado</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-calendar-alt"></i>&nbsp;&nbsp;Fechas</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" ><i class="fa fa-city"></i>&nbsp;&nbsp;Campus</th>
+        <th tabindex="0" rowspan="1" colspan="1" class="border-tr" style="width:130px"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="participations.length != 0">
+        <tr class="odd" *ngFor="let part of participations | paginate : {
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+          <ng-container *ngFor="let pu of participacionUsuario">
+            <ng-container *ngIf="pu.id==part.id_usuario">
+              <td>
+                {{pu.user.name}}<br>
+                {{pu.user.email}}
+              </td>
+              <td>{{(pu.num_celular)?pu.num_celular:'Desconocido'}}</td>
+              <td>{{(pu.num_empleado)?pu.num_empleado:'Desconocido'}}</td>
+            </ng-container>
+          </ng-container>
+          <td>
+            <ng-container *ngFor="let fe of fechasEvento">
+              <ng-container *ngIf="part.id==fe.id_participacion">
+                Inicio: {{fe.tiempo_inicio | date: 'dd-MM-yyyy'}} <br>
+                Fin: {{fe.tiempo_final | date: 'dd-MM-yyyy'}}
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngFor="let pu of participacionUsuario">
+              <ng-container *ngIf="pu.id==part.id_usuario">
+                <ng-container *ngFor="let pu of pu.campus;let i=index;">
+                  <ng-container *ngIf="i>0">,<br></ng-container>
+                  <ng-container *ngFor="let ctl of campusTotalList">
+                    <ng-container *ngIf="pu.pivot.id_campus==ctl.id">
+                      {{ctl.nombre}}
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>
+            <button type="button" class="btn btn-primary btn-icon"
+                    routerLink="/scicom/encuentro/{{eventoId}}/event-participation-details/{{part.id}}"><i class="fa fa-eye"></i>
+            </button>&nbsp;
+            <a href="#" type="button" class="btn btn-success btn-icon waves-effect waves-themed" data-toggle="modal"
+               data-target="#modal-update-participacion" (click)="modalUpdatePaticipation(part)"><i class="fas fa-edit"></i>
+            </a>&nbsp;
+            <button [disabled]="!permisosScicomService.canEliminarParticipacionEvento(eventoId)" type="button"
+                    class="btn btn-danger btn-icon" (click)="deleteParticipation(part)"><i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="participations.length==0">
+        <tr class="odd"><td colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay registros que mostrar</td></tr>
+      </ng-container>
+      </tbody>
+    </table>
+    <div class="row" *ngIf="participations.length!=0">
+      <div class="col-6">
+        <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="margin-top:-5px">{{labelTotalItems}}</div>
+      </div>
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end" style="margin-top:-5px">
+            {{labelTotalPagination}}&nbsp;&nbsp;&nbsp;
+            <li class="paginate_button page-item previous disabled" *ngIf="pageNumber==1" >
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item previous" *ngIf="pageNumber!=1" (click)="loadPagination('prev')">
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <ng-container *ngFor="let page of pageNumbersArray" >
+              <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber">
+                <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+              </li>
+              <li class="page-item" *ngIf="page.id!=pageNumber">
+                <a class="page-link" (click)="loadPagination(page.id)">{{page.id}}</a>
+              </li>
+            </ng-container>
+            <li class="paginate_button page-item next" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next')">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item next disabled" *ngIf="pageNumber==pageNumbers">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show" id="participation-modal" tabindex="-1" role="dialog" [style]="estilosModalPart" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregue un registro</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <select class="custom-select" [(ngModel)]="usuarioSelected">
+            <ng-container *ngIf="participacionUsuarioDisponibles.length!=0">
+              <option value="0">Selecciona un usuario...</option>
+              <ng-container *ngFor="let user of participacionUsuarioDisponibles">
+                <option value="{{user.id}}">{{user.user.name}} - {{user.user.email}}</option>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="participacionUsuarioDisponibles.length==0">
+              <option value="0">No hay registradores disponibles...</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="alert border-warning bg-transparent text-white fade show" role="alert">
+            <div class="d-flex align-items-center">
+              <div class="alert-icon">
+                <i class="fal fa-info-circle color-warning-800"></i>
+              </div>
+              <div class="flex-1 color-warning-800">
+                Si el usuario que busca no aparece, agréguelo en colaboradores
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="mensaje=='guardado'">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true"><i class="fal fa-times"></i></span>
+            </button>
+            <div class="d-flex align-items-center">
+              <div class="alert-icon width-8">
+                <span class="icon-stack icon-stack-lg">
+                  <i class="base-2 icon-stack-3x color-success-400"></i>
+                  <i class="base-10 text-white icon-stack-1x"></i>
+                  <i class="ni md-profile color-success-800 icon-stack-2x"></i>
+                </span>
+              </div>
+              <div class="flex-1 pl-1">
+                ¡Usuario guardado exitosamente!
+                <br><span><b>Correo:</b> {{usuarioEmail}}</span>
+                <br><span><b>Nombre:</b> {{usuarioNombre}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="alert alert-warning alert-dismissible fade show" *ngIf="mensaje=='scicom'">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true"><i class="fal fa-times"></i></span>
+            </button>
+            <div class="d-flex align-items-center">
+              <div class="alert-icon width-8">
+                <span class="icon-stack icon-stack-lg">
+                  <i class="base-2 icon-stack-3x color-warning-400"></i>
+                  <i class="base-10 text-white icon-stack-1x"></i>
+                  <i class="ni md-profile color-warning-800 icon-stack-2x"></i>
+                </span>
+              </div>
+              <div class="flex-1 pl-1">
+                El usuario indicado ya existía en SCINTRA, se agregó al evento.
+                <br><span><b>Correo:</b> {{usuarioEmail}}</span>
+                <br><span><b>Nombre:</b> {{usuarioNombre}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" *ngIf="mensaje=='existe'">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true"><i class="fal fa-times"></i></span>
+          </button>
+          <div class="d-flex align-items-center">
+            <div class="alert-icon width-8">
+              <span class="icon-stack icon-stack-lg">
+                <i class="base-2 icon-stack-3x color-danger-400"></i>
+                <i class="base-10 text-white icon-stack-1x"></i>
+                <i class="ni md-profile color-danger-800 icon-stack-2x"></i>
+              </span>
+            </div>
+            <div class="flex-1 pl-1">
+              El usuario indicado es colaborador del evento y no puede participar
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" data-dismiss="modal" [disabled]="(usuarioSelected==0)" routerLink="/scicom/encuentro/{{eventoId}}/event-participation-new/{{usuarioSelected}}"><i class="fa fa-check"></i>&nbsp;Crear&nbsp;registro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="usuario-modal" tabindex="-1" role="dialog" [style]="estilosModalUsuario" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Creación de nuevo usuario</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label text-muted ml-1">Correo:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group mb-2" [formGroup]="formEmails">
+            <input type="text" class="form-control" placeholder="Escribe correo..."
+                   [class.is-invalid]="emails.invalid && emails.touched"
+                   formControlName="email" [(ngModel)]="usuarioEmail"
+                   [disabled]="mensaje=='guardado' || mensaje=='scicom'">
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <label class="form-label text-muted ml-1">Nombre:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Escribe nombre..." [(ngModel)]="usuarioNombre"
+                   [disabled]="mensaje=='guardado' || mensaje=='scicom'">
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <div class="panel-hdr row">
+          <h2 class="text-muted" style="font-size:16px">Instituciones</h2>
+        </div>
+        <div class="row" style="padding:12px;padding-right:20px">
+          <div class="input-group input-group-sm bg-white shadow-inset-2">
+            <input type="text" placeholder="Buscar instituciones(en inglés)..." class="form-control" [(ngModel)]="search" >
+            <div class="input-group-append">
+              <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="loadAfiliacion()" [disabled]="(search=='')">
+                <i class="fal fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mt-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="afiliacionSelected" [disabled]="(afiliacionesList.length==0)">
+              <ng-container *ngIf="afiliacionesList.length!=0">
+                <option value="0">Seleccione una institución...</option>
+                <ng-container *ngFor="let afil of afiliacionesList">
+                  <option value="{{afil.id}}" *ngIf="afil.id!=0">{{afil.institution_name}} - {{afil.country}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="afiliacionesList.length==0">
+                <option value="0">No hay instituciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarRor()" style="width:130px;margin-right:12px" [disabled]="(afiliacionesList.length==0)">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row m-2" *ngFor="let afil of afiliaciones">
+          <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-left:-5px;margin-bottom:3px">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeRor(afil.id)">
+              <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+            </button>
+            {{afil.institution_name}} - <strong>{{afil.country}}</strong>
+          </div>
+        </div>
+        <div class="panel-hdr row">
+          <h2 class="text-muted" style="font-size:16px">Campus&nbsp;&nbsp;<span style="font-size:11px">(<b style="color:red">*</b>) campo obligatorio</span></h2>
+        </div>
+        <div class="input-group flex-nowrap mt-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="campusSelected">
+              <ng-container *ngIf="campusList.length!=0">
+                <option value="0">Seleccione un campus...</option>
+                <ng-container *ngFor="let cam of campusList">
+                  <option value="{{cam.id}}" *ngIf="cam.id!=0">{{cam.nombre}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="campusList.length==0">
+                <option value="0">No hay campus disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarCampus()" style="width:130px;margin-right:12px">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row m-2" *ngFor="let camp of campus">
+          <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-left:-5px;margin-bottom:3px">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeCampus(camp.id)">
+              <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+            </button>
+            <strong>{{camp.nombre}}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" (click)="newUser()" *ngIf="mensaje=='inicio' || mensaje=='existe'"
+                  [disabled]="(emails.invalid && emails.touched) || (usuarioEmail=='' || usuarioNombre=='' || campus.length==0)" data-dismiss="modal">
+            <i class="fal fa-check" ></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" *ngIf="mensaje=='guardado' || mensaje=='scicom'">
+            Cerrar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade display-none" id="modal-editar" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog smodal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edición de participación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label text-muted ml-1">Correo:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group">
+            <input type="text" class="form-control mr-3" [(ngModel)]="correoParticipacion" disabled="true">
+          </div>
+        </div>
+        <label class="form-label text-muted ml-1">Nombre:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group">
+            <input type="text" class="form-control mr-3" [(ngModel)]="nombreParticipacion" disabled="true">
+          </div>
+        </div>
+        <label class="form-label text-muted ml-1">Tipo de participación:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group">
+            <select class="form-control mr-3" disabled="">
+              <ng-container *ngIf="tipoParticipacion!=''">
+                <option selected>{{tipoParticipacion}}</option>
+              </ng-container>
+              <ng-container *ngIf="tipoParticipacion==''">
+                <option value="0">No hay tipos de participaciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+        <label class="form-label text-muted ml-1">No. empleado:</label>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="noEmpleadoParticipacion" (keyup)="validateNoEmpleado()"
+                   [class.is-invalid]="validEmpleadoNumberParticipation">
+            <div class="invalid-feedback" *ngIf="noEmpleadoParticipacion>9999999999">El número de empleado no puede ser mayor a 10 dígitos</div>
+            <div class="invalid-feedback" *ngIf="validEmpleadoNumberParticipation && noEmpleadoParticipacion==0">El número de empleado no puede ser igual a 0</div>
+            <div class="invalid-feedback" *ngIf="validEmpleadoNumberParticipation && !noEmpleadoParticipacion && noEmpleadoParticipacion!=0">El número de empleado es un campo obligatorio</div>
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <label class="form-label text-muted ml-1">Campus&nbsp;&nbsp;<span style="font-size:11px">(<b style="color:red">*</b>) campo obligatorio</span></label>
+        <div class="input-group flex-nowrap mt-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="campusParticipacionSelected">
+              <ng-container *ngIf="campusSinParticipacion.length!=0">
+                <option value="0">Seleccione un campus...</option>
+                <ng-container *ngFor="let c of campusSinParticipacion">
+                  <option value="{{c.id}}" *ngIf="c.id!=0">{{c.nombre}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="campusSinParticipacion.length==0">
+                <option value="0">No hay campus disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="addCampusToParticipation()" style="width:130px;margin-right:12px">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="form-label text-muted ml-1 mr-2 mt-2" *ngFor="let c of campusParticipacion">
+          <div class="alert alert-primary alert-dismissible fade show w-100 mb-0" role="alert" style="margin-left:-4px;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="delCampusToParticipation(c.id)">
+              <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+            </button>
+            <strong>{{c.nombre}}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="h5">(<b style="color:red">*</b>) campo obligatorio</span>
+        <button (click)="updateParticipacion()" type="button" class="btn btn-success waves-effect waves-themed"
+                data-dismiss="modal" [disabled]="validEmpleadoNumberParticipation || noEmpleadoParticipacion==0 || !noEmpleadoParticipacion || campusParticipacion.length==0">
+          <i class="fa fa-check"></i>&nbsp;Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade display-none" id="modal-update-participacion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Actualizar registro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3 mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Nombre:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <label class="ml-3">{{partUsuario}}</label>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3 mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Correo:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <label class="ml-3">{{partEmail}}</label>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Número de celular:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input type="number" class="form-control" [class.is-invalid]="validCelular!=0"
+                   [(ngModel)]="partCelular" (keyup)="validarNoCelular()">
+            <div class="invalid-feedback" *ngIf="validCelular==1">El campo es obligatorio no puede dejarse en 0 o estar vacio.</div>
+            <div class="invalid-feedback" *ngIf="validCelular==2">El número de celular debe tener 10 dígitos.</div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Número de empleado:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input type="number" class="form-control" [class.is-invalid]="validNumEmpleado!=0"
+                   [(ngModel)]="partNumEmpleado" (keyup)="validarNoEmpleado()">
+            <div class="invalid-feedback" *ngIf="validNumEmpleado==1">El campo es obligatorio no puede dejarse en 0 o estar vacio.</div>
+            <div class="invalid-feedback" *ngIf="validNumEmpleado==2">El número de empleado no puede ser mayor a 10 dígitos.</div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Fecha real de inicio:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <div class="input-group">
+              <input type="text" class="form-control" [class.is-invalid]="validFechaInicio!=0"
+                     placeholder="Selecciona la fecha..." (cambioFecha)="setFechaInicio($event)"
+                     (focus)="validarFechas()" [(ngModel)]="showFechaInicio" appDateranger readonly>
+              <div class="input-group-append">
+                <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+              </div>
+              <div class="invalid-feedback" *ngIf="validFechaInicio==1">El campo es obligatorio.</div>
+              <div class="invalid-feedback" *ngIf="validFechaInicio==2">La fecha debe de ser posterior a la fecha inicial.</div>
+              <div class="invalid-feedback" *ngIf="validFechaInicio==3">Ingresa una fecha inicial.</div>
+              <div class="invalid-feedback" *ngIf="validFechaInicio==4">La fecha inicial debe de estar en el rango del evento.</div>
+            </div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Fecha real final:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <div class="input-group">
+              <input type="text" class="form-control" [class.is-invalid]="validFechaFinal!=0"
+                     placeholder="Selecciona la fecha..." (cambioFecha)="setFechaFinal($event)"
+                     (focus)="validarFechas()" [(ngModel)]="showFechaFinal" appDateranger readonly>
+              <div class="input-group-append">
+                <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+              </div>
+            </div>
+            <div class="invalid-feedback" *ngIf="validFechaFinal==1">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="validFechaFinal==2">La fecha debe de ser posterior a la fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="validFechaFinal==3">Ingresa una fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="validFechaFinal==4">La fecha final debe de estar en el rango del evento.</div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="justify-content-start col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex ">
+            Campus:<b class="red">*</b>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <div class="input-group">
+              <select class="custom-select" [(ngModel)]="campusSelected">
+                <ng-container *ngIf="partCampusDisponibles.length!=0">
+                  <option value="0">Seleccione un campus...</option>
+                  <ng-container *ngFor="let p of partCampusDisponibles">
+                    <option value="{{p.id}}">{{p.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="partCampusDisponibles.length==0">
+                  <option value="0">No hay campus disponibles...</option>
+                </ng-container>
+              </select>&nbsp;&nbsp;
+              <button class="btn btn-primary" (click)="agregarCampus()">
+                <i class="fa fa-plus"></i>&nbsp;Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12"></div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <ng-container *ngFor="let pc of partCampus">
+              <div class="row align-self-center align-items-center align-content-center justify-content-center mt-2"
+                   style="margin:1px">
+                <div class="alert alert-primary alert-dismissible fade show mb-0 col-12" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerCampus(pc.id)">
+                    <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                  </button>
+                  <strong>{{pc.nombre}}</strong>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Pronóstico de carteles:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input type="number" class="form-control" [class.is-invalid]="validPronosticoCarteles==1"
+                   [(ngModel)]="pronosticoCarteles" (keyup)="validarPronosticoCarteles()">
+            <div class="invalid-feedback" *ngIf="validPronosticoCarteles==1">El campo es obligatorio, debe ser mayor a 0.</div>
+          </div>
+        </div>
+        <div class="row align-self-center align-items-center align-content-center justify-content-center m-1 mt-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <label>Pronóstico de estudiantes:<b class="red">*</b></label>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+            <input type="number" class="form-control" [class.is-invalid]="validPronosticoEstudiantes==1"
+                   [(ngModel)]="pronosticoEstudiantes" (keyup)="validarPronosticoEstudiantes()">
+            <div class="invalid-feedback" *ngIf="validPronosticoEstudiantes==1">El campo es obligatorio, debe ser mayor a 0.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="h5">(<b class="red">*</b>) campo obligatorio</span>
+
+        <button (click)="actualizarParticipacion()" type="button" class="btn btn-success waves-effect waves-themed"
+                data-dismiss="modal" [disabled]="validTodo">
+          <i class="fa fa-check"></i>&nbsp;Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

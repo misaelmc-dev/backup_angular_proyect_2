@@ -1,0 +1,83 @@
+<!--
+<div class="row js-list-filter" id="js-contacts">
+  <div class="col-xl-4" *ngFor="let item of ranked.slice(0,6)">
+    <div id="panel-8" class="panel">
+      <div class="panel-hdr">
+        <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+          <div class="d-flex flex-row align-items-center">
+          <span class="mr-3">
+            <span class="rounded-circle profile-image d-block " [style]="'background-image:url(' + item.url_foto + '); background-size: cover;'"></span>
+          </span>
+            <div class="info-card-text flex-1">
+              <a [routerLink]="'/invest/' + item.id" class="fs-xl text-truncate text-truncate-lg text-info" data-toggle="dropdown" aria-expanded="false">
+                {{ item.nombre }}
+              </a>
+              <span class="text-truncate text-truncate-xl">{{ item.grado_invest }}</span>
+            </div>
+            <button class="js-expand-btn btn btn-sm btn-default d-none waves-effect waves-themed" data-toggle="collapse" data-target="#c_1 > .card-body + .card-body" aria-expanded="false">
+              <span class="collapsed-hidden">+</span>
+              <span class="collapsed-reveal">-</span>
+            </button>
+          </div>
+        </div>
+        <div class="panel-toolbar">
+          <h5 class="m-0">
+            <span class="badge badge-pill badge-danger fw-400 l-h-n">
+              11
+            </span>
+          </h5>
+        </div>
+        <div class="panel-toolbar ml-2">
+          <h5 class="m-0">
+            <span class="badge badge-primary fw-400 l-h-n">
+              Panel Badge
+            </span>
+          </h5>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <div class="card-body p-0 collapse show">
+            <div class="p-3">
+
+              <a href="" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-map-marker-alt"></i>&nbsp;<strong style="font-family: Poppins">Pais:</strong>&nbsp; {{ item.pais }}</a>
+              <a href="" class="mt-1 d-block fs-sm fw-400 text-dark" style="font-family: Poppins">
+                <i class="fas fa-building"></i>&nbsp;<strong style="font-family: Poppins">Campus:</strong>&nbsp;{{ item.campus | concatName }}</a>
+              <a href="" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-graduation-cap"></i>&nbsp;<strong style="font-family: Poppins">Colegios:</strong>&nbsp;{{ item.colegios | concatName }}</a>
+              <a href="" class="mt-1 d-block fs-sm fw-400 text-dark">
+                <i class="fas fa-chart-network"></i>&nbsp;<strong style="font-family: Poppins">Centros:</strong>&nbsp;{{ item.centros | concatName }}</a>
+
+            </div>
+          </div>
+
+        </div>
+        &lt;!&ndash; panel footer with utility classes &ndash;&gt;
+        <div class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted d-flex">
+
+          <div class="d-flex flex-row">
+            <a *ngIf="getGoogleScholar(item.lista_redes_sociales)" [href]="getGoogleScholar(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#38A1F3">
+              &lt;!&ndash;<i class="fab fa-facebook-square"></i>&ndash;&gt;
+              <i class="fab fa-google"></i>
+            </a>
+            <a *ngIf="getResearchGate(item.lista_redes_sociales)" [href]="getResearchGate(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#00d0af">
+              <i class="fab fa-researchgate"></i>
+            </a>
+            <a *ngIf="getLinkedIn(item.lista_redes_sociales)" [href]="getLinkedIn(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#0077B5">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a *ngIf="getMendeley(item.lista_redes_sociales)" [href]="getMendeley(item.lista_redes_sociales)" target="_blank" class="mr-2 fs-xxl" style="color:#0077B5">
+              <i class="fab fa-mendeley"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+
+

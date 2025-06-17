@@ -1,0 +1,67 @@
+<br>
+<h2>{{ title }} </h2>
+<br>
+
+<div class="row">
+  <div class="col-sm-12">
+
+    <div id="panel-4" class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Citas <span class="fw-300"><i></i></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button class="btn btn-icon btn-sm btn-danger mr-1 shadow-0 waves-effect waves-themed" routerLink="/invest/{{id}}/sci-prod/">
+            <i class="fas fa-long-arrow-alt-left"></i>
+          </button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+          <div class="input-group input-group-md mb-g">
+            <input type="text" id="simpleinput" class="form-control" placeholder="Filtro" [(ngModel)]="filter" (keyup)="loadQuotes()">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-search"></i></span>
+            </div>
+          </div>
+
+          <table class="table m-0 table table-bordered" id="table-example">
+            <thead>
+            <tr>
+              <th>Año</th>
+              <th>Tipo</th>
+              <th>Título</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of quoteData | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+              <td>{{row.anio}}</td>
+              <td>{{row.nombreTipo}}</td>
+              <td>{{row.titulo}}</td>
+            </tr>
+            </tbody>
+          </table>
+
+          <br>
+
+          <pagination-controls
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]="responsive"
+            [id]="paginationId"
+            (pageChange)="handlePageChange($event)"
+            class="paginationStyle"
+          ></pagination-controls>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

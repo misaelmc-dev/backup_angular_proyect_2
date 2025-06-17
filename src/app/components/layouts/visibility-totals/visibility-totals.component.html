@@ -1,0 +1,52 @@
+<div class="subheader" *ngIf="!scicom &&
+                              !(this.router.url.includes('/statistics-api')) &&
+                              !(this.router.url.includes('/statistics-encounter')) &&
+                              !(this.router.url.includes('/statistics-forum'))">
+  <h1 class="subheader-title">
+    <!--<i class='subheader-icon fal fa-chart-area'></i> Analytics <span class='fw-300'>Dashboard</span>-->
+  </h1>
+  <div class="subheader-block d-lg-flex align-items-center">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>SCOPUS</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-primary-500"
+            appVisibilityTotals [data]="scopus" [header]="'scopus'">
+        {{scopus}}
+      </span>
+    </div>
+  </div>
+  <div *ngIf="false" class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>JCR</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-danger-500"
+            appVisibilityTotals [data]="jcr" [header]="'jcr'">{{jcr}}</span>
+    </div>
+  </div>
+  <div class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>SCIELO</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-danger-500"
+            appVisibilityTotals [data]="scielo" [header]="'scielo'">{{scielo}}</span>
+    </div>
+  </div>
+  <div class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>CONACYT</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-danger-500"
+            appVisibilityTotals [data]="conacyt" [header]="'conacyt'">{{conacyt}}</span>
+    </div>
+  </div>
+  <div class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>DOAJ</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-danger-500"
+            appVisibilityTotals [data]="doaj" [header]="'doaj'">{{doaj}}</span>
+    </div>
+  </div>
+  <div class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+    <div class="d-inline-flex flex-column justify-content-center mr-3">
+      <span class="fw-300 fs-xs d-block opacity-50"><small>OTROS</small></span>
+      <span class="visibility-total poppins fw-500 fs-xl d-block color-danger-500"
+            appVisibilityTotals [data]="otros" [header]="'otros'">{{otros}}</span>
+    </div>
+  </div>
+</div>

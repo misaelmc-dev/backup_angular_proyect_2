@@ -1,0 +1,453 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2>Mis estadísticas SCICOM <span class="fw-300"><i> Foro UVM</i></span></h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container show">
+    <div class="panel-content">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" data-toggle="tab" href="#tab-1" role="tab"><i class="fal fa-calendar mr-1"></i> Por eventos de campus</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-2" role="tab"><i class="fal fa-clock mr-1"></i> Por ciclos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-3" role="tab"><i class="fal fa-calendar-check mr-1"></i> Por años</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-4" role="tab"><i class="fal fa-school mr-1"></i> Por campus</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-5" role="tab"><i class="fal fa-tree mr-1"></i> Por ODS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" href="#tab-6" role="tab"><i class="fal fa-book mr-1"></i> Por área de conocimiento</a>
+        </li>
+      </ul>
+      <div class="tab-content border border-top-0 p-3">
+        <div class="tab-pane fade show active" id="tab-1" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorEventosCampus()"
+                      [(ngModel)]="selectedEveCampByCiclo">
+                <ng-container *ngIf="ciclosList.length>0">
+                  <option value="0">Selecciona un ciclo...</option>
+                  <ng-container *ngFor="let cd of ciclosList">
+                    <option value="{{cd.id}}">{{cd.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="ciclosList.length<=0">
+                  <option value="0">No hay ciclos disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Carteles vs pronósticos por evento de campus</h4>
+                <ng-container *ngFor="let c of cartelesEveCamp">
+                  <div class="mt-2">
+                    <ng-container *ngFor="let p of participacionCartelesEveCamp">
+                      <ng-container *ngIf="p.id==c.id_participacion">
+                        <ng-container *ngFor="let u of usuariosCartelesEveCamp">
+                          <ng-container *ngIf="u.id==p.id_usuario">
+                            <div class="d-flex">
+                              <label class="mb-1">{{u.user.name+"("+u.user.email+")"}}</label>
+                              <span class="d-inline-block ml-auto">{{c.count_trabajos}} / {{c.pronosticoCarteles}}</span>
+                            </div>
+                            <div class="d-flex">
+                              <label class="mb-1">
+                                <ng-container *ngFor="let c of campus">
+                                  <ng-container *ngFor="let uc of u.campus;let i=index;">
+                                    <ng-container *ngIf="uc.id==c.id">
+                                      {{c.nombre}}<ng-container *ngIf="i>0"> ,</ng-container>
+                                    </ng-container>
+                                  </ng-container>
+                                </ng-container>
+                              </label>
+                              <span class="d-inline-block ml-auto">{{(c.count_trabajos*100)/c.pronosticoCarteles | number:'1.0-0'}}%</span>
+                            </div>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar" role="progressbar" [style]="loadWidthCarteles(c.count_trabajos,c.pronosticoCarteles)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesEveCamp.length!=0">
+                <div class="panel p-3 mt-2" style="background-color:#F4F5F6;">
+                  <h5>Leyenda</h5>
+                  <div class="row">
+                    <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-danger">&nbsp;</a>&nbsp;0% a 69%</div>
+                    <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:yellow;">&nbsp;</a>&nbsp;70% a 78%</div>
+                    <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:orange;">&nbsp;</a>&nbsp;79% a 89%</div>
+                    <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-success">&nbsp;</a>&nbsp;90% a 100%</div>
+                  </div>
+                </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesEveCamp.length==0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Estudiantes vs pronósticos por evento de campus</h4>
+                <ng-container *ngFor="let e of estudiantesEveCamp">
+                  <div class="mt-2">
+                    <ng-container *ngFor="let p of participacionEstudiantesEveCamp">
+                      <ng-container *ngIf="p.id==e.id_participacion">
+                        <ng-container *ngFor="let u of usuariosEstudiantesEveCamp">
+                          <ng-container *ngIf="u.id==p.id_usuario">
+                            <div class="d-flex">
+                              <label class="mb-1">{{u.user.name+"("+u.user.email+")"}}</label>
+                              <span class="d-inline-block ml-auto">{{e.count_autores_trab}} / {{e.pronosticoEstudiantes}}</span>
+                            </div>
+                            <div class="d-flex">
+                              <label class="mb-1">
+                                <ng-container *ngFor="let c of campus">
+                                  <ng-container *ngFor="let uc of u.campus;let i=index;">
+                                    <ng-container *ngIf="uc.id==c.id">
+                                      {{c.nombre}}<ng-container *ngIf="i>0"> ,</ng-container>
+                                    </ng-container>
+                                  </ng-container>
+                                </ng-container>
+                              </label>
+                              <span class="d-inline-block ml-auto">
+                                {{(e.count_autores_trab*100)/e.pronosticoEstudiantes | number:'1.0-0'}}%
+                              </span>
+                            </div>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar" role="progressbar" [style]="loadWidthCarteles(e.count_autores_trab,e.pronosticoEstudiantes)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesEveCamp.length!=0">
+                  <div class="panel p-3 mt-2" style="background-color:#F4F5F6;">
+                    <h5>Leyenda</h5>
+                    <div class="row">
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-danger">&nbsp;</a>&nbsp;0% a 69%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:yellow;">&nbsp;</a>&nbsp;70% a 78%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:orange;">&nbsp;</a>&nbsp;79% a 89%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-success">&nbsp;</a>&nbsp;90% a 100%</div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesEveCamp.length==0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-2" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorCiclo()" [(ngModel)]="selectedCicloByCiclo">
+                <ng-container *ngIf="ciclosList.length>0">
+                  <option value="0">Selecciona un ciclo...</option>
+                  <ng-container *ngFor="let cd of ciclosList">
+                    <option value="{{cd.id}}">{{cd.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="ciclosList.length<=0">
+                  <option value="0">No hay ciclos disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Carteles vs pronósticos totales por ciclo</h4>
+                <ng-container *ngFor="let c of cartelesCiclo">
+                  <div class="d-flex mt-2">
+                    {{c.nombre_evento}}
+                    <span class="d-inline-block ml-auto">{{c.count_trabajos}} / {{c.pronosticoCarteles}}</span>
+                  </div>
+                  <div class="d-flex">
+                    <span class="d-inline-block ml-auto">{{(c.count_trabajos*100)/c.pronosticoCarteles | number:'1.0-0'}}%</span>
+                  </div>
+                  <div class="progress progress-sm  mb-2 mt-1">
+                    <div class="progress-bar" role="progressbar" [style]="loadWidthCarteles(c.count_trabajos,c.pronosticoCarteles)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesCiclo.length!=0">
+                  <div class="panel p-3 mt-2" style="background-color:#F4F5F6;">
+                    <h5>Leyenda</h5>
+                    <div class="row">
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-danger">&nbsp;</a>&nbsp;0% a 69%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:yellow;">&nbsp;</a>&nbsp;70% a 78%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:orange;">&nbsp;</a>&nbsp;79% a 89%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-success">&nbsp;</a>&nbsp;90% a 100%</div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="cartelesCiclo.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Estudiantes vs pronósticos totales por ciclo</h4>
+                <ng-container *ngFor="let e of estudiantesCiclo">
+                  <div class="d-flex mt-2">
+                    {{e.nombre_evento}}
+                    <span class="d-inline-block ml-auto">{{e.count_autores_trab}} / {{e.pronosticoEstudiantes}}</span>
+                  </div>
+                  <div class="d-flex">
+                    <span class="d-inline-block ml-auto">{{(e.count_autores_trab*100)/e.pronosticoEstudiantes | number:'1.0-0'}}%</span>
+                  </div>
+                  <div class="progress progress-sm  mb-2 mt-1">
+                    <div class="progress-bar" role="progressbar" [style]="loadWidthEstudiantes(e.count_autores_trab,e.pronosticoEstudiantes)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="estudiantesCiclo.length!=0">
+                  <div class="panel p-3 mt-2" style="background-color:#F4F5F6;">
+                    <h5>Leyenda</h5>
+                    <div class="row">
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-danger">&nbsp;</a>&nbsp;0% a 69%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:yellow;">&nbsp;</a>&nbsp;70% a 78%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle" style="background-color:orange;">&nbsp;</a>&nbsp;79% a 89%</div>
+                      <div class="leyenda pr-2 pl-3"><a class="btn btn-icon btn-xs rounded-circle btn-success">&nbsp;</a>&nbsp;90% a 100%</div>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="estudiantesCiclo.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Eventos de campus por ciclo</h4>
+                <ng-container *ngFor="let p of participacionCiclo">
+                  <div class="d-flex mt-2">
+                    {{p.nombre_evento}}
+                    <span class="d-inline-block ml-auto">{{p.count_participaciones}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidthParticipacion(p.count_participaciones)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="participacionCiclo.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-3" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorAnio()" [(ngModel)]="selectedAnioByCiclo">
+                <ng-container *ngIf="ciclosList.length>0">
+                  <option value="0">Selecciona un ciclo...</option>
+                  <ng-container *ngFor="let cd of ciclosList">
+                    <option value="{{cd.id}}">{{cd.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="ciclosList.length<=0">
+                  <option value="0">No hay ciclos disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel panel-container show" *ngIf="cartelesAnio.length>0">
+                <div class="panel-content">
+                  <highcharts-chart
+                    [Highcharts]="highchartsOne"
+                    [options]="optionsChartOne"
+                    style="width: 90%; height: 100%; display: block"
+                    [(update)]="updateFlagOne">
+                  </highcharts-chart>
+                </div>
+              </div>
+              <ng-container *ngIf="cartelesAnio.length<=0">
+                <div class="panel p-3">
+                  <h4>Carteles por año</h4>
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center m-1" role="alert" style="height:100px">Sin datos</div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel panel-container show" *ngIf="cartelesAnio.length>0">
+                <div class="panel-content">
+                  <highcharts-chart
+                    [Highcharts]="highchartsTwo"
+                    [options]="optionsChartTwo"
+                    style="width: 90%; height: 100%; display: block"
+                    [(update)]="updateFlagTwo">
+                  </highcharts-chart>
+                </div>
+              </div>
+              <ng-container *ngIf="cartelesAnio.length<=0">
+                <div class="panel p-3">
+                  <h4>Eventos de campus por año</h4>
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center m-1" role="alert" style="height:100px">Sin datos</div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-4" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorCampus('recargar')" [(ngModel)]="selectedCampusPart">
+                <ng-container *ngIf="eventPartCampList.length>0">
+                  <option value="0">Selecciona un campus...</option>
+                  <ng-container *ngFor="let epcl of eventPartCampList">
+                    <option value="{{epcl.nombre_campus_reg}}">{{epcl.nombre_campus_reg}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="eventPartCampList.length<=0">
+                  <option value="0">No hay campus disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Carteles por campus</h4>
+                <ng-container *ngFor="let ecc of eventCartCamp">
+                  <div class="d-flex mt-2">
+                    {{ecc.nombre_campus_reg}}
+                    <span class="d-inline-block ml-auto">{{ecc.count_trabajos}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidthParticipacion3(ecc.count_trabajos)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="eventCartCamp.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Estudiantes por campus</h4>
+                <ng-container *ngFor="let eac of eventAuthCamp">
+                  <div class="d-flex mt-2">
+                    {{eac.nombre_campus_reg}}
+                    <span class="d-inline-block ml-auto">{{eac.count_autores_trab}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidth(eac.count_autores_trab,valorAuthCampMax)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="eventAuthCamp.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Foros por campus</h4>
+                <ng-container *ngFor="let epc of eventPartCamp">
+                  <div class="d-flex mt-2">
+                    {{epc.nombre_campus_reg}}
+                    <span class="d-inline-block ml-auto">{{epc.count_participaciones}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidthParticipacion2(epc.count_participaciones)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="eventPartCamp.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-5" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorODS('recargar')" [(ngModel)]="selectedODS">
+                <ng-container *ngIf="eventWorkODSList.length>0">
+                  <option value="0">Selecciona un ODS...</option>
+                  <ng-container *ngFor="let ewol of eventWorkODSList">
+                    <option value="{{ewol.nombre_ods}}">{{ewol.nombre_ods}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="eventWorkODSList.length<=0">
+                  <option value="0">No hay ODS disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Carteles por ODS</h4>
+                <ng-container *ngFor="let ewo of eventWorkODS">
+                  <div class="d-flex mt-2">
+                    {{ewo.nombre_ods}}
+                    <span class="d-inline-block ml-auto">{{ewo.count_trabajos}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidth(ewo.count_trabajos,valorODSMax)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="eventWorkODS.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-6" role="tabpanel">
+          <div class="row mb-3">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <select class="js-border-color custom-select border-primary" (change)="loadTabPorArea('recargar')" [(ngModel)]="selectedAreas">
+                <ng-container *ngIf="eventWorkAreaList.length>0">
+                  <option value="0">Selecciona una area de conocimiento ...</option>
+                  <ng-container *ngFor="let ewol of eventWorkAreaList">
+                    <option value="{{ewol.nombre_area_conocimiento}}">{{ewol.nombre_area_conocimiento}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="eventWorkAreaList.length<=0">
+                  <option value="0">No hay areas de conocimiento disponibles...</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-1 mt-1">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <div class="panel p-3">
+                <h4>Carteles por área de conocimiento</h4>
+                <ng-container *ngFor="let ewo of eventWorkArea">
+                  <div class="d-flex mt-2">
+                    {{ewo.nombre_area_conocimiento}}
+                    <span class="d-inline-block ml-auto">{{ewo.count_trabajos}}</span>
+                  </div>
+                  <div class="progress progress-sm mb-2 mt-1">
+                    <div class="progress-bar bg-primary" role="progressbar" [style]="loadWidth(ewo.count_trabajos,valorAreaMax)" aria-valuenow="1" aria-valuemin="0" aria-valuemax="10"></div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="eventWorkArea.length<=0">
+                  <div class="alert alert-secondary alert-dismissible fade show mt-2 d-flex justify-content-center align-items-center" role="alert" style="height:100px">Sin datos</div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

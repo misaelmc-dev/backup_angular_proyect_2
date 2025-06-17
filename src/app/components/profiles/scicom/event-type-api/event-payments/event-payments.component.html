@@ -1,0 +1,214 @@
+<div class="panel-hdr">
+  <h2>{{(titulo)?'Tipos de pagos permitidos en el evento :':'Agregue los tipos de pagos permitidos en el evento :'}}&nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button *ngIf="this.permisosScicomService.canAgregarTipoPagoEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#payments-modal" (click)="cleanValues()">
+      <i class="fal fa-plus"></i>
+    </button>
+  </h2>
+</div>
+<div style="padding:10px">
+  <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+         aria-describedby="dt-basic-example_info" >
+    <thead class="bg-primary-600 ">
+    <tr role="row">
+      <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-sack-dollar"></i>&nbsp;Tipo de pago</th>
+      <th class="sorting col-3" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;Descripción</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-dollar-sign"></i>&nbsp;Monto</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-calendar"></i>&nbsp;Fechas de ejecución</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-calendar"></i>&nbsp;Fechas de validación</th>
+      <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="paymentsAsing.length!=0">
+      <tr class="odd" *ngFor="let pay of paymentsAsing | paginate : {
+            id: 'paymentsPagination',
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+        <td>{{pay.nombre}}</td>
+        <td>{{pay.descripcion}}</td>
+        <td>
+          <ng-container *ngFor="let tipPay of eventosPagos">
+            <strong *ngIf="pay.id==tipPay.id_tipo_pago">{{tipPay.monto | currency}} MXN</strong>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngFor="let fa of fechasAsign1">
+            <label *ngIf="fa.id_tipo_rango==5">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngFor="let fa of fechasAsign2">
+            <label *ngIf="fa.id_tipo_rango==6">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <button [disabled]="!this.permisosScicomService.canEditarTipoPagoEvento(eventoId)" type="button" class="btn btn-success btn-icon" data-toggle="modal" data-target="#payments-modal"
+                  (click)="updateModal(pay,getFirstRangeIdByRangeType(5, fechasAsign1),getFirstRangeIdByRangeType(6, fechasAsign2))">
+            <i class="fal fa-edit"></i>
+          </button>&nbsp;&nbsp;
+          <button [disabled]="!this.permisosScicomService.canEliminarTipoPagoEvento(eventoId)" type="button" class="btn btn-danger btn-icon"
+                  (click)="removePayments(pay.id,getFirstRangeIdByRangeType(5, fechasAsign1),getFirstRangeIdByRangeType(6, fechasAsign2))">
+            <i class="fal fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="paymentsAsing.length==0">
+      <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay tipos de pagos que mostrar</td></tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-sm-12 col-md-5 mt-2 mb-2">
+      <div class="dataTables_info ml-2" role="status" aria-live="polite">
+        Total de elementos: {{totalItems}}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+      <pagination-controls
+        id="paymentsPagination"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [responsive]=true
+        (pageChange)="cambiarPagina($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="payments-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{(flagUpdate)?'Actualizar tipo de pago':'Agregue un tipo de pago'}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="margin:0px;margin-bottom:10px;">
+          <select [class]="{'form-control': true, 'is-invalid': (mensaje6==2)}" (change)="validateInput('pago')" [(ngModel)]="paymentSelected" [disabled]="(flagUpdate)">
+            <ng-container *ngIf="paymentsNoAsing.length!=0">
+              <option value="0">Selecciona un tipo de pago...</option>
+              <ng-container *ngIf="flagUpdate">
+                <ng-container *ngFor="let pay of paymentsAsing">
+                  <option value="{{pay.id}}">{{pay.nombre}} - {{pay.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!flagUpdate">
+                <ng-container *ngFor="let pay of paymentsNoAsing">
+                  <option value="{{pay.id}}">{{pay.nombre}} - {{pay.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="paymentsNoAsing.length==0">
+              <ng-container *ngIf="flagUpdate">
+                <ng-container *ngFor="let pay of paymentsAsing">
+                  <option value="{{pay.id}}">{{pay.nombre}} - {{pay.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!flagUpdate">
+                <option value="0">No hay tipos de pagos disponibles...</option>
+              </ng-container>
+            </ng-container>
+          </select>
+          <div class="invalid-feedback" *ngIf="mensaje6==2">El campo es obligatorio.</div>
+        </div>
+        <div class="row" style="margin:0px;margin-bottom:15px;">
+          <div class="input-group" style="width: 460px">
+            <input type="number" [class]="{'form-control': true, 'is-invalid': (mensaje5==2)}" placeholder="Escriba el monto $" (change)="validateInput('monto')" [(ngModel)]="payMonto">
+            &nbsp;<b style="color:red;">*</b>
+            <div class="invalid-feedback" *ngIf="mensaje5==2">El campo es obligatorio.</div>
+            <div class="input-group">
+            </div>
+            <label style="margin-top: 10px">Fechas de ejecución</label>
+            <div class="row" style="margin-bottom:15px;">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <div class="input-group" style="width: 205px">
+                    <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje1==2 || mensaje1==3 || mensaje1==5)}" placeholder="Fecha inicial ..." (cambioFecha)="setFechaInicioEval($event)" (focus)="validateInput('fechas1')" [(ngModel)]="showFechaInicioEval" appDateranger>
+                    <div class="input-group-append rounded-right-radius-3">
+                      <span class="input-group-text fs-xl border-tr border-br rounded-right-radius-3"><i class="fal fa-calendar"></i></span>
+                    </div>
+                  </div>
+                  &nbsp;<b style="color:red;">*</b>
+                </div>
+                <div class="invalid-feedback" *ngIf="mensaje1==2">El campo es obligatorio.</div>
+                <div class="invalid-feedback" *ngIf="mensaje1==3">La fecha inicial debe de ser anterior a la fecha final.</div>
+                <div class="invalid-feedback" *ngIf="mensaje1==5">Fechas fuera del rango del evento</div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <div class="input-group" style="width: 205px">
+                    <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje2==2 || mensaje2==3 || mensaje2==4 || mensaje2==5)}" placeholder="Fecha final..." (cambioFecha)="setFechaFinalEval($event)" (focus)="validateInput('fechas1')" [(ngModel)]="showFechaFinalEval" appDateranger>
+                    <div class="input-group-append">
+                      <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                    </div>
+                  </div>
+                  &nbsp;<b style="color:red">*</b>
+                </div>
+                <div class="invalid-feedback" *ngIf="mensaje2==2">El campo es obligatorio.</div>
+                <div class="invalid-feedback" *ngIf="mensaje2==3">La fecha debe de ser posterior a la fecha inicial.</div>
+                <div class="invalid-feedback" *ngIf="mensaje2==4">Ingresa una fecha inicial.</div>
+                <div class="invalid-feedback" *ngIf="mensaje2==5">Fecha fuera del rango del evento</div>
+              </div>
+            </div>
+            <label>Fechas de validación</label>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <div class="input-group" style="width: 205px">
+                    <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje3==2 || mensaje3==3 || mensaje3==5)}" placeholder="Fecha inicial ..." (cambioFecha)="setFechaInicioValid($event)" (focus)="validateInput('fechas2')" [(ngModel)]="showFechaInicioValid" appDateranger>
+                    <div class="input-group-append rounded-right-radius-3">
+                      <span class="input-group-text fs-xl border-tr border-br rounded-right-radius-3"><i class="fal fa-calendar"></i></span>
+                    </div>
+                  </div>
+                  &nbsp;<b style="color:red;">*</b>
+                </div>
+                <div class="invalid-feedback" *ngIf="mensaje3==2">El campo es obligatorio.</div>
+                <div class="invalid-feedback" *ngIf="mensaje3==3">La fecha inicial debe de ser anterior a la fecha final.</div>
+                <div class="invalid-feedback" *ngIf="mensaje3==5">Fechas fuera del rango del evento</div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <div class="input-group" style="width: 205px">
+                    <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje4==2 || mensaje4==3 || mensaje4==4 || mensaje4==5)}" placeholder="Fecha final..." (cambioFecha)="setFechaFinalValid($event)" (focus)="validateInput('fechas2')" [(ngModel)]="showFechaFinalValid" appDateranger>
+                    <div class="input-group-append">
+                      <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                    </div>
+                  </div>
+                  &nbsp;<b style="color:red">*</b>
+                </div>
+                <div class="invalid-feedback" *ngIf="mensaje4==2">El campo es obligatorio.</div>
+                <div class="invalid-feedback" *ngIf="mensaje4==3">La fecha debe de ser posterior a la fecha inicial.</div>
+                <div class="invalid-feedback" *ngIf="mensaje4==4">Ingresa una fecha inicial.</div>
+                <div class="invalid-feedback" *ngIf="mensaje4==5">Fecha fuera del rango del evento</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer text-lg-right align-items-end justify-content-end" *ngIf="!flagUpdate">
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(paymentSelected==0 || !payMonto || mensaje1!=1 || mensaje2!=1 || mensaje3!=1 || mensaje4!=1)" (click)="asingPayments(false)">
+              <i class="fal fa-check"></i>&nbsp;Guardar
+            </button>
+          </span>
+        </div>
+        <div class="modal-footer text-lg-right align-items-end justify-content-end" *ngIf="flagUpdate" >
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(paymentSelected==0 || !payMonto || mensaje1!=1 || mensaje2!=1 || mensaje3!=1 || mensaje4!=1)" (click)="updatePayments()">
+              <i class="fal fa-check"></i>&nbsp;Actualizar
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

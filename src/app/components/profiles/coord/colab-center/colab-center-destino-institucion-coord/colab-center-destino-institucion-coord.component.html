@@ -1,0 +1,86 @@
+<div *ngIf="showBackButton && showElemList" class="panel-hdr">
+  <h2>
+    {{titulo}} <span class="fw-300"><i></i></span>
+  </h2>
+  <div class="panel-toolbar">
+    <a class="btn" (click)="goBack()">
+      <i class="fal fa-arrow-left fs-xl"></i>&nbsp;Atrás
+    </a>
+  </div>
+</div>
+<br *ngIf="showBackButton && showElemList">
+<div id="elemList" *ngIf="showElemList">
+  <div class="row">
+    <div class="col-lg-4" *ngFor="let institucion of instituciones | paginate : {
+                  id: 'colabDestinoInst',
+                  itemsPerPage: 6,
+                  currentPage: currentPage,
+                  totalItems: instituciones.length
+                }" (click)="onElementClicked(institucion.idRorInterno, institucion.nombre)">
+      <div id="panel-8" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="institucion.nombre">
+                {{(institucion.nombre) ? institucion.nombre : 'Desconocida'}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="panel-container show">
+          <div class="panel-content">
+            <div class="card-body p-0 collapse show">
+              <div class="p-3">
+                <div *ngIf="institucion.ciudad" class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fa fa-city"></i><strong class="poppins">&nbsp;</strong>{{institucion.ciudad}}
+                </div>
+                <div *ngIf="institucion.pais" class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fa fa-flag"></i><strong class="poppins">&nbsp;</strong>{{institucion.pais}}
+                </div>
+                <br>
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-file"></i><strong class="poppins">&nbsp;Productos en colaboración: </strong>{{institucion.prodsColab}}
+                </div>
+                <div class="mt-1 d-block fs-sm fw-400 text-dark">
+                  <i class="fas fa-users"></i><strong class="poppins">&nbsp;Coautores: </strong>{{institucion.colabsIndividuales}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pagination-controls
+    previousLabel="Anterior"
+    nextLabel="Siguiente"
+    [responsive]="true"
+    [id]="'colabDestinoInst'"
+    (pageChange)="handlePageChange($event)"
+    class="paginationStyle"
+  ></pagination-controls>
+</div>
+<app-colab-center-desglose-destino-seleccion-coord
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo + ((titulo) ? ' / ' : '') + selectedInstitutionNombre"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="[this.selectedInstitutionId.toString()]"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+  [showInstitucionesOption]="false"
+
+  *ngIf="!showElemList">
+</app-colab-center-desglose-destino-seleccion-coord>
+

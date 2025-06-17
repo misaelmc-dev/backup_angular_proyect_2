@@ -1,0 +1,77 @@
+<div class="menu">
+  <a class="item-menu" (click)="showFiltro=!showFiltro">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <button class="btn waves-effect waves-themed" type="button"
+                [ngClass]="(showFiltro)?'btn-primary':'btn-default'">
+          <i [class]="iconFilter+' fs-xl'"></i>
+        </button>
+      </div>
+      <ng-container *ngIf="opcionSeleccionada==0">
+        <ng-container *ngIf="lista.length==1">
+          <ng-container *ngFor="let item of lista">
+            <input type="text" class="custom-select" [placeholder]="item.texto" data-ms-editor="true"
+                   aria-describedby="button-addon4" spellcheck="false" readonly>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="lista.length!=1">
+          <input type="text" class="custom-select" [placeholder]="textoSinFiltroSeleccionado" data-ms-editor="true"
+                 aria-describedby="button-addon4" spellcheck="false" readonly>
+        </ng-container>
+      </ng-container>
+      <ng-container  *ngIf="opcionSeleccionada!=0">
+        <ng-container *ngIf="lista.length==1">
+          <ng-container *ngFor="let item of lista">
+            <input type="text" class="custom-select" [placeholder]="item.texto" data-ms-editor="true"
+                   aria-describedby="button-addon4" spellcheck="false" readonly>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="lista.length>1">
+          <ng-container *ngFor="let item of lista">
+            <ng-container *ngIf="opcionSeleccionada==item.id">
+              <input type="text" class="custom-select" [placeholder]="item.texto" data-ms-editor="true"
+                     aria-describedby="button-addon4" spellcheck="false" readonly>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+  </a>
+  <div class="submenu" *ngIf="showFiltro">
+    <span class="select2-search select2-search--dropdown">
+      <div class="input-group bg-white shadow-inset-2">
+        <div class="input-group-prepend search-filter-icon" >
+          <span class="input-group-text bg-transparent border-right-0">
+            <i class="fal fa-search"></i>
+          </span>
+        </div>
+        <input type="text" class="form-control border-left-0 bg-transparent pl-0 search-filter"
+               [placeholder]='searchBarPlaceholder' spellcheck="false" data-ms-editor="true"
+               (keyup)="buscarListaFiltro()" [(ngModel)]="campoBusquedaFiltro">
+      </div>
+    </span>
+    <div class="list-options" (scroll)="loadMoreItems()" id="filtro">
+      <ng-container *ngIf="lista.length==0">
+        <a class="item" (click)="showFiltro=false">No hay elementos disponibles...</a>
+      </ng-container>
+      <ng-container *ngIf="lista.length==1">
+        <ng-container *ngFor="let item of lista">
+          <a class="item active" (click)="seleccionarFiltro(item.id)">{{item.texto}}</a>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="lista.length>1">
+        <a class="item" (click)="seleccionarFiltro(0)">{{textoSinFiltroSeleccionado}}</a>
+        <ng-container *ngFor="let item of lista">
+          <a class="item" [ngClass]="(opcionSeleccionada==item.id)?'active':''"
+             (click)="seleccionarFiltro(item.id)">{{item.texto}}</a>
+        </ng-container>
+        <ng-container *ngIf="loadingItems[0]">
+          <div class="filter-msg d-flex justify-content-center">
+            <span><b><div class="spinner-border spinner-border-sm"></div> Cargando... </b></span>
+          </div>
+        </ng-container>
+        <a class="item">&nbsp;</a>
+      </ng-container>
+    </div>
+  </div>
+</div>

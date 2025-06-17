@@ -1,0 +1,288 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2><i class="fa fa-file-search"></i>&nbsp;&nbsp;&nbsp;Herramienta de revistas similares</h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container show">
+    <div class="panel-content">
+      <div class="row">
+        <b class="mb-2 ml-3">Selección de revista origen</b>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group input-group-sm bg-white shadow-inset-2">
+            <input type="text" placeholder="Buscar" class="form-control ng-pristine ng-valid ng-touched"
+                   [(ngModel)]="fuentesSearch" style="height:38px">
+            <div class="input-group-append">
+              <button type="button" data-toggle="modal" data-target="#fuente-modal"
+                      class="btn btn-primary waves-effect waves-themed"
+                      (click)="filtrarFuenteOrigen()">
+                <i class="fal fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="fuenteSelected" (change)="filtrarFuentesSimilares()">
+              <option value="0">{{(fuentesOrigen.length!=0)?'Listado de fuentes...':'No hay fuentes disponibles'}}</option>
+              <ng-container *ngFor="let f of fuentesOrigen">
+                <option value="{{f.id}}">{{f.titulo}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-file-signature"></i></span>
+            </div>
+          </div>
+        </div>
+        <span style="width:100px;margin-right:10px">
+          <button class="btn btn-danger" (click)="cleanOrigenFilters()"><i class="fa fa-ban"></i>&nbsp;Limpiar</button>
+        </span>
+      </div>
+      <br>
+      <div class="col-12" style="border-top:1px rgba(128,128,128,0.21) solid"></div>
+      <div class="row">
+        <b class="mb-2 ml-3 mt-3">Fuentes sugeridas</b>
+      </div>
+      <div class="row mb-2">
+        <div class="col">
+          <div class="input-group input-group-sm bg-white shadow-inset-2">
+            <input type="text" placeholder="Buscar" class="form-control ng-pristine ng-valid ng-touched"
+                   [(ngModel)]="fuentesSimilaresSearch"  style="height:38px"
+                   [disabled]="filtrosDisabled">
+            <div class="input-group-append">
+              <button type="button" data-toggle="modal" data-target="#fuente-modal"
+                      (click)="filtrarFuentesSimilares()"
+                      class="btn btn-primary waves-effect waves-themed" [disabled]="filtrosDisabled">
+                <i class="fal fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="accesoSelected" [disabled]="filtrosDisabled"
+                    (change)="filtrarFuentesSimilares()">
+              <option value="0">Filtre por acceso abierto...</option>
+              <option value="1">Solo con acceso abierto</option>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-globe-americas"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px;width:100px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="cuartilSelected" [disabled]="filtrosDisabled"
+                    (change)="filtrarFuentesSimilares()">
+              <option value="0">Filtre por cuartil...</option>
+              <option value="q1">Q1</option>
+              <option value="q2">Q2</option>
+              <option value="q3">Q3</option>
+              <option value="q4">Q4</option>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-check-circle"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <div class="custom-select" [attr.data-toggle]="(filtrosDisabled)?'':'dropdown'"
+                 [class.disabled]="filtrosDisabled" aria-haspopup="false" aria-expanded="false">
+              <ng-container *ngIf="paisSelected==0">
+                Filtre por país...
+              </ng-container>
+              <ng-container *ngIf="paisSelected!=0">
+                <ng-container *ngFor="let p of paisesList">
+                  <ng-container *ngIf="paisSelected==p.ISO_3166_1_num">
+                    <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                      <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'" width="18px" height="12px">&nbsp;
+                    </ng-container>
+                    {{p.ISO_3166_1_alfa2}} -
+                    <span *ngIf="p.nombre.length>30">{{p.nombre | slice:0:30}}...</span>
+                    <span *ngIf="p.nombre.length<=30">{{p.nombre}}</span>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </div>
+            <div class="dropdown-menu select-pais">
+              <div class="option-pais" data-toggle="dropdown" (click)="selectPais(0)">
+                Filtre por país...
+              </div>
+              <ng-container *ngFor="let p of paisesList">
+                <div class="option-pais" data-toggle="dropdown" (click)="selectPais(p.ISO_3166_1_num)">
+                  <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                    <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'" width="15px" height="10px">&nbsp;
+                  </ng-container>
+                  {{p.ISO_3166_1_alfa2}} -
+                  <span *ngIf="p.nombre.length>25">{{p.nombre | slice:0:25}}...</span>
+                  <span *ngIf="p.nombre.length<=25">{{p.nombre}}</span>
+                </div>
+              </ng-container>
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-flag-alt"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="width-3" style="margin-right: 10px"></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="areaSelected" [disabled]="filtrosDisabled"
+                    (change)="filtrarFuentesSimilares('area')">
+              <option value="0">Filtre por área...</option>
+              <ng-container *ngFor="let a of areasList">
+                <option value="{{a.id_scimago}}">{{a.name}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-bookmark"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="subAreaSelected" [disabled]="filtrosDisabled"
+                    (change)="filtrarFuentesSimilares('subarea')">
+              <option value="0">Filtre por subárea...</option>
+              <ng-container *ngFor="let a of subAreasList">
+                <option value="{{a.id_scimago}}">{{a.name}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-bring-forward"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="idiomaSelected" [disabled]="filtrosDisabled"
+                    (change)="filtrarFuentesSimilares()">
+              <option value="0">Filtre por idioma...</option>
+              <ng-container *ngFor="let i of idiomasList">
+                <option value="{{i.id}}">{{i.id_639_1}} - {{i.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-headset"></i></span>
+            </div>
+          </div>
+        </div>
+        <span class="width-3" style="margin-right: 10px">
+          <button class="btn btn-danger btn-icon" (click)="cleanFilters()"><i class="fa fa-ban"></i></button>
+        </span>
+      </div>
+      <div class="dataTables_scroll">
+        <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px; width: 100%;">
+          <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%;">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable no-footer" role="grid" style="margin-left: 0px;width:100%;">
+              <thead class="bg-primary-600" style="padding-right: 17px">
+              <tr role="row">
+                <th style="width:17%" class="border-tl"><i class="fa fa-file-signature"></i>&nbsp;TÍTULO DE LA FUENTE</th>
+                <th style="width:12%;text-align: center"><i class="fa fa-link"></i>&nbsp;URL-NORMAS</th>
+                <th style="width:14%"><i class="fa fa-lock-open"></i>&nbsp;ACCESO ABIERTO</th>
+                <th style="width:10%;text-align: center"><i class="fa fa-dollar-sign"></i>&nbsp;APC</th>
+                <th style="width:13%" [class]="ordenCites" (click)="ordenarFuentes('cites')"><i class="fa fa-analytics"></i>&nbsp;CITES SCORE</th>
+                <th style="width:7%" [class]="ordenQuartil" (click)="ordenarFuentes('quartil')"><i class="fa fa-check-circle"></i>&nbsp;Q</th>
+                <th style="width:9%" [class]="ordenQuartilSc" (click)="ordenarFuentes('quartilsc')"
+                    title="Cuartil Scintra basado en la moda estadística"><i class="fa fa-check-circle"></i>&nbsp;Q_Sc
+                </th>
+                <th style="width:7%"><i class="fa fa-flag"></i>&nbsp;PAÍS</th>
+                <th style="width:13%" [class]="ordenSimilitud"  [class.border-tr]="true" (click)="ordenarFuentes('similitud')"><i class="fa fa-equals"></i>&nbsp;SIMILITUD</th>
+              </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+        <div [class.contenedor]="fuentesList.length>6">
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table border-bl border-br"
+                 role="grid" aria-describedby="dt-basic-example_info" style="width:100%;">
+            <tbody>
+            <ng-container *ngFor="let f of fuentesList">
+              <tr class="odd">
+                <td style="width:17%">
+                  <ng-container *ngIf="f.url!=null">
+                    <a [href]="f.url" target="_blank" style="text-decoration:none">
+                      <span>{{f.titulo}}<br></span>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="f.url==null">
+                    <span>{{f.titulo}}<br></span>
+                  </ng-container>
+                </td>
+                <td style="width:12%" align="center">
+                  <ng-container *ngIf="f.url_normas!=null">
+                    <a [href]="f.url_normas" target="_blank">
+                      <i class="fa fa-external-link" style="font-size:15px "></i>
+                    </a>
+                  </ng-container>
+                  <label *ngIf="f.url_normas==null">-</label>
+                </td>
+                <td style="width:14%" align="center">{{(f.acceso_abierto==null)?'No':'Sí'}}</td>
+                <td style="width:10%" align="center">{{(f.apc_costo==null)?'Desconocido':f.apc_costo}}</td>
+                <td style="width:13%" align="center">{{(f.cites_score==null)?'-':f.cites_score}}</td>
+                <td style="width:7%" align="center">{{(f.scopus_q==null)?'-':f.scopus_q}}</td>
+                <td style="width:9%" align="center">{{(f.scopus_q_scintra==null)?'-':f.scopus_q_scintra}}</td>
+                <td style="width:7%;margin-right: -100px" align="center">
+                  <ng-container *ngFor="let p of paisesList">
+                    <ng-container *ngIf="f.paises.length!=0" >
+                    <span *ngIf="f.paises[0].ISO_3166_1_num==p.ISO_3166_1_num">
+                      <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                        <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'"
+                             alt="{{p.nombre}}" title="{{p.nombre}}" width="40px" height="15px">
+                      </ng-container>
+                    </span>
+                    </ng-container>
+                  </ng-container>
+                </td>
+                <td style="width:13%" align="center">
+                  <ng-container *ngIf="f.fuentes_similares_originarias.length!=0">
+                    <ng-container *ngFor="let fp of f.fuentes_similares_originarias;let i = index">
+                      <ng-container *ngIf="i==0">
+                        <span *ngIf="(fp.pivot.similarity * 100)>=0 && (fp.pivot.similarity * 100) <= 59">
+                          <p class="badge badge-danger badge-pill" style="background-color: red;font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+                          {{fp.pivot.similarity * 100 | number:'1.0-0'}}%
+                        </span>
+                        <span *ngIf="(fp.pivot.similarity * 100)>=60 && (fp.pivot.similarity * 100) <= 84">
+                          <p class="badge badge-warning badge-pill" style="font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+                          {{fp.pivot.similarity * 100 | number:'1.0-0'}}%
+                        </span>
+                        <span *ngIf="(fp.pivot.similarity * 100)>=85 && (fp.pivot.similarity * 100) <= 100">
+                          <p class="badge bg-success badge-pill" style="font-size:10px">&nbsp;</p>&nbsp;&nbsp;&nbsp;
+                          {{fp.pivot.similarity * 100 | number:'1.0-0'}}%
+                        </span>
+                        <!--{{.54666666666666 * 100 | number:'1.0-0'}}%-->
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                  <span *ngIf="f.fuentes_similares_originarias.length==0">-</span>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="fuentesList.length==0">
+              <tr class="odd">
+                <td valign="top" colspan="8" class="dataTables_empty" style="color:#0a70bd">
+                  {{(sinResultados)?'No hay revistas similares':'Debe seleccionar una revista de origen'}}
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+
+
+
+

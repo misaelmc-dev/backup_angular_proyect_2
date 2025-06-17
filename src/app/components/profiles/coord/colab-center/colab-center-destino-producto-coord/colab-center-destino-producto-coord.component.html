@@ -1,0 +1,72 @@
+<div *ngIf="showBackButton" class="panel-hdr">
+  <h2>
+    {{titulo}} <span class="fw-300"><i></i></span>
+  </h2>
+  <div class="panel-toolbar">
+    <a class="btn" (click)="goBack()">
+      <i class="fal fa-arrow-left fs-xl"></i>&nbsp;Atrás
+    </a>
+  </div>
+</div>
+<div class="panel-container show">
+  <div class="panel-content">
+
+
+
+    <div class="panel" *ngFor="let product of products | paginate : {
+                  id: 'colabDestinoProd',
+                  itemsPerPage: 10,
+                  currentPage: currentPage,
+                  totalItems: products.length
+                }">
+      <div class="panel-hdr">
+        <h2>
+          {{ product.titulo }}
+        </h2>
+        <!--<div class="panel-toolbar">
+
+          <span class="badge mr-2" style="background-color: #6261ab;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.doaj">Doaj</span>
+          <span class="badge mr-2" style="background-color: #0e9187;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.jcr">JCR</span>
+          <span class="badge mr-2" style="background-color: #e69627;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scopus">Scopus</span>
+          <span class="badge mr-2" style="background-color: #154896;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.conacyt">Conacyt</span>
+          <span class="badge mr-2" style="background-color: #86011f;color: #fff;" *ngIf="product.visibilidad && product.visibilidad.scielo">Scielo</span>
+          <span class="badge badge-light">Citas: {{ product.citedby }}</span>
+
+        </div>-->
+      </div>
+      <div class="panel-container show">
+        <!-- panel footer with utility classes -->
+        <div class="panel-content py-2 rounded-bottom border-faded border-left-0 border-right-0 border-bottom-0 text-muted">
+          <!--<h5 class="m-0">
+                <span *ngIf="product.nombreTipo" class="badge badge-primary fw-400 l-h-n">
+                  {{ product.nombreTipo }}
+                </span>
+          </h5>-->
+          <br>
+          <p *ngIf="product.anio">{{ product.anio }} <!--<span *ngIf="product.fuente">* Fuente: {{ product.fuente }}</span>--></p>
+          <!--<p *ngIf="product.coautores.join() || product.nombreInvest">Autores: {{ product.nombreInvest + ', ' + product.coautores.join(', ') }}</p>-->
+          <p *ngIf="product.doi"><span class="font-weight-bold">DOI:&nbsp;</span><a target="_blank" [href]="'https://www.doi.org/'+product.doi">{{ product.doi }}</a></p>
+          <p *ngIf="product.url"><span class="font-weight-bold">Url:&nbsp;</span><a target="_blank" [href]="product.url">{{ product.url }}</a></p>
+          <div class="mt-1 d-block fs-sm fw-400 text-dark">
+            <i class="fas fa-users"></i><strong class="poppins">&nbsp;Coautores: </strong>{{product.colabsIndividuales}}
+          </div>
+          <!--<p *ngIf="product.DOI">DOI: {{ product.DOI }}</p>-->
+        </div>
+      </div>
+    </div>
+    <pagination-controls
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]="true"
+      [id]="'colabDestinoProd'"
+      (pageChange)="handlePageChange($event)"
+      class="paginationStyle"
+    ></pagination-controls>
+
+
+  </div>
+</div>
+
+
+
+

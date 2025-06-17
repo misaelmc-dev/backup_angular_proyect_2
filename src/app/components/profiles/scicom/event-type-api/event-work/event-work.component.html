@@ -1,0 +1,97 @@
+<div class="panel-hdr">
+  <h2>{{(titulo)?'Tipos de trabajos permitidos en el evento :':'Agregue los tipos de trabajos permitidos en el evento :'}} &nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button *ngIf="this.permisosScicomService.canAgregarTipoTrabajoEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#work-modal" (click)="cleanValues()">
+      <i class="fal fa-plus"></i>
+    </button>
+  </h2>
+</div>
+<div style="padding:10px">
+  <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+         aria-describedby="dt-basic-example_info" >
+    <thead class="bg-primary-600 ">
+    <tr role="row" >
+      <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-suitcase"></i>&nbsp;&nbsp;Tipo de trabajo</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+      <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;Eliminar</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="workAsing.length!=0">
+      <tr class="odd" *ngFor="let campus of workAsing | paginate : {
+            id: 'workPagination',
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+        <td>{{campus.nombre}}</td>
+        <td>{{campus.descripcion}}</td>
+        <td>
+          <button [disabled]="!this.permisosScicomService.canEliminarTipoTrabajoEvento(eventoId)" type="button" class="btn btn-danger btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false" data-dismiss="alert" aria-label="Close"
+                  (click)="removeWork(campus.id)">
+            <i class="fal fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="workAsing.length==0">
+      <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay tipos de trabajos que mostrar</td></tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-sm-12 col-md-5 mt-2 mb-2">
+      <div class="dataTables_info ml-2" role="status" aria-live="polite">
+        Total de elementos: {{totalItems}}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+      <pagination-controls
+        id="workPagination"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [responsive]=true
+        (pageChange)="cambiarPagina($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="work-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Selecciona un tipo de trabajo </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="margin:10px;">
+          <select class="form-control" [(ngModel)]="workSelected">
+            <ng-container *ngIf="workNoAsing.length!=0">
+              <option value="0">Selecciona un tipo de trabajo...</option>
+              <ng-container *ngFor="let camp of workNoAsing">
+                <option value="{{camp.id}}">{{camp.nombre}}</option>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="workNoAsing.length==0">
+              <option value="0">No hay tipos de trabajo disponibles...</option>
+            </ng-container>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(workSelected==0)" (click)="asingWork()">
+            <i class="fal fa-plus" ></i>&nbsp;Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

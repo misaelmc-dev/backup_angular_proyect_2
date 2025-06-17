@@ -1,0 +1,68 @@
+.border-tl{
+  border-top-left-radius:3px;
+}
+.border-tr{
+  border-top-right-radius:3px;
+}
+.border-bl{
+  border-bottom-left-radius:3px;
+}
+.border-br{
+  border-bottom-right-radius:3px;
+}
+
+.contenedor {
+  height: 400px;
+  width:100.8%;
+  margin-right: 20px;
+  overflow:auto;
+  box-sizing: border-box;
+  border-bottom: 10px grey;
+}
+
+.select-pais {
+  height:200px;
+  width:100%;
+  overflow:auto;
+  box-sizing: border-box;
+  border-bottom: 10px grey;
+}
+.option-pais {
+  padding-left: 15px;
+  width: 97%;
+}
+
+.option-pais:hover {
+ background-color: grey;
+}
+
+/* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+.contenedor::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.contenedor::-webkit-scrollbar:vertical {
+  width:10px;
+  position: fixed;
+}
+
+.contenedor::-webkit-scrollbar-button:increment,.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.contenedor::-webkit-scrollbar:horizontal {
+  height: 10px;
+  margin-left: -10px;
+}
+
+.contenedor::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: 2px solid #f1f2f3;
+}
+
+.contenedor::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+

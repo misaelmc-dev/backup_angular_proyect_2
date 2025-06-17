@@ -1,0 +1,68 @@
+<div *ngIf="modal=='ver'">
+  <div class="row mb-2">
+    <h5 class="col-12 pr-2">
+      <i class="fa fa-align-left width-1"></i>Niveles SNI asociados al investigador
+    </h5>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12">
+      <ng-container *ngFor="let lc of listaItems">
+        <ng-container *ngIf="lc.accion=='agregado'">
+          <li class="m-0 p-0 ml-2">{{lc.nivel}}</li>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!permisoAgregar">
+        <label class="ml-4">No hay niveles SNI asociados.</label>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="modal=='crear' || modal=='editar'">
+  <div class="row mb-2">
+    <label class="form-label col-3 mt-2">
+      <i class="fa fa-align-left width-1"></i>Nivel SNI:
+    </label>
+    <select class="custom-select col-5 pr-0" [(ngModel)]="itemSeleccionado">
+      <option value="0">Selecciona un nivel SNI...</option>
+      <ng-container *ngFor="let lc of listaItems">
+        <ng-container *ngIf="lc.accion=='no agregado' || lc.accion=='eliminar'">
+          <option value="{{lc.id}}">{{lc.nivel}}</option>
+        </ng-container>
+      </ng-container>
+    </select>
+    <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+      <button class="btn btn-primary" (click)="agregarItem()"
+              [disabled]="itemSeleccionado==0 || permisoAgregar">
+        <i class="fa fa-plus"></i> Agregar
+      </button>
+    </div>
+    <label class="col-1"></label>
+  </div>
+  <div class="row" *ngFor="let lc of listaItems">
+    <ng-container *ngIf="lc.accion=='agregado' || lc.accion=='agregar'">
+      <label class="col-3"></label>
+      <div class="alert alert-primary alert-dismissible fade show col-8 m-0 mt-1" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerItem(lc.id)">
+          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+        </button>
+        {{lc.nivel}}
+      </div>
+      <label class="col-1"></label>
+    </ng-container>
+  </div>
+  <div class="row mt-2">
+    <div class="alert bg-primary-400 text-white fade show col-11" role="alert">
+      <div class="d-flex align-items-center">
+        <div class="alert-icon">
+          <i class="fal fa-info-circle"></i>
+        </div>
+        <div class="flex-1">
+          Nota: Solo se puede asignar un nivel SNI.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

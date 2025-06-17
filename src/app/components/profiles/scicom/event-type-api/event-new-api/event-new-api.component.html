@@ -1,0 +1,83 @@
+<div class="row mt-2">
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+    <label class="form-label mt-2">Nombre:<b class="red">*</b></label>
+  </div>
+  <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+    <input type="text" class="form-control" [class.is-invalid]="validacionNombre!=0" maxlength="100" height="100px"
+           placeholder="Escribe el nombre del evento ..." [(ngModel)]="eventoNombre" (keyup)="validarNombre()">
+    <div class="invalid-feedback" *ngIf="validacionNombre!=0">El campo es obligatorio.</div>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+    <label class="form-label mt-2">Descripción:</label>
+  </div>
+  <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+    <div class="input-group">
+      <textarea rows="8" class="form-control" [class.is-invalid]="validacionDescripcion!=0"
+                placeholder="Escribe la descripción del evento ..." [(ngModel)]="eventoDescripcion"
+                (keyup)="validarDescripcion()"></textarea>
+    </div>
+    <div class="invalid-feedback" *ngIf="validacionDescripcion!=0">La descripción no puede tener más de 500 caracteres.</div>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+    <label class="form-label mt-2">Lema:</label>
+  </div>
+  <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+    <div class="input-group">
+      <textarea rows="4" class="form-control" [class.is-invalid]="validacionLema!=0"
+                placeholder="Escribe el lema del evento ..." [(ngModel)]="eventoLema"
+                (keyup)="validarLema()"></textarea>
+    </div>
+    <div class="invalid-feedback" *ngIf="validacionLema!=0">El lema no puede tener más de 200 caracteres.</div>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+    <label class="form-label mt-2">Objetivos:</label>
+  </div>
+  <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+    <div class="input-group">
+      <textarea rows="8" class="form-control" [class.is-invalid]="validacionObjetivo!=0"
+                placeholder="Escribe los objetivos del evento ..." [(ngModel)]="eventoObjetivo"
+                (keyup)="validarObjetivo()"></textarea>
+    </div>
+    <div class="invalid-feedback" *ngIf="validacionObjetivo!=0">Los objetivos no pueden tener más de 500 caracteres.</div>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 mt-2">
+    <label class="form-label">Fecha&nbsp;inicio:<b class="red">*</b></label>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+    <div class="input-group">
+      <input type="text" class="form-control" [class.is-invalid]="validacionFechaInicio!=0" readonly
+             placeholder="Selecciona la fecha ..." (cambioFecha)="setFechaInicio($event)"
+             (focus)="validarFechas()" [(ngModel)]="showFechaInicio" appDateranger>
+      <div class="input-group-append">
+        <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+      </div>
+    </div>
+    <div class="invalid-feedback" *ngIf="validacionFechaInicio==1">El campo es obligatorio.</div>
+    <div class="invalid-feedback" *ngIf="validacionFechaInicio==2">La fecha inicial debe de ser anterior a la fecha final.</div>
+  </div>
+  <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 mt-2">
+    <label class="form-label">Fecha&nbsp;final:<b class="red">*</b></label>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+    <div class="input-group">
+      <input type="text" class="form-control" [class.is-invalid]="validacionFechaFinal!=0" readonly
+             placeholder="Selecciona la fecha ..." (cambioFecha)="setFechaFinal($event)"
+             (focus)="validarFechas()" [(ngModel)]="showFechaFinal" appDateranger>
+      <div class="input-group-append">
+        <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+      </div>
+    </div>
+    <div class="invalid-feedback" *ngIf="validacionFechaFinal==1">El campo es obligatorio.</div>
+    <div class="invalid-feedback" *ngIf="validacionFechaFinal==2">La fecha final debe de ser posterior a la fecha inicial.</div>
+    <div class="invalid-feedback" *ngIf="validacionFechaFinal==3">Ingresa una fecha inicial.</div>
+  </div>
+</div>
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

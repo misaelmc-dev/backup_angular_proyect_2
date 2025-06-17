@@ -1,0 +1,363 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-school mr-2'></i>Catálogo de instituciones ROR <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button"
+                          (click)="filtrarInstituciones()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroProyecto($event)"
+              [iconFilter]="'fal fa-briefcase'"
+              [placeholder]="'Solo con proyecto'"
+              [numberOption]="1"
+              [update]="update1">
+            </app-filtro-checkbox>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroProducto($event)"
+              [iconFilter]="'fal fa-edit'"
+              [placeholder]="'Solo con producto Scintra'"
+              [numberOption]="2"
+              [update]="update2">
+            </app-filtro-checkbox>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroCita($event)"
+              [iconFilter]="'fal fa-book'"
+              [placeholder]="'Solo con citas'"
+              [numberOption]="3"
+              [update]="update3">
+            </app-filtro-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 40%;" aria-sort="ascending">Nombre</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 40%;">País</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let li of listaInstitucionesRor | paginate : {
+                          id: 'institucionPagination',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{li.institution_name}}</td>
+                <td class="sorting_1 dtr-control b-bot-l">{{li.country}}</td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#consultar-modal" type="button" (click)="obtenerInstitucionVer(li.id)"
+                  ><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#editar-modal" type="button" (click)="obtenerInstitucionActualizar(li.id)">
+                    <i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button"
+                          (click)="eliminar(li)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="institucionPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles de la institución ROR
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-key width-1"></i>Id:</label>
+          <label class="col-9">{{institucionId}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-key width-1"></i>Id ROR:</label>
+          <label class="col-9">{{institucionIdRor}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-university width-1"></i>Nombre:</label>
+          <label class="col-9">{{institucionName}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>País:</label>
+          <label class="col-9">{{institucionPais.nombre}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>Estado:</label>
+          <label class="col-9">{{institucionState}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>Ciudad:</label>
+          <label class="col-9">{{institucionCity}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-link width-1"></i>Link:</label>
+          <label class="col-9"><a href="{{institucionLink}}}" target="_blank">{{institucionLink | slice :0:40}}...</a></label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-planet-moon width-1"></i>Latitud:</label>
+          <label class="col-9">{{institucionLatitud}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-planet-moon width-1"></i>Longitud:</label>
+          <label class="col-9">{{institucionLongitud}}</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos de la institución ROR
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Id ROR:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa el id ROR..."
+                 [(ngModel)]="institucionIdRor" [ngClass]="validarNumeroCaracteres(institucionIdRor,20)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionIdRor,20)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <textarea type="text" class="form-control col-9" placeholder="Ingresa nombre..." rows="3"
+                    [(ngModel)]="institucionName" [ngClass]="validarNumeroCaracteres(institucionName,256)">
+          </textarea>
+          <ng-container *ngIf="validarNumeroCaracteres(institucionName,256)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">País:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-9" [(ngModel)]="institucionIdPais" (change)="cambiarPais()">
+            <option value="0">Selecciona un país</option>
+            <ng-container *ngFor="let lp of listaPaises">
+              <option value="{{lp.ISO_3166_1_num}}">{{lp.nombre}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Estado:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa estado..."
+                    [(ngModel)]="institucionState" [ngClass]="validarNumeroCaracteres(institucionState,100)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionState,100)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Ciudad:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa ciudad..."
+                    [(ngModel)]="institucionCity" [ngClass]="validarNumeroCaracteres(institucionCity,100)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionCity,100)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Link:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa un link..." [(ngModel)]="institucionLink"
+                 (keyup)="validarLink()" [ngClass]="(validLink==1)?'is-invalid':''">
+          <ng-container *ngIf="validLink==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Latitud:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa latitud..." [(ngModel)]="institucionLatitud">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Longitud:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa longitud..." [(ngModel)]="institucionLongitud">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="crear()" [disabled]="validLink==1 || institucionIdPais==0 || institucionName==''">
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos de la institucion ROR
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Id:</label>
+          <input type="text" class="form-control col-9" [(ngModel)]="institucionId" disabled readonly>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <textarea type="text" class="form-control col-9" placeholder="Ingresa nombre..." rows="3"
+                    [(ngModel)]="institucionName" [ngClass]="validarNumeroCaracteres(institucionName,256)">
+          </textarea>
+          <ng-container *ngIf="validarNumeroCaracteres(institucionName,256)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Id ROR:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa el id ROR..."
+                 [(ngModel)]="institucionIdRor" [ngClass]="validarNumeroCaracteres(institucionIdRor,20)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionIdRor,20)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">País:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-9" [(ngModel)]="institucionIdPais" (change)="cambiarPais()">
+            <option value="0">Selecciona un país</option>
+            <ng-container *ngFor="let lp of listaPaises">
+              <option value="{{lp.ISO_3166_1_num}}">{{lp.nombre}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Estado:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa estado..."
+                 [(ngModel)]="institucionState" [ngClass]="validarNumeroCaracteres(institucionState,100)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionState,100)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Ciudad:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa ciudad..."
+                 [(ngModel)]="institucionCity" [ngClass]="validarNumeroCaracteres(institucionCity,100)">
+          <ng-container *ngIf="validarNumeroCaracteres(institucionCity,100)">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El numero caracteres es mayor al permitido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Link:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa un link..." [(ngModel)]="institucionLink"
+                 (keyup)="validarLink()" [ngClass]="(validLink==1)?'is-invalid':''">
+          <ng-container *ngIf="validLink==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Latitud:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa latitud..." [(ngModel)]="institucionLatitud">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Longitud:</label>
+          <input type="text" class="form-control col-9" placeholder="Ingresa longitud..." [(ngModel)]="institucionLongitud">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizar()" [disabled]="validLink==1 || institucionIdPais==0 || institucionName==''">
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

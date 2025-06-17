@@ -1,0 +1,61 @@
+<div class="row">
+  <div class="col-xl-12">
+    <div class="card mb-g border shadow-0" *ngFor="let impact of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                };
+          let i = index">
+      <div class="card-header p-0">
+        <div class="p-3 d-flex flex-row">
+          <div class="d-block ml-2">
+            <span class="h6 font-weight-bold d-block m-0">
+              <ng-container *ngIf="impact.DOI">
+                <a [href]="'https://www.doi.org/'+impact.DOI" class="link-info" target="_blank">{{ impact.titulo }}</a>
+              </ng-container>
+              <ng-container *ngIf="impact.DOI===null && impact.url!==null">
+                <a [href]="impact.url" class="link-info" target="_blank">{{ impact.titulo }}</a>
+              </ng-container>
+              <ng-container *ngIf="impact.DOI===null && impact.url===null">{{ impact.titulo }}</ng-container>
+            </span>
+            <a href="javascript:void(0);" class="fs-sm text-info h6 fw-500 mb-0 d-block">{{ impact.nombreTipo }}</a>
+            <div class="d-flex mt-1 text-warning align-items-center">
+            </div>
+          </div>
+          <a  target="_blank" id="citedby" routerLink="/invest/{{ researcherId }}/quote-detail/{{ impact.id }}" class="d-inline-flex align-items-center text-dark ml-auto align-self-start">
+            <span>Citas:&nbsp;{{ impact.citedby }}</span>
+          </a>
+        </div>
+      </div>
+      <div class="card-body ">
+        <p>{{ impact.anio }}</p>
+        <p *ngIf="impact.nombreInvest">
+          <i class="fas fa-users"></i>&nbsp;{{ impact.nombreInvest}}<ng-container *ngFor="let c of impact.coautores_ordenados">, {{c.nombre}}</ng-container>
+        </p>
+        <p *ngIf="impact.DOI"><span class="font-weight-bold">DOI:&nbsp;</span><a target="_blank" [href]="'https://www.doi.org/'+impact.DOI">{{ impact.DOI }}</a></p>
+      </div>
+      <!--<div class="card-footer">
+        <div class="d-flex align-items-center">
+          <span class="text-sm text-muted font-italic"><i class="fal fa-clock mr-1"></i> Posted 1 week ago</span>
+          <a href="javascript:void(0);" class="flex-shrink-0 ml-auto">Reply <i class="fal fa-reply ml-2"></i> </a>
+        </div>
+      </div>-->
+    </div>
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+        &nbsp;&nbsp;Total de elementos: {{totalItems}}
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-end">
+        <pagination-controls
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          [responsive]="responsive"
+          [id]="paginationId"
+          (pageChange)="handlePageChange($event)"
+          class="paginationStyle"
+        ></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>

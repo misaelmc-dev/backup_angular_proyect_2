@@ -1,0 +1,164 @@
+<div *ngIf="showBackButton && showElemList" class="panel-hdr">
+  <h2>
+    {{titulo}} <span class="fw-300"><i></i></span>
+  </h2>
+  <div class="panel-toolbar">
+    <a class="btn" (click)="goBack()">
+      <i class="fal fa-arrow-left fs-xl"></i>&nbsp;Atrás
+    </a>
+  </div>
+</div>
+<br *ngIf="showBackButton && showElemList">
+<div id="elemList" *ngIf="showElemList">
+  <div class="row">
+    <!-- Instituciones -->
+    <div *ngIf="showInstitucionesOption" class="col-lg-4" (click)="onInstitutionClicked()">
+      <div id="panel-6" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="'Instituciones'">
+                Instituciones
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Investigadores -->
+    <div *ngIf="showInvestigadoresOption" class="col-lg-4" (click)="onInvestigadorClicked()">
+      <div id="panel-7" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="'Investigadores'">
+                Investigadores
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Años -->
+    <div *ngIf="showAniosOption" class="col-lg-4" (click)="onYearClicked()">
+      <div id="panel-8" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="'Años'">
+                Años
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Productos -->
+    <div *ngIf="showProductosOption" class="col-lg-4" (click)="onProductoClicked()">
+      <div id="panel-9" class="panel cursor-pointer shadow-hover">
+        <div class="panel-hdr">
+          <div class="card-body border-faded border-top-0 border-left-0 border-right-0 rounded-top">
+            <div class="d-flex flex-row align-items-center">
+              <p class="poppins text-primary fs-md" [title]="'Productos'">
+                Productos
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-colab-center-destino-institucion-coord
+  *ngIf="!showElemList && showInstitucionesList"
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+  [showBackButton]=""
+>
+
+</app-colab-center-destino-institucion-coord>
+<app-colab-center-destino-investigador-coord
+  *ngIf="!showElemList && showInvestigadoresList"
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+  [showBackButton]=""
+>
+</app-colab-center-destino-investigador-coord>
+<app-colab-center-destino-anio-coord
+  *ngIf="!showElemList && showYearList"
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+>
+</app-colab-center-destino-anio-coord>
+<app-colab-center-destino-producto-coord
+  *ngIf="!showElemList && showProductList"
+  (backEvent)="onBackEventReceived()"
+  [titulo]="titulo + ' / Productos'"
+  [tipoElementoOrigen]="tipoElementoOrigen"
+  [tiposElementosDestino]="newObjectReference(tiposElementosDestino)"
+  [idsInstitucionesOrigen]="newObjectReference(idsInstitucionesOrigen)"
+  [idsColegiosOrigen]="newObjectReference(idsColegiosOrigen)"
+  [idsCampusOrigen]="newObjectReference(idsCampusOrigen)"
+  [idsLineasOrigen]="newObjectReference(idsLineasOrigen)"
+  [idsInvestigadoresOrigen]="newObjectReference(idsInvestigadoresOrigen)"
+  [idsInstitucionesDestino]="newObjectReference(idsInstitucionesDestino)"
+  [searchTermInvestigadoresDestino]="searchTermInvestigadoresDestino"
+  [aniosDestino]="newObjectReference(aniosDestino)"
+  [idsPaisesDestino]="newObjectReference(idsPaisesDestino)"
+  [searchTermProductosDestino]="searchTermProductosDestino"
+  [soloDestinoNacional]="soloDestinoNacional"
+  [soloDestinoInternacional]="soloDestinoInternacional"
+  [soloDestinoInstitucional]="soloDestinoInstitucional"
+  [filterSearchTerm]="filterSearchTerm"
+>
+</app-colab-center-destino-producto-coord>
+
+

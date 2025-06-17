@@ -1,0 +1,25 @@
+<div class="form-group">
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <button class="btn btn-default waves-effect waves-themed b-top-l b-bot-l" type="button">
+        <i [class]="iconFilter+' fs-xl'"></i></button>
+    </div>
+    <div class="input-group-prepend form-control">{{placeholder}}</div>
+    <div class="input-group-append">
+      <div class="input-group-text">
+        <div class="custom-control custom-checkbox">
+          <ng-container *ngIf="checked">
+            <input type="checkbox" class="custom-control-input"
+                   (click)="cambiarFiltroPositivo(false)" id="check-open-{{numberOption*100+1}}" checked>
+            <label class="custom-control-label" for="check-open-{{numberOption*100+1}}"></label>
+          </ng-container>
+          <ng-container *ngIf="!checked">
+            <input type="checkbox" class="custom-control-input"
+                   (click)="cambiarFiltroNegativo(true)" id="check-open-{{numberOption*100+2}}">
+            <label class="custom-control-label" for="check-open-{{numberOption*100+2}}"></label>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

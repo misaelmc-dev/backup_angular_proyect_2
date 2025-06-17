@@ -1,0 +1,193 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-address-card'></i>Catálogo de access rights <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button" (click)="filtrarAccess()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12"></div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban width-1"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">ID</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">Right term</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1">Right code</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let ll of listaAccess | paginate : {
+                          id: 'accessPagination',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+            };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{ll.id}}</td>
+                <td class="sorting_1 dtr-control">{{ll.right_term}}</td>
+                <td class="sorting_1 dtr-control">{{ll.right_code}}</td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal" data-target="#consultar-modal" type="button" (click)="verInfoAccess(ll.id)"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal" data-target="#editar-modal" type="button" (click)="abrirModalActualizar(ll)"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button" (click)="eliminarAccess(ll)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{listaAccess.length}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="accessPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles de access right
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-key width-1"></i>ID:</label>
+          <label class="col-8">{{accessId}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-address-card width-1"></i>Right term:</label>
+          <label class="col-8">{{accessTerm}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-barcode width-1"></i>Right code:</label>
+          <label class="col-8">{{accessCode}}</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Agregar
+          <small class="m-0 text-muted">
+            Ingrese los datos de access right
+          </small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Right term:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa right term..." [(ngModel)]="accessTerm">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Right code:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa right code..." [(ngModel)]="accessCode">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="crearAccess()" [disabled]="accessTerm=='' || accessCode==''">
+            <i class="fal fa-save mr-2"></i>Guardar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos de access right
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">ID:</label>
+          <input type="text" class="form-control col-8" [(ngModel)]="accessId" readonly disabled="true">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Right term:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa right term..." [(ngModel)]="accessTerm">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Right code:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa right code..." [(ngModel)]="accessCode">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizarAccess()" [disabled]="accessTerm=='' || accessCode==''">
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

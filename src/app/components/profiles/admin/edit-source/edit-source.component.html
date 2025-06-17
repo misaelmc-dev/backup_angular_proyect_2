@@ -1,0 +1,435 @@
+<div class="row">
+  <div class="col-lg-12 col-xl-12">
+    <div id="panel-1" class="panel">
+      <div class="panel-hdr">
+        <h2>
+          Editar Fuente <span class="fw-300"><i></i></span>
+        </h2>
+        <div class="panel-toolbar">
+          <button type="button" class="btn btn-primary waves-effect waves-themed" routerLink="/admin/sources">Regresar</button>
+        </div>
+      </div>
+      <div class="panel-container show">
+        <div class="panel-content">
+
+          <form [formGroup]="sourceForm" (ngSubmit)="submit(sourceForm.value)">
+            <div class="row g-3">
+              <div class="col">
+
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Título</label>
+                  <input type="text" class="form-control" placeholder="Título" formControlName="titulo">
+                </div>
+
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label">Publisher</label>
+                  <div class="input-group input-group-sm bg-white shadow-inset-2">
+                    <input type="text" class="form-control" placeholder="Publisher" formControlName="publisher">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary waves-effect waves-themed" type="button" id="button-addon5" data-toggle="modal" data-target="#fuente-modal"><i class="fal fa-search"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">URL Normas</label>
+                  <input type="text" class="form-control" placeholder="URL Normas" formControlName="url_normas">
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Rights URI</label>
+                  <input type="text" class="form-control" placeholder="Rights URI" formControlName="rights_uri">
+                </div>
+              </div>
+              <div class="col">
+
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Tipo Fuente</label>
+                  <select class="form-control" id="select-tipo-fuente" formControlName="tipo_fuente">
+                    <option *ngFor="let option of productTypes" [value]="option">{{option}}</option>
+                  </select>
+                </div>
+
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Scielo</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="scielo" formControlName="scielo">
+                          <label class="custom-control-label" for="scielo">Scielo</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">ISSN E</label>
+                  <input type="text" class="form-control" placeholder="ISSN E" formControlName="issn_e">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">ISSN I</label>
+                  <input type="text" class="form-control" placeholder="ISSN I" formControlName="issn_i">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Frecuencia</label>
+                  <select formControlName="frecuencia" class="form-control">
+                    <option *ngFor="let item of frecuencies" [value]="item">
+                      {{ item }}
+                    </option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Fi</label>
+                  <input type="text" class="form-control" placeholder="Fi" formControlName="fi">
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">JCR Q</label>
+                  <input type="text" class="form-control" placeholder="JCR Q" aria-label="JCR Q" formControlName="jcr_q">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Scopus Q</label>
+                  <input type="text" class="form-control" placeholder="Scopus Q" aria-label="Scopus Q" formControlName="scopus_q">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">AA Autor</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="aa_autor" formControlName="aa_autor">
+                          <label class="custom-control-label" for="aa_autor">AA Autor</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">AA Lector</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="aa_lector" formControlName="aa_lector">
+                          <label class="custom-control-label" for="aa_lector">AA Lector</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Área</label>
+                  <input type="text" class="form-control" placeholder="Área" formControlName="area">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Plantillas</label>
+                  <input type="text" class="form-control" placeholder="Plantillas" formControlName="plantillas">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Coverletter</label>
+                  <input type="text" class="form-control" placeholder="Coverletter" formControlName="coverletter">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Cites Score</label>
+                  <input type="text" class="form-control" placeholder="Cites Score" formControlName="cites_score">
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="doaj">Doaj</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="doaj" formControlName="doaj">
+                          <label class="custom-control-label" for="doaj">Doaj</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">JCR</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="jcr" formControlName="jcr">
+                          <label class="custom-control-label" for="jcr">JCR</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Scopus</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="scopus" formControlName="scopus">
+                          <label class="custom-control-label" for="scopus">Scopus</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Conacyt</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="conacyt" formControlName="conacyt">
+                          <label class="custom-control-label" for="conacyt">Conacyt</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">APC Costo</label>
+                  <input type="text" class="form-control" placeholder="APC Costo" formControlName="apc_costo">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">License Conditions</label>
+                  <input type="text" class="form-control" placeholder="License Conditions" formControlName="license_condition">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Persistent Article Identifier</label>
+                  <input type="text" class="form-control" placeholder="Persistent Article Identifier" formControlName="persistent_article_identifier">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Article Meta Includes Orcid</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="article_meta_includes_orcid" formControlName="article_meta_includes_orcid">
+                          <label class="custom-control-label" for="article_meta_includes_orcid">Article Meta Includes Orcid</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Clasif Conacyt</label>
+                  <select class="form-control" formControlName="clasif_conacyt">
+                    <option *ngFor="let option of clasif_conacyt" [value]="option">{{option}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">ISBN</label>
+                  <input type="text" class="form-control" placeholder="ISBN" formControlName="isbn">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Proceeding</label>
+                  <input type="text" class="form-control" placeholder="Proceeding" formControlName="proceeding">
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-tipo-fuente">Acceso Abierto</label>
+
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" id="acceso_abierto" formControlName="acceso_abierto">
+                          <label class="custom-control-label" for="acceso_abierto">Acceso Abierto</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-language">Idioma</label>
+                  <select class="form-control" id="select-language" formControlName="idioma">
+                    <option *ngFor="let option of languages" [value]="option.id">{{option.nombre}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="form-label" for="select-country">País</label>
+                  <select class="form-control" id="select-country" formControlName="pais">
+                    <option *ngFor="let option of countries" [value]="option.ISO_3166_1_num">{{option.nombre}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <br>
+
+            <div class="row g-3">
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Tópicos" aria-label="Topicos" formControlName="subjects">
+              </div>
+            </div>
+            <br>
+
+            <div class="panel-toolbar">
+              <button type="button" class="btn  btn-sm btn-danger mr-1 shadow-0 waves-effect waves-themed" (click)="cancel()">
+                Cancelar &nbsp;<i class="fas fa-window-close"></i>
+              </button>
+              <button class="btn  btn-sm btn-primary mr-1 shadow-0 waves-effect waves-themed">
+                Salvar &nbsp;<i class="fas fa-save"></i>
+              </button>
+            </div>
+
+          </form>
+
+          <div class="modal fade" id="fuente-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">
+                    Fuente
+                    <small class="m-0 text-muted">
+                      Entre los siguientes datos por favor:
+                    </small>
+                  </h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <form>
+                    <div class="form-group">
+                      <label class="form-label" for="nombre_afiliacion">Criterio de Búsqueda</label>
+                      <div class="input-group">
+                        <input id="nombre_afiliacion" class="form-control" placeholder="Criterio de Búsqueda" [(ngModel)]="textCriteria" [ngModelOptions]="{standalone: true}">
+                        <div class="input-group-append">
+                          <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="loadPublishersByCriteria()"><i class="fal fa-search"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label" for="sources">Fuente</label>
+                      <select class="form-control" id="sources" name="ror" (change)="selectSource()" [(ngModel)]="selectedPublisher" [ngModelOptions]="{standalone: true}">
+                        <option *ngFor="let item of publishers" [ngValue]="item">
+                          {{item}}
+                        </option>
+                      </select>
+                    </div>
+
+                  </form>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary waves-effect waves-themed" data-dismiss="modal">OK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

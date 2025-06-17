@@ -1,0 +1,254 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2><i class="fa fa-book-open"></i>&nbsp;&nbsp;&nbsp;Selección de revistas</h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container show">
+    <div class="panel-content">
+      <div class="row mb-2">
+        <div class="col">
+          <div class="input-group input-group-sm bg-white shadow-inset-2">
+            <input type="text" placeholder="Buscar" class="form-control ng-pristine ng-valid ng-touched"
+                   [(ngModel)]="fuentesSearch" style="height:38px">
+            <div class="input-group-append">
+              <button type="button" data-toggle="modal" data-target="#fuente-modal" (click)="filtrarFuentes()"
+                      class="btn btn-primary waves-effect waves-themed">
+                <i class="fal fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="accesoSelected"
+                    (change)="filtrarFuentes()">
+              <option value="0">Filtre por acceso abierto...</option>
+              <option value="1">Solo con acceso abierto</option>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-globe-americas"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="cuartilSelected"
+                    (change)="filtrarFuentes()">
+              <option value="0">Filtre por cuartil...</option>
+              <option value="q1">Q1</option>
+              <option value="q2">Q2</option>
+              <option value="q3">Q3</option>
+              <option value="q4">Q4</option>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-check-circle"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <div class="custom-select" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+              <ng-container *ngIf="paisSelected==0">
+                Filtre por país...
+              </ng-container>
+              <ng-container *ngIf="paisSelected!=0">
+                <ng-container *ngFor="let p of paisesList">
+                  <ng-container *ngIf="paisSelected==p.ISO_3166_1_num">
+                    <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                      <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'" width="18px" height="12px">&nbsp;
+                    </ng-container>
+                    {{p.ISO_3166_1_alfa2}} -
+                    <span *ngIf="p.nombre.length>30">{{p.nombre | slice:0:30}}...</span>
+                    <span *ngIf="p.nombre.length<=30">{{p.nombre}}</span>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </div>
+            <div class="dropdown-menu select-pais">
+              <div class="option-pais" data-toggle="dropdown" (click)="selectPais(0)">
+                Filtre por país...
+              </div>
+              <ng-container *ngFor="let p of paisesList">
+                <div class="option-pais" data-toggle="dropdown" (click)="selectPais(p.ISO_3166_1_num)">
+                  <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                    <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'" width="15px" height="10px">&nbsp;
+                  </ng-container>
+                  {{p.ISO_3166_1_alfa2}} -
+                  <span *ngIf="p.nombre.length>22">{{p.nombre | slice:0:22}}...</span>
+                  <span *ngIf="p.nombre.length<=22">{{p.nombre}}</span>
+                </div>
+              </ng-container>
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-flag-alt"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="width-3" style="margin-right: 10px"></div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="areaSelected"
+                    (change)="filtrarFuentes('area')">
+              <option value="0">Filtre por área...</option>
+              <ng-container *ngFor="let a of areasList">
+                <option value="{{a.id_scimago}}">{{a.name}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-bookmark"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="subAreaSelected"
+                    (change)="filtrarFuentes('subarea')">
+              <option value="0">Filtre por subárea...</option>
+              <ng-container *ngFor="let a of subAreasList">
+                <option value="{{a.id_scimago}}">{{a.name}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-bring-forward"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col" style="margin-left:-15px">
+          <div class="input-group input-group-md">
+            <select class="custom-select" [(ngModel)]="idiomaSelected"
+                    (change)="filtrarFuentes()">
+              <option value="0">Filtre por idioma...</option>
+              <ng-container *ngFor="let i of idiomasList">
+                <option value="{{i.id}}">{{i.id_639_1}} - {{i.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-headset"></i></span>
+            </div>
+          </div>
+        </div>
+        <span class="width-3" style="margin-right: 10px">
+          <button class="btn btn-danger btn-icon" (click)="cleanFilters()"><i class="fa fa-ban"></i></button>
+        </span>
+      </div>
+      <div class="dataTables_scroll" *ngIf="fuentesList.length!=0">
+        <div class="dataTables_scrollHead" style="overflow: hidden; position: relative; border: 0px; width: 100%;">
+          <div class="dataTables_scrollHeadInner" style="box-sizing: content-box; width: 100%;">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable no-footer" role="grid" style="margin-left: 0px;width:100%;">
+              <thead class="bg-primary-600" style="padding-right: 17px">
+              <tr role="row">
+                <th style="width:24%" class="border-tl"><i class="fa fa-file-signature"></i>&nbsp;TÍTULO DE LA FUENTE</th>
+                <th style="width:12%;text-align: center"><i class="fa fa-link"></i>&nbsp;URL-NORMAS</th>
+                <th style="width:14%"><i class="fa fa-lock-open"></i>&nbsp;ACCESO ABIERTO</th>
+                <th style="width:12%;text-align: center"><i class="fa fa-dollar-sign"></i>&nbsp;APC</th>
+                <th style="width:14%" [class]="ordenCites" (click)="ordenarFuentes('cites')"><i class="fa fa-analytics"></i>&nbsp;CITES_SCORE</th>
+                <th style="width:7%" [class]="ordenQuartil" (click)="ordenarFuentes('quartil')"><i class="fa fa-check-circle"></i>&nbsp;Q</th>
+                <th style="width:9%" [class]="ordenQuartilSc" (click)="ordenarFuentes('quartilsc')"
+                    title="Cuartil Scintra basado en la moda estadística"><i class="fa fa-check-circle"></i>&nbsp;Q_Sc
+                </th>
+                <th style="width:10%" class="border-tr"><i class="fa fa-flag"></i>&nbsp;PAÍS</th>
+              </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+        <div [class.contenedor]="fuentesList.length>6">
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table border-bl border-br"
+                 role="grid" aria-describedby="dt-basic-example_info" style="width:100%;">
+            <tbody>
+            <ng-container *ngFor="let f of fuentesList">
+            <tr class="odd">
+                <td style="width:24%">
+                  <ng-container *ngIf="f.url!=null">
+                    <a [href]="f.url" target="_blank" style="text-decoration:none">
+                      <span>{{f.titulo}}<br></span>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="f.url==null">
+                    <span>{{f.titulo}}<br></span>
+                  </ng-container>
+                </td>
+                <td style="width:12%" align="center">
+                  <ng-container *ngIf="f.url_normas!=null">
+                    <a [href]="f.url_normas" target="_blank">
+                      <i class="fa fa-external-link" style="font-size:15px "></i>
+                    </a>
+                  </ng-container>
+                  <label *ngIf="f.url_normas==null">-</label>
+                </td>
+                <td style="width:14%" align="center">{{(f.acceso_abierto==null)?'No':'Sí'}}</td>
+                <td style="width:12%" align="center">{{(f.apc_costo==null)?'Desconocido':f.apc_costo}}</td>
+                <td style="width:14%" align="center">{{(f.cites_score==null)?'-':f.cites_score}}</td>
+                <td style="width:7%" align="center">{{(f.scopus_q==null)?'-':f.scopus_q}}</td>
+                <td style="width:9%" align="center">{{(f.scopus_q_scintra==null)?'-':f.scopus_q_scintra}}</td>
+                <td style="width:10%;margin-right: -100px" align="center">
+                  <ng-container *ngFor="let p of paisesList">
+                    <ng-container *ngIf="f.paises.length!=0" >
+                    <span *ngIf="f.paises[0].ISO_3166_1_num==p.ISO_3166_1_num">
+                      <ng-container *ngIf="p.ISO_3166_1_alfa2!='WN'">
+                        <img [src]="'../assets/img/flags3x2/'+p.ISO_3166_1_alfa2+'.svg'"
+                             alt="{{p.nombre}}" title="{{p.nombre}}" width="40px" height="15px">
+                      </ng-container>
+                    </span>
+                    </ng-container>
+                  </ng-container>
+                </td>
+            </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table border-bl border-br"
+             role="grid" aria-describedby="dt-basic-example_info" *ngIf="fuentesList.length==0">
+        <thead class="bg-primary-600 text-uppercase">
+        <tr role="row">
+          <th style="width:32%" class="border-tl"><i class="fa fa-file-signature"></i>&nbsp;Título de la fuente</th>
+          <th style="width:12%;text-align: center"><i class="fa fa-link"></i>&nbsp;Url-Normas</th>
+          <th style="width:14%"><i class="fa fa-lock-open"></i>&nbsp;acceso_abierto</th>
+          <th style="width:17%;text-align: center" class="align-content-center"><i class="fa fa-dollar-sign"></i>&nbsp;apc</th>
+          <th style="width:12%"><i class="fa fa-analytics"></i>&nbsp;cites_score</th>
+          <th style="width:5%"><i class="fa fa-check-circle"></i>&nbsp;Q</th>
+          <th style="width:10%" class="border-tr"><i class="fa fa-flag"></i>&nbsp;País</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr class="odd"><td valign="top" colspan="7" class="dataTables_empty" style="color:#0a70bd">No hay fuentes que mostrar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="new-files-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Detalles de la fuente</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" *ngIf="fuenteDetalle.length!=0">
+          id:
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">&nbsp;Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+
+
+
+

@@ -1,0 +1,61 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2>Detalles del registro</h2>
+  </div>
+  <div class="row m-3">
+    <div class="col">
+      <label><i class="fa fa-user"></i>&nbsp;<b>Nombre:</b>&nbsp;{{usuario}}</label><br>
+      <label><i class="fa fa-envelope"></i>&nbsp;<b>Correo:</b>&nbsp;{{correo}}</label><br>
+      <label><i class="fa fa-phone"></i>&nbsp;<b>Celular:</b>&nbsp;{{numeroCelular}}</label><br>
+      <label><i class="fa fa-presentation"></i>&nbsp;<b>Pronóstico de carteles a presentar:</b>&nbsp;{{pronosticoCarteles}}</label><br>
+      <label><i class="fa fa-users"></i>&nbsp;<b>Pronóstico de estudiantes a participar:</b>&nbsp;{{pronosticoeEstudiantes}}</label><br>
+    </div>
+    <div class="col">
+      <label><i class="fa fa-calendar-alt"></i>&nbsp;<b>Fecha real de inicio:</b>&nbsp;{{fechaInicio | date: 'dd-MM-yyyy'}}</label><br>
+      <label><i class="fa fa-calendar-alt"></i>&nbsp;<b>Fecha real final:</b>&nbsp;{{fechaFin | date: 'dd-MM-yyyy'}}</label><br>
+      <label><i class="fa fa-id-card"></i>&nbsp;<b>No. empleado:</b>&nbsp;{{numeroEmpleado}}</label><br>
+      <div class="row">
+        <div class="d-flex justify-content-start" style="width:80px;margin-left:12px">
+          <i class="fa fa-city"></i>&nbsp;<b>Campus:</b>
+        </div>&nbsp;
+        <div>
+          <label>
+            <ng-container *ngFor="let c of campus;let i=index">
+              <ng-container *ngFor="let cl of campusList">
+                <ng-container *ngIf="c.pivot.id_campus==cl.id">
+                  {{cl.nombre}}<br>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-content m-3">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#tab_borders_icons-1" role="tab" aria-selected="true">
+          <i class="fal fa-presentation mr-1"></i> Trabajos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#tab_borders_icons-2" role="tab" aria-selected="false">
+          <i class="fal fa-archive mr-1"></i> Archivos
+        </a>
+      </li>
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+      <div class="tab-pane fade active show" id="tab_borders_icons-1" role="tabpanel">
+        <app-event-participation-works-encounter [eventoId]="eventoId" [participacionId]="participacionId"></app-event-participation-works-encounter>
+        <br>
+        <app-event-participation-cartels-encounter [eventoId]="eventoId" [participacionId]="participacionId"></app-event-participation-cartels-encounter>
+      </div>
+      <div class="tab-pane fade" id="tab_borders_icons-2" role="tabpanel">
+        <app-event-participation-files-encounter [eventoId]="eventoId" [participacionId]="participacionId"></app-event-participation-files-encounter>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

@@ -1,0 +1,165 @@
+<div class="modal fade display-none" id="modal-exportar-ciclos-excel" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Generación de reporte foro/encuentro </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label class="form-label col-3 mt-1" for="select-institucion">Institución</label>
+          <select class="form-control col-6" id="select-institucion" [(ngModel)]="selectInstituciones"
+                  (change)="loadListaEventos()">
+            <option value="0">Selecciona una institución</option>
+            <ng-container *ngFor="let i of listaInstituciones">
+              <option value="{{i.institucion_ror}}">{{i.institucion}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group row">
+          <label class="form-label col-3 mt-1" for="select-year">Año</label>
+          <select class="form-control col-6" id="select-year" [(ngModel)]="selectYear"
+                  [disabled]="selectInstituciones==0" (change)="loadCompleteYear()">
+            <option value="0">Selecciona un año</option>
+            <ng-container *ngFor="let a of listaYears">
+              <option value="{{a.year}}">{{a.year}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group row mt-0">
+          <label class="form-label col-3" for="select-ciclo">Ciclos</label>
+          <div class="col-6 m-0 p-0">
+            <select class="form-control " id="select-ciclo" [(ngModel)]="selectCiclo"
+                    [disabled]="selectInstituciones==0" (change)="loadNombreEvento()">
+              <ng-container *ngIf="selectInstituciones==0">
+                <option value="0">Selecciona primero una institución</option>
+              </ng-container>
+              <ng-container *ngIf="selectInstituciones!=0">
+                <option value="0">Selecciona un ciclo para agregar</option>
+              </ng-container>
+              <ng-container *ngFor="let c of listaCiclos">
+                <option value="{{c.id}}">{{c.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="invalid-feedback" style="color:#5c5c5c">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Agrega máximo 5 ciclos</div>
+          </div>
+          <div class="col-3 pl-2 pr-2">
+            <button class="btn btn-success" (click)="agregarCicloLista()" [disabled]="selectCiclo==0 || listaCiclosBuscar.length>=5"><i class="fa fa-plus"></i>&nbsp;Agregar</button>
+          </div>
+        </div>
+        <div class="row mt-2" *ngFor="let lc of listaCiclosBuscar">
+          <div class="col-3"></div>
+          <div class="alert alert-primary alert-dismissible fade show w-100 mb-0 col-6" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerCicloLista(lc.id)">
+              <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+            </button>
+            <strong>{{lc.nombre}}</strong>
+          </div>
+          <div class="col-3"></div>
+        </div>
+        <div class="form-group row mt-4">
+          <label class="form-label col-3" for="select-ciclo">Reporte con ciclos</label>
+          <div class="col-6">
+              <ng-container *ngIf="reporteConCiclos">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="sinCiclos" (change)="changeCiclos(false)">
+                  <label class="custom-control-label" for="sinCiclos">No</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="conCiclos" checked="">
+                  <label class="custom-control-label" for="conCiclos">Sí</label>
+                </div>
+              </ng-container>
+              <ng-container  *ngIf="!reporteConCiclos">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="sinCiclos1" checked="">
+                  <label class="custom-control-label" for="sinCiclos1">No</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="conCiclos1" (change)="changeCiclos(true)">
+                  <label class="custom-control-label" for="conCiclos1">Sí</label>
+                </div>
+              </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal" (click)="limpiarFormularioExportar()">Cerrar</button>
+        <ng-container *ngIf="!reporteConCiclos">
+          <button type="button" class="btn btn-success waves-effect waves-themed"
+                  data-dismiss="modal" [disabled]="selectInstituciones==0 || selectYear==0 || listaCiclosBuscar.length==0" (click)="exportToExcelReporteSinCiclos()">
+            Exportar
+          </button>
+        </ng-container>
+        <ng-container *ngIf="reporteConCiclos">
+          <button type="button" class="btn btn-success waves-effect waves-themed"
+                  data-dismiss="modal" [disabled]="selectInstituciones==0 || selectYear==0 || listaCiclosBuscar.length==0" (click)="exportToExcelReporte()">
+            Exportar
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade display-none" id="modal-meta-anual" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Control de metas anuales</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label class="form-label col-4 mt-1">Año</label>
+          <select class="form-control col-7" [(ngModel)]="selectYearAnual"
+                  (change)="loadDatosMetas()">
+            <option value="0">Selecciona un año</option>
+            <ng-container *ngFor="let a of listaYears">
+              <option value="{{a.year}}">{{a.year}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group row">
+          <label class="form-label col-4 mt-1">Institución</label>
+          <select class="form-control col-7" [(ngModel)]="selectInstitucionesAnual"
+                  (change)="loadDatosMetas()">
+            <option value="0">Selecciona una institución</option>
+            <ng-container *ngFor="let i of listaInstitucionesAnual">
+              <option value="{{i.id}}">{{i.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <ng-container *ngIf="listaMetasCompleta.length != 0">
+          <div class="form-group row">
+            <label class="form-label col-4"></label>
+            <label class="form-label col-4">Estudiantes</label>
+            <label class="form-label col-4">Carteles</label>
+          </div>
+          <div class="form-group row">
+          <ng-container *ngFor="let c of listaMetasCompleta">
+            <label class="form-label col-4 mt-1">{{c.nombre}}</label>
+            <input type="number" class="form-control col-3" value="{{c.metaEstValor}}" *ngIf="c.hasOwnProperty('metaEstId')" (keyup)="actualizarMeta(c.metaEstId,$event,c.id,1)" >
+            <input type="number" class="form-control col-3" *ngIf="!c.hasOwnProperty('metaEstId')" (keyup)="crearMeta($event,c.id,1)">
+            <label class="form-label col-1"></label>
+            <input type="number" class="form-control col-3" value="{{c.metaCartValor}}" *ngIf="c.hasOwnProperty('metaCartId')" (keyup)="actualizarMeta(c.metaCartId,$event,c.id,2)">
+            <input type="number" class="form-control col-3" *ngIf="!c.hasOwnProperty('metaCartId')" (keyup)="crearMeta($event,c.id,2)">
+            <label class="form-label col-1"></label>
+          </ng-container>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal" (click)="limpiarFormularioReporteAnual()"><i class="fa fa-times"></i>&nbsp;&nbsp;Cerrar</button>
+        <button type="button" class="btn btn-success waves-effect waves-themed"
+                data-dismiss="modal" [disabled]="selectInstitucionesAnual==0 || selectYearAnual==0" (click)="confirmarMetas()">
+          <i class="fa fa-save"></i>&nbsp;&nbsp;Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

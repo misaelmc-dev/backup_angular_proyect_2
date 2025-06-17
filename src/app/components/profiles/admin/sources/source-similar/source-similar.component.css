@@ -1,0 +1,21 @@
+.bg-green{
+  background-color: #39850c;
+  border-color: #39850c;
+  color: #ffffff;
+}
+.bg-red{
+  background-color: #8f0c0c;
+  border-color: #8f0c0c;
+  color: #ffffff;
+}
+.b-top-l{ border-top-left-radius: 3px !important; }
+.b-top-r{ border-top-right-radius: 3px !important; }
+.b-bot-l{ border-bottom-left-radius: 3px !important; }
+.b-bot-r{ border-bottom-right-radius: 3px !important; }
+
+.picture-institution{ height: 150px; }
+.picture-institution-form{ height: 120px; }
+
+.alert{
+  margin-bottom: 0rem !important;
+}

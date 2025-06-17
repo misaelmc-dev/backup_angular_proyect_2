@@ -1,0 +1,299 @@
+<div class="dataTables_wrapper dt-bootstrap4">
+  <div class="row mb-2">
+    <h5 class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pt-2">
+      <i class="fa fa-clock width-1"></i> Históricos Scimago
+    </h5>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+      <button class="btn btn-primary bg-green waves-effect waves-themed" type="button"
+              (click)="mostrar('nuevo')" *ngIf="modal!='ver'">
+        <i class="fal fa-plus mr-2"></i> Agregar
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12" style="overflow-y: auto">
+    <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+      <thead class="bg-primary-600 b-top-l b-top-r">
+      <tr role="row">
+        <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">Año</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >SJR</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Documentos</th>
+        <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 90px;">Acciones</th>
+      </tr>
+      </thead>
+      <tbody class="b-bot-l b-bot-r">
+      <ng-container *ngFor="let item of listaItems | paginate : {
+                          id: 'items2Pagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+        <tr role="row" class="odd b-bot-l b-bot-r" *ngIf="item.accion!='eliminar'">
+          <td>{{item.year}}</td>
+          <td>{{item.sjr}}</td>
+          <td>{{item.docs}}</td>
+          <td class="sorting_1 dtr-control b-bot-r" >
+            <button class="btn btn-sm btn-icon btn-primary waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('ver',item)"
+            ><i class="fa fa-eye"></i></button>
+            <button class="btn btn-sm btn-icon btn-success bg-green waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('editar',item)" *ngIf="modal!='ver'">
+              <i class="fa fa-edit"></i></button>
+            <button class="btn btn-sm btn-icon btn-danger bg-red waves-effect waves-themed mr-1" type="button"
+                    (click)="removerItem(item.id)" *ngIf="modal!='ver'"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-5 mt-2 mb-2">
+    <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+  </div>
+  <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+    <pagination-controls
+      id="items2Pagination"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]=true
+      (pageChange)="cambiarPagina($event)">
+    </pagination-controls>
+  </div>
+</div>
+
+<div class="modal fade {{(visualizar)?'show':''}}" id="default-example-modal-center" tabindex="0" role="dialog"
+     style="{{(visualizar)?'display:block;':'display:none;'}}">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{similar_titulo_modal}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="mostrar('limpiar')">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="similar_btn_modal=='ver'">
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <label class="col-6"><b>Año:</b></label>
+                <label class="col-6"> {{datosHistory.year}}
+                  <p *ngIf="datosHistory.year==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Documentos:</b></label>
+                <label class="col-6"> {{datosHistory.docs}}
+                  <p *ngIf="datosHistory.docs==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Citas últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.cites_last_3_years}}
+                  <p *ngIf="datosHistory.cites_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Auto citas últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.self_cites_last_3_years}}
+                  <p *ngIf="datosHistory.self_cites_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Razón de documentos citados últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.cited_docs_ratio_last_3_years}}
+                  <p *ngIf="datosHistory.cited_docs_ratio_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Razón de documentos no citados últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.uncited_docs_ratio_last_3_years}}
+                  <p *ngIf="datosHistory.uncited_docs_ratio_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Razón de documentos citables últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.citable_docs_ratio_last_3_years}}
+                  <p *ngIf="datosHistory.citable_docs_ratio_last_3_years==null">-</p>
+                </label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <label class="col-6"><b>SJR:</b></label>
+                <label class="col-6"> {{datosHistory.sjr}}
+                  <p *ngIf="datosHistory.sjr==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Razón de documentos no citables últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.non_citable_docs_ratio_last_3_years}}
+                  <p *ngIf="datosHistory.non_citable_docs_ratio_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Citas por documento últimos 4 años:</b></label>
+                <label class="col-6"> {{datosHistory.cites_per_doc_last_4_years}}
+                  <p *ngIf="datosHistory.cites_per_doc_last_4_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Citas por documento últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.cites_per_doc_last_3_years}}
+                  <p *ngIf="datosHistory.cites_per_doc_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Citas por documento últimos 2 años:</b></label>
+                <label class="col-6"> {{datosHistory.cites_per_doc_last_2_years}}
+                  <p *ngIf="datosHistory.cites_per_doc_last_2_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Citas externas por documento últimos 3 años:</b></label>
+                <label class="col-6"> {{datosHistory.external_cites_per_doc_last_3_years}}
+                  <p *ngIf="datosHistory.external_cites_per_doc_last_3_years==null">-</p>
+                </label>
+              </div>
+              <div class="row">
+                <label class="col-6"><b>Porcentaje de colaboración internacional:</b></label>
+                <label class="col-6"> {{datosHistory.international_colab_percent}}
+                  <p *ngIf="datosHistory.international_colab_percent==null">-</p>
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal!='ver'">
+          <div class="row">
+            <div class="col">
+              <div class="row mb-2">
+                <label class="form-label col-6 mt-1">Año:<b style="color:red">*</b></label>
+                <div class="col-6">
+                  <select class="form-control" [(ngModel)]="year">
+                    <option value="0">Selecciona un año...</option>
+                    <ng-container *ngIf="year_save!=0">
+                      <option value="{{year_save}}">{{year_save}}</option>
+                    </ng-container>
+                    <ng-container *ngFor="let la of listaAnios">
+                      <option value="{{la}}">{{la}}</option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Documentos:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="docs" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Citas últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="cites_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Auto citas últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="self_cites_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Razón de documentos citados últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="cited_docs_ratio_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Razón de documentos no citados últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="uncited_docs_ratio_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Razón de documentos citables últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="citable_docs_ratio_last_3_years" />
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Sjr:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="sjr" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Razón de documentos no citables últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="non_citable_docs_ratio_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Citas por documento últimos 4 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="cites_per_doc_last_4_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Citas por documento últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="cites_per_doc_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Citas por documento últimos 2 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="cites_per_doc_last_2_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Citas externas por documento últimos 3 años:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="external_cites_per_doc_last_3_years" />
+                </div>
+              </div>
+              <div class="row mb-2">
+                <label class="form-label col-8 mt-1"><b>Porcentaje de colaboración internacional:</b></label>
+                <div class="col-4">
+                  <input type="number" class="form-control" [(ngModel)]="international_colab_percent" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <ng-container *ngIf="similar_btn_modal!='editar' && similar_btn_modal!='nuevo'">
+          <button type="button" class="btn btn-secondary waves-effect waves-themed"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='editar' || similar_btn_modal=='nuevo'" >
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed ml-1"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>&nbsp;
+          <ng-container *ngIf="similar_btn_modal=='nuevo'">
+          <button type="button" class="btn btn-primary waves-effect waves-themed"
+                  (click)="mostrar('agregar')" [disabled]="year==0">
+            <i class="fa fa-save mr-2"></i>Guardar</button>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='editar'">
+          <button type="button" class="btn btn-primary waves-effect waves-themed"
+                  (click)="mostrar('actualizar')" [disabled]="year==0">
+            <i class="fa fa-save mr-2"></i> Actualizar</button>
+        </ng-container>
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

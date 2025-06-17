@@ -1,0 +1,548 @@
+<div id="panel" class="panel" xmlns="http://www.w3.org/1999/html">
+  <div class="panel-hdr">
+    <h2>
+      <i class="fa fa-calendar-check"></i>&nbsp;&nbsp;Lista de trabajos a {{(idTipoEvaluacion==1)?'pre evaluar':'evaluar'}}
+    </h2>
+    <div class="panel-toolbar">
+      <span *ngIf="periodoEvaluacion" class="badge bg-success badge-pill">
+        <span style="color:white"><i class="fa fa-lock-open"></i>&nbsp;&nbsp;Periodo evaluativo abierto</span>
+      </span>
+      <span *ngIf="!periodoEvaluacion" class="badge bg-danger badge-pill">
+        <span style="color:white"><i class="fa fa-lock"></i>&nbsp;&nbsp;Periodo evaluativo cerrado</span>
+      </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container">
+    <div class="panel-content">
+      <div class="row">
+        <div class="col-6">
+          <label><b><i class="fa fa-calendar-day width-1"></i>Nombre del evento:</b>&nbsp;{{eventoNombre}}</label><br>
+          <label><b><i class="fa fa-calendar-edit width-1"></i>Tipo de evento:</b>&nbsp;{{eventoTipoNombre}}</label><br>
+          <label><b><i class="fa fa-calendar-alt width-1"></i>Fechas de {{(idTipoEvaluacion==1)?'pre evaluación':'evaluación'}}:</b>&nbsp;{{fechaInicioEvento | date: 'dd-MM-yyyy'}} - {{fechaFinalEvento | date: 'dd-MM-yyyy'}}</label>
+        </div>
+        <div class="col-6">
+          <label><b><i class="fa fa-clipboard-check width-1"></i>Tipo de evaluación:</b>&nbsp;{{tipoEvaluacionNombre}}</label><br>
+          <table>
+            <td style="width:105px"><b><i class="fa fa-text-height width-1"></i>Descripción:</b></td>
+            <td><p class="text-justify mr-5">{{tipoEvaluacionDescripcion}}</p></td>
+          </table>
+        </div>
+      </div>
+      <div class="col-12 border-btm"></div>
+    </div>
+    <div class="panel-content">
+      <div class="row mb-2">
+        <table class="col-12">
+          <td class="col-8" style="margin-right:-20px">
+            <div class="input-group bg-white shadow-inset-2">
+              <input type="text" placeholder="Buscar (título, resumen)..." class="form-control ng-pristine ng-valid ng-touched" [(ngModel)]="search" >
+              <div class="input-group-append" style="margin-right:-22px">
+                <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="filtrarTrabajos()">
+                  <i class="fal fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </td>
+          <td class="col-4">
+            <div class="input-group ml-2">
+              <select class="form-control" [(ngModel)]="selectedAreaConocimiento" (change)="filtrarTrabajos()">
+                <option value="0">Filtre por áreas del conocimiento...</option>
+                <ng-container *ngFor="let ac of listaAreasConocimiento">
+                  <option value="{{ac.id}}">{{ac.nombre}}</option>
+                </ng-container>
+              </select>
+              <div class="input-group-append">
+                <span class="input-group-text"><i class="fal fa-book"></i></span>
+              </div>
+            </div>
+          </td>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <table class="col-lg-12 col-md-12">
+            <td>
+              <div class="input-group">
+                <select class="form-control" [(ngModel)]="selectedTipoParticipacion" (change)="filtrarTrabajos()">
+                  <option value="0">Filtre por tipos de participación...</option>
+                  <ng-container *ngFor="let tp of listaTiposParticipaciones">
+                    <option value="{{tp.id}}">{{tp.nombre}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fa fa-check-circle"></i></span>
+                </div>
+              </div>
+            </td>
+            <td style="padding-left:10px">
+              <div class="input-group">
+                <select class="form-control" [(ngModel)]="selectedTipoTrabajo" (change)="filtrarTrabajos()">
+                  <option value="0">Filtre por tipos de trabajo...</option>
+                  <ng-container *ngFor="let tt of listaTiposTrabajo">
+                    <option value="{{tt.id}}">{{tt.nombre}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+            </td>
+            <td style="padding-left:10px">
+              <div class="input-group">
+                <select class="form-control" [(ngModel)]="selectedDictamen" (change)="filtrarTrabajos()">
+                  <option value="0">Filtre por dictamen...</option>
+                  <option value="1">Sin evaluar</option>
+                  <option value="2">{{(idTipoEvaluacion==1)?'Preaprobado':'Aprobado'}}</option>
+                  <option value="3">{{(idTipoEvaluacion==1)?'No preaprobado':'No aprobado'}}</option>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-book-reader"></i></span>
+                </div>
+              </div>
+            </td>
+            <td style="padding-left:10px">
+              <div class="input-group">
+                <select class="form-control" [(ngModel)]="selectedCampus" (change)="filtrarTrabajos()">
+                  <option value="0">Filtre por campus...</option>
+                  <ng-container *ngFor="let ce of campusEvento">
+                    <option value="{{ce.id}}">{{ce.nombre}}</option>
+                  </ng-container>
+                </select>
+                <div class="input-group-append">
+                  <span class="input-group-text"><i class="fal fa-book-reader"></i></span>
+                </div>
+              </div>
+            </td>
+            <td class=" d-flex justify-content-end">
+              <button class="btn btn-danger btn-icon" (click)="cleanFilters()"><i class="fa fa-ban"></i></button>
+            </td>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="panel-content">
+      <ng-container *ngFor="let t of itemsToShow | paginate : {
+          itemsPerPage: pageSize,
+          currentPage: pageNumber,
+          totalItems: totalItems
+          };let i = index">
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card border mb-2">
+              <div class="card-header height-3 d-flex align-items-center" style="background-color:#ebf6fd">
+                <div class="col-10 mt-2" style="margin-left:-15px">
+                  {{getTitulo(t)}}
+                </div>
+                <a *ngIf="t.hasOwnProperty('evaluaciones')" class="col-2 d-flex justify-content-end align-items-center">
+                  <ng-container *ngIf="t.hasOwnProperty('validado') && idTipoEvaluacion==2">
+                    <span class="badge bg-primary badge-pill bange" *ngIf="t.validado">
+                      <span style="color:white" class="mt-1"><i class="fa fa-star-shooting"></i>&nbsp;&nbsp;Verificado HABILIS</span>
+                    </span>
+                    <span class="badge bg-secondary badge-pill bange" *ngIf="!t.validado">
+                      <span style="color:white" class="mt-1"><i class="fa fa-clock"></i>&nbsp;&nbsp;Pendiente de verificación</span>
+                    </span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                  </ng-container>
+                  <ng-container *ngFor="let et of t.evaluaciones">
+                    <span *ngIf="et.aprobatoria" class="badge bg-success badge-pill bange">
+                      <a href="javascript(0)" data-toggle="modal" data-target="#default-example-modal-lg"
+                         appTooltip [texto]="et.descripcion" [colorClass]="'success'" (click)="aprobadoFileModal(t.id)">
+                        <span style="color:white" class="mt-1"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;{{(idTipoEvaluacion==1)?'Preaprobado':'Aprobado'}}</span>
+                      </a>
+                    </span>
+                    <span *ngIf="!et.aprobatoria" class="badge bg-danger badge-pill bange">
+                      <a href="javascript(0)" data-toggle="modal" data-target="#default-example-modal-lg"
+                         appTooltip [texto]="et.descripcion" [colorClass]="'danger'" (click)="noaprobadoFileModal(t.id)">
+                        <span style="color:white" class="mt-1"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;{{(idTipoEvaluacion==1)?'No preaprobado':'No aprobado'}}</span>
+                      </a>
+                    </span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a [routerLink]="'/scicom/api/'+eventoId+'/evaluation/'+t.id+'/'+idTipoEvaluacion" class="text-black" style="text-decoration: none">
+                      <span class="badge badge-warning"><span class="mt-1"><i class="fal fa-file"></i>&nbsp;&nbsp;Ver ficha</span></span>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="t.evaluaciones.length == 0">
+                    <span  class="badge bg-secondary badge-pill bange">
+                      <ng-container *ngIf="this.periodoEvaluacion">
+                        <a href="javascript(0)" data-toggle="modal" data-target="#default-example-modal-lg" (click)="sinEvaluarFileModal(t.id)">
+                          <span style="color:white" class="mt-1"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Sin evaluar</span>
+                        </a>
+                      </ng-container>
+                      <ng-container *ngIf="!this.periodoEvaluacion">
+                        <a (click)="validarPeriodoEvaluacion()">
+                          <span style="color:white" class="mt-1"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Sin evaluar</span>
+                        </a>
+                      </ng-container>
+                    </span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="text-black" style="text-decoration: none">
+                      <span class="badge badge-warning"><span class="mt-1"><i class="fal fa-file"></i>&nbsp;&nbsp;Ver ficha</span></span>
+                    </a>
+                  </ng-container>
+                </a>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 col-lg-12 row mb-1">
+                    <ng-container *ngIf="t.hasOwnProperty('participacion') && t.participacion.hasOwnProperty('usuario')">
+                      <div class="col">
+                        <i class="fa fa-user width-1"></i><b>Registra:&nbsp;</b>
+                        {{t.participacion.usuario.user.name}}&nbsp;&nbsp;
+                      </div>
+                      <div class="col">
+                        <b style="margin-left:10px"><i class="fa fa-envelope width-1"></i>Email:&nbsp;</b>
+                        {{t.participacion.usuario.user.email}}&nbsp;&nbsp;
+                      </div>
+                      <div class="col-3">
+                        <i class="fa fa-id-card width-1"></i><b>No. empleado:&nbsp;</b>
+                        {{(t.participacion.usuario.num_empleado)?t.participacion.usuario.num_empleado:'Desconocido'}}
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-12 col-lg-12 row mb-1" *ngIf="t.hasOwnProperty('preevaluaciones') && t.preevaluaciones.length !=0">
+                    <ng-container>
+                      <div class="col-6">
+                        <i class="fa fa-user-check width-1"></i><b>{{(idTipoEvaluacion==2)?'Preevaluador:':''}}&nbsp;</b>
+                        <ng-container *ngFor="let e of t.preevaluaciones">
+                          <ng-container *ngIf="e.id_usuario==null">
+                            Reservado
+                          </ng-container>
+                          <ng-container *ngIf="e.id_usuario!=null">
+                            <ng-container *ngFor="let ue of e.userPreeval">
+                              {{ue.user.name}}
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                      <div class="col-6">
+                        <ng-container *ngFor="let e of t.preevaluaciones">
+                          <ng-container *ngIf="e.id_usuario!=null">
+                            <ng-container *ngFor="let ue of e.userPreeval">
+                              <b style="margin-left:10px"><i class="fa fa-envelope width-1"></i>Email:</b>&nbsp;&nbsp;{{ue.user.email}}
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-12 col-lg-12 row mb-1" *ngIf="t.hasOwnProperty('preevaluaciones') && t.preevaluaciones.length !=0">
+                    <div class="col-12 d-flex" style="margin-bottom: -5px">
+                      <div style="width:245px">
+                        <b><i class="fa fa-presentation width-1"></i>Dictamen de preevaluación:</b>
+                      </div>
+                      <div class="w-100">
+                        <ng-container *ngFor="let e of t.preevaluaciones">
+                          <label class="text-justify">{{e.descripcion}}</label>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 col-lg-12 row mb-1">
+                    <ng-container *ngIf="t.hasOwnProperty('evaluaciones') && t.evaluaciones.length !=0">
+                      <div class="col-6">
+                        <i class="fa fa-user-check width-1"></i><b>{{(idTipoEvaluacion==1)?'Preevaluador:':'Evaluador:'}}&nbsp;</b>
+                        <ng-container *ngFor="let e of t.evaluaciones">
+                          <ng-container *ngIf="e.id_usuario==null">
+                            Reservado
+                          </ng-container>
+                          <ng-container *ngIf="e.id_usuario!=null">
+                            <ng-container *ngFor="let ue of e.userEval">
+                              {{ue.user.name}}
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                      <div class="col-6">
+                        <ng-container *ngFor="let e of t.evaluaciones">
+                          <ng-container *ngIf="e.id_usuario!=null">
+                            <ng-container *ngFor="let ue of e.userEval">
+                              <b style="margin-left:10px"><i class="fa fa-envelope width-1"></i>Email:</b>&nbsp;&nbsp;{{ue.user.email}}
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-12 col-lg-12">
+                    <label>
+                      <table style="margin-bottom:-5px">
+                        <td style="width:140px">
+                          <i class="fa fa-file-signature width-1"></i><b>Título en español:</b>
+                        </td>
+                        <td *ngIf="t.hasOwnProperty('metadatos')">
+                          <ng-container *ngFor="let m of t.metadatos">
+                            <ng-container *ngIf="m.id_idioma == 150">
+                              <ng-container *ngIf="m.url">
+                                <a href="{{m.url}}" target="_blank">
+                                  <ng-container *ngIf="m.titulo">{{m.titulo}}
+                                  </ng-container>
+                                </a>
+                              </ng-container>
+                              <ng-container *ngIf="m.url==null">
+                                <ng-container *ngIf="m.titulo">{{m.titulo}}</ng-container>
+                              </ng-container>
+                            </ng-container>
+                          </ng-container>
+                        </td>
+                      </table>
+                    </label><br>
+                    <label>
+                      <table style="margin-bottom:-5px">
+                        <td style="width:130px">
+                          <i class="fa fa-file-signature width-1"></i><b>Título en inglés:</b>
+                        </td>
+                        <td *ngIf="t.hasOwnProperty('metadatos')">
+                          <ng-container *ngFor="let m of t.metadatos">
+                            <ng-container *ngIf="m.id_idioma == 41">
+                              <ng-container *ngIf="m.url">
+                                <a href="{{m.url}}" target="_blank">
+                                  <ng-container *ngIf="m.titulo">{{m.titulo}}</ng-container>
+                                </a>
+                              </ng-container>
+                              <ng-container *ngIf="m.url==null"><ng-container *ngIf="m.titulo">{{m.titulo}}</ng-container></ng-container>
+                            </ng-container>
+                          </ng-container>
+                        </td>
+                      </table>
+                    </label><br>
+                    <label *ngIf="t.hasOwnProperty('fuente')"><i class="fa fa-book-open width-1"></i><b>Fuente:&nbsp;</b>
+                      {{t.fuente.titulo}}
+                    </label><br>
+                    <label>
+                      <table style="margin-bottom:-5px">
+                        <td style="width:80px">
+                          <i class="fa fa-users width-1"></i><b>Autores:&nbsp;</b>
+                        </td>
+                        <td>
+                          <ng-container *ngFor="let ae of t.autores; let i = index">
+                            {{ae.nombre + ((i == t.autores.length - 1) ? '' : ',')}}&nbsp;&nbsp;
+                          </ng-container>
+                        </td>
+                      </table>
+                    </label><br>
+                  </div>
+                  <div class="col-md-6 col-lg-6">
+                    <label *ngIf="t.hasOwnProperty('participacion') && t.participacion.hasOwnProperty('tipPart')">
+                      <i class="fa fa-address-book width-1"></i><b>Tipo de participación:&nbsp;</b>
+                      {{t.participacion.tipPart.nombre}}
+                    </label>
+                  </div>
+                  <div class="col-md-4 col-lg-4">
+                    <label *ngIf="t.hasOwnProperty('tipTrab')">
+                      <i class="fa fa-suitcase width-1"></i><b>Tipo de trabajo:&nbsp;</b>
+                      {{t.tipTrab.nombre}}
+                    </label><br>
+                  </div>
+                  <div class="col-md-2 col-lg-2 d-flex flex-row-reverse">
+                    <label *ngIf="t.hasOwnProperty('refrendado_api_uvmunitec')">
+                      <b><i class="fa fa-bookmark width-1"></i>Refrendo:&nbsp;</b>
+                      {{(t.refrendado_api_uvmunitec)?'Sí':' No'}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="row col-12 ml-2 d-flex justify-content-center" *ngIf="itemsToShow.length == 0">
+      <h3 style="color:#0a70bd">No hay trabajos registrados en el evento</h3><br><br><br><br><br><br>
+    </div>
+    <div class="row col-12 ml-2" *ngIf="itemsToShow.length > 0">
+      <div class="col-6">
+        <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="margin-top:-5px">{{labelTotalItems}}</div>
+      </div>
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-end" style="margin-top:-5px">
+            {{labelTotalPagination}}&nbsp;&nbsp;&nbsp;
+            <li class="paginate_button page-item previous disabled" *ngIf="pageNumber==1" >
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item previous" *ngIf="pageNumber!=1" (click)="loadPagination('prev')">
+              <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-left"></i>
+              </a>
+            </li>
+            <ng-container *ngFor="let page of pageNumbersArray" >
+              <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber">
+                <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+              </li>
+              <li class="page-item" *ngIf="page.id!=pageNumber">
+                <a class="page-link" (click)="loadPagination(page.id)">{{page.id}}</a>
+              </li>
+            </ng-container>
+            <li class="paginate_button page-item next" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next')">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+            <li class="paginate_button page-item next disabled" *ngIf="pageNumber==pageNumbers">
+              <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+                <i class="fal fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="default-example-modal-lg" tabindex="-1" role="dialog" aria-modal="false" >
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Dictamen de trabajo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row form-group" style="margin-left:-6px">
+          <div class="d-flex w-100">
+            <div class="p-2 col-7 w-100">
+              <label><span>Resultado de la evaluación <span style="color: red">*</span></span></label>
+            </div>
+            <div class="p-2 col-5 flex-shrink-1">
+              <div class="frame-wrap">
+                <ng-container *ngIf="modalDisabled">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" [checked]="evaluacionTrue" [disabled]="modalDisabled">
+                    <label class="custom-control-label" style="color:darkgreen">{{(idTipoEvaluacion==1)?'Preaprobado':'Aprobado'}}</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" [checked]="evaluacionFalse" [disabled]="modalDisabled">
+                    <label class="custom-control-label" style="color:red">{{(idTipoEvaluacion==1)?'No preaprobado':'No aprobado'}}</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!modalDisabled">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="radio1" [checked]="evaluacionTrue" (click)="activeTrue()">
+                    <label class="custom-control-label" for="radio1" style="color:darkgreen">{{(idTipoEvaluacion==1)?'Preaprobado':'Aprobado'}}</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="radio2" [checked]="evaluacionFalse" (click)="activeFalse()">
+                    <label class="custom-control-label" for="radio2" style="color:red">{{(idTipoEvaluacion==1)?'No preaprobado':'No aprobado'}}</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row form-group col-12">
+          <label>Resumen de dictamen <span class="help-block">(máx. 700 caracteres) <span style="color: red">*</span></span></label><br>
+          <textarea rows="5" class="form-control" [(ngModel)]="dictamen" [disabled]="modalDisabled"
+                    [class.is-invalid]="dictamen.length > 700"></textarea>
+        </div>
+        <div class="row form-group col-12">
+          <div class="row form-group col-12 mb-1 align-items-center">
+            <label>Archivos adjuntos</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-success btn-icon" data-toggle="modal" data-target="#new-files-modal"
+                    (click)="newFileModal()">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+          <table class="table table-bordered table-hover table-striped dataTable dtr-inline border-table" role="grid"
+                 aria-describedby="dt-basic-example_info" >
+            <thead class="bg-primary-600 ">
+            <tr role="row">
+              <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Nombre</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+              <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr role="row" class="odd" *ngFor="let archivo of archivosEvaluacion">
+              <td><a class="fs-lg text-dark">{{archivo.nombre}}</a></td>
+              <td><a class="fs-lg text-dark">{{archivo.descripcion}}</a></td>
+              <td>
+                <ng-container *ngIf="archivo.id">
+                  <button class="btn btn-primary btn-icon" (click)="viewFileSaved(archivo.uri)">
+                    <i class="fas fa-file" style="color: white;" ></i>
+                  </button>&nbsp;
+                </ng-container>
+                <ng-container *ngIf="archivo.clave">
+                  <button class="btn btn-primary btn-icon" (click)="viewFileNew(archivo.file)">
+                    <i class="fas fa-file" style="color: white;" ></i>
+                  </button>&nbsp;
+                  <button class="btn btn-danger btn-icon" (click)="removeArchivoByClave(archivo.clave)">
+                    <i class="fas fa-trash-alt" style="color: white;"></i>
+                  </button>
+                </ng-container>
+              </td>
+            </tr>
+            <ng-container *ngIf="archivosEvaluacion.length==0">
+              <tr class="odd"><td colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  (click)="saveEvaluation(idTrabajoGuardar)"
+                  [disabled]="!evaluacionTrue && !evaluacionFalse || dictamen=='' || dictamen.length > 700"
+                  *ngIf="!modalDisabled">
+            <i class="fa fa-save"></i>&nbsp;&nbsp;&nbsp;&nbsp;Guardar</button>
+          <button type="button" class="btn btn-success waves-effect waves-themed" data-dismiss="modal"
+                  (click)="updateEvaluation(idEvaluation)"
+                  *ngIf="modalDisabled">
+            <i class="fa fa-save"></i>&nbsp;&nbsp;&nbsp;&nbsp;Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="new-files-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="padding: 10px">
+      <div class="modal-header">
+        <h4 class="modal-title">Nuevo archivo</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <input type="text" class="form-control" placeholder="Escribe un nombre..." [(ngModel)]="nombreArchivo">
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <div class="form-group mb-2" style="margin-right:12px">
+          <textarea class="form-control" placeholder="Escribe una descripción..." [(ngModel)]="descripcionArchivo"></textarea>
+        </div>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" (change)="extractFileFromEvent($event)" [(ngModel)]="archivoVacio">
+              <label class="custom-file-label">
+                <ng-container *ngIf="archivoTrabajo">{{archivoTrabajo.name}}</ng-container>
+                <ng-container *ngIf="!archivoTrabajo">Selecciona un archivo...</ng-container>
+              </label>
+            </div>
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal"
+                  [disabled]="(tipoArchivoSelected==0 || !archivoTrabajo || nombreArchivo=='')" (click)="agregarArchivo()">
+            &nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

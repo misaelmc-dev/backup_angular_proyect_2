@@ -1,0 +1,1169 @@
+<div class="panel-hdr">
+  <h2>Registro de trabajo&nbsp;&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#work-modal" [disabled]="trabajos.length>=3" (click)="clearValues()">
+      <i class="fal fa-plus" *ngIf="trabajos.length<3"></i><i class="fal fa-plus" *ngIf="trabajos.length>=3"></i>
+    </button></h2>
+</div>
+<table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+       aria-describedby="dt-basic-example_info" >
+  <thead class="bg-primary-600 ">
+  <tr role="row">
+    <th class="border-tl"><i class="fa fa-text-width"></i>&nbsp;&nbsp;Título</th>
+    <th ><i class="fa fa-file-invoice"></i>&nbsp;&nbsp;Fuente</th>
+    <th width="100px"><i class="fa fa-user"></i>&nbsp;&nbsp;Autor</th>
+    <th><i class="fa fa-clipboard-user"></i>&nbsp;&nbsp;Tipo</th>
+    <th width="80px"><i class="fa fa-star"></i>&nbsp;&nbsp;Estatus</th>
+    <th width="90px"><i class="fa fa-check"></i>&nbsp;&nbsp;Evaluación</th>
+    <th width="80px"><i class="fa fa-dollar-sign"></i>&nbsp;&nbsp;Pago</th>
+    <th class="border-tr" width="130px"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngIf="trabajos.length!=0">
+      <tr *ngFor="let work of trabajos">
+        <td>
+          <ng-container *ngFor="let met of metadatosTitulos">
+            <label *ngIf="work.id==met.id_trabajo">
+              {{met.titulo}}
+            </label>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngFor="let fc of fuentesCarga">
+            <label *ngIf="work.id_fuente==fc.id">{{fc.titulo}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <label [innerHTML]="getCommaSeparatedAuthorListHtml(work.id)"></label>
+        </td>
+        <td>
+          <ng-container *ngFor="let w of typeWorkAsing">
+            <label *ngIf="work.id_tipo_trabajo==w.id">{{w.nombre}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngFor="let ew of estatusWork">
+            <label *ngIf="work.id_estatus_trabajo==ew.id">{{ew.nombre}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="work.hasOwnProperty('evaluacion')">
+            <ng-container *ngIf="work.evaluacion=='Preaprobado'">
+              <a href="javascript(0)" appTooltip [texto]="'Autorización del artículo para proceder a participar en estímulos de API (UVM / UNITEC)'" [colorClass]="'success'">
+                <span class="badge bg-success badge-pill bange">
+                  <span style="color:white"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;Preaprobado</span>
+                </span>
+              </a>
+            </ng-container>
+            <ng-container *ngIf="work.evaluacion=='No preaprobado'">
+              <a href="javascript(0)" appTooltip [texto]="'No autorización del artículo para proceder a participar en estímulos de API (UVM / UNITEC)'" [colorClass]="'danger'">
+                <span class="badge bg-danger badge-pill bange">
+                  <span style="color:white"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;No preaprobado</span>
+                </span>
+              </a>
+            </ng-container>
+            <ng-container *ngIf="work.evaluacion=='Aprobado'">
+              <a href="javascript(0)" appTooltip [texto]="'Aprobación de artículo para estímulo API (UVM / UNITEC)'" [colorClass]="'success'">
+                <span class="badge bg-success badge-pill bange">
+                  <span style="color:white"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;Aprobado</span>
+                </span>
+              </a>
+            </ng-container>
+            <ng-container *ngIf="work.evaluacion=='No aprobado'">
+              <a href="javascript(0)" appTooltip [texto]="'No aprobación de artículo para estímulo API (UVM / UNITEC)'" [colorClass]="'danger'">
+                <span class="badge bg-danger badge-pill bange">
+                  <span style="color:white"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;No aprobado</span>
+                </span>
+              </a>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="!work.hasOwnProperty('evaluacion')">
+            <span class="badge bg-secondary badge-pill bange">
+              <span style="color:white"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Sin evaluar</span>
+            </span>
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="filterPagos(work.id)">
+            <span class="badge bg-warning badge-pill bange">
+              <span style="color:white"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;Pagado</span>
+            </span>
+          </ng-container>
+          <ng-container *ngIf="!filterPagos(work.id)">
+            <span class="badge bg-secondary badge-pill bange">
+              <span style="color:white"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Pendiente</span>
+            </span>
+          </ng-container>
+        </td>
+        <td>
+          <button class="btn btn-primary btn-icon" (click)="workDetailsModal(work)" data-toggle="modal" data-target="#details-modal"><i class="fa fa-eye"></i></button>&nbsp;
+          <button class="btn btn-success btn-icon" (click)="workUpdateModal(work)" data-toggle="modal" data-target="#edit-work-modal" ><i class="fa fa-edit"></i></button>&nbsp;
+          <button class="btn btn-danger btn-icon" (click)="deleteWork(work.id)"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="trabajos.length==0">
+      <tr class="odd"><td valign="top" colspan="8" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay trabajos que mostrar</td></tr>
+    </ng-container>
+  </tbody>
+</table>
+<div class="alert bg-primary-400 text-white fade show" role="alert" *ngIf="trabajos.length>=3">
+  <div class="d-flex align-items-center">
+    <div class="alert-icon">
+      <i class="fal fa-info-circle"></i>
+    </div>
+    <div class="flex-1">
+      <span class="h5">Se alcanzó el límite máximo de trabajos</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade overflow-auto" data-spy="scroll" style="height:100%" id="work-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Registrar trabajo </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <div class="row mb-2 border-bottom pb-3">
+          <div class="col-6">
+            <label class="text-muted"><b>Tipo de trabajo</b>&nbsp;&nbsp;<b style="color:red;">*</b></label>
+            <div class="input-group flex-nowrap">
+              <div class="input-group flex-nowrap">
+                <select class="form-control" [(ngModel)]="typeWorkSelected">
+                  <ng-container *ngIf="typeWorkAsing.length!=0">
+                    <option value="0">Selecciona un tipo de trabajo...</option>
+                    <ng-container *ngFor="let camp of typeWorkAsing">
+                      <option value="{{camp.id}}">{{camp.nombre}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="typeWorkAsing.length==0">B
+                    <option value="0">No hay tipos de trabajo disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <label class="text-muted"><b>Refrendo:</b></label>
+            &nbsp;&nbsp;<b style="color:red;">*</b>
+            <div class="input-group flex-nowrap mt-2">
+              <div class="input-group flex-nowrap">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio1"
+                         [checked]="trabajoRefrendoTrue" (click)="activeRefrendo('true')">
+                  <label class="custom-control-label" for="radio1">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio2"
+                         [checked]="trabajoRefrendoFalse" (click)="activeRefrendo('false')">
+                  <label class="custom-control-label" for="radio2">No</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Español</b></label>
+            <input type="text" class="form-control mb-2" [class.is-invalid]="validTitulo1" (keyup)="validateMetaSection()" placeholder="Escribe el título en español..." [(ngModel)]="datosTitulo1">
+            <div class="invalid-feedback m2" *ngIf="validTitulo1">El campo es obligatorio.</div>
+            <textarea class="form-control mb-2" rows="4" [class.is-invalid]="validResumen1" (keyup)="validateMetaSection()" placeholder="Escribe el resumen en español..." [(ngModel)]="datosresumen1"></textarea>
+            <div class="invalid-feedback m2" *ngIf="validResumen1">El campo es obligatorio.</div>
+            <input type="text" class="form-control mb-2" placeholder="Url de la publicación en español..." [(ngModel)]="datosUrl1" (keyup)="validateMetaSection()">
+          </div>
+          <div class="col">
+            <label class="text-muted"><b>Inglés</b></label>
+            <input type="text" class="form-control mb-2" [class.is-invalid]="validTitulo2" (keyup)="validateMetaSection()" placeholder="Escribe el título en inglés..." [(ngModel)]="datosTitulo2">
+            <div class="invalid-feedback m2" *ngIf="validTitulo2">El campo es obligatorio.</div>
+            <textarea class="form-control mb-2" rows="4" [class.is-invalid]="validResumen2" (keyup)="validateMetaSection()" placeholder="Escribe el resumen  en inglés..." [(ngModel)]="datosresumen2"></textarea>
+            <div class="invalid-feedback m2" *ngIf="validResumen2">El campo es obligatorio.</div>
+            <input type="text" class="form-control mb-2"  placeholder="Url de la publicación en inglés..." [(ngModel)]="datosUrl2" (keyup)="validateMetaSection()">
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Fuente</b></label>
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" placeholder="Buscar fuentes scopus..." [(ngModel)]="search1">
+              <div class="input-group-append">
+                <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="searchFuentes()"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <select class="form-control" [(ngModel)]="fuentesSelected" [disabled]="(fuentesList.length==0)">
+                  <ng-container *ngIf="fuentesList.length!=0">
+                    <option value="0">Seleccione una fuente...</option>
+                    <ng-container *ngFor="let font of fuentesList">
+                      <option value="{{font.id}}" *ngIf="font.id!=0">{{font.titulo}} - {{font.publisher}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="fuentesList.length==0">
+                    <option value="0">No hay fuentes disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>
+              &nbsp;&nbsp;<b style="color:red;">*</b>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Áreas del conocimiento</b></label>
+            <div class="input-group flex-nowrap">
+              <div class="input-group flex-nowrap">
+                <select class="form-control" [(ngModel)]="areaSelected">
+                  <ng-container *ngIf="areasConocimientoList.length!=0">
+                    <option value="0">Seleccione un área del conocimiento...</option>
+                    <ng-container *ngFor="let area of areasConocimientoList">
+                      <option value="{{area.id}}">{{area.nombre}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="areasConocimientoList.length==0">
+                    <option value="0">No hay áreas del conocimiento disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" (click)="agregarArea()" style="width:40px"><i class="fa fa-plus"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let area of areasConocimiento">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:5px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeArea(area.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{area.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Agregue los autores según la posición en el trabajo&nbsp;</b>&nbsp;&nbsp;<span style="color: red">*</span>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" data-toggle="modal" data-target="#autor-modal" (click)="openModalAutor()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="saveAutorFlag">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+              </button>
+              <div class="d-flex align-items-center">
+                <div class="alert-icon width-8">
+                    <span class="icon-stack icon-stack-sm">
+                      <i class="fal fa-user-plus"></i>
+                    </span>
+                </div>
+                <div class="flex-1 pl-1">
+                  <h4>Autor agregado exitosamente</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="dontSaveAutorFlag">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+              </button>
+              <div class="d-flex align-items-center">
+                <div class="alert-icon width-8">
+                    <span class="icon-stack icon-stack-sm">
+                      <i class="fal fa-user-plus"></i>
+                    </span>
+                </div>
+                <div class="flex-1 pl-1">
+                  <h4>No se pudo agregar el autor, el correo especificado pertenece a otro autor</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                   aria-describedby="dt-basic-example_info" >
+              <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-sort-numeric-down"></i>&nbsp;&nbsp;Posición</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" ><i class="fa fa-user"></i>&nbsp;&nbsp;Nombre completo</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-envelope"></i>&nbsp;&nbsp;Correo electrónico</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-clipboard-user"></i>&nbsp;&nbsp;ORCID</th>
+                <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="autores.length!=0">
+                <tr *ngFor="let aut of autores; index as i">
+                  <td>{{i+1}}</td>
+                  <td>{{aut.nombre}}</td>
+                  <td>{{aut.correo}}</td>
+                  <td>{{aut.orcid}}</td>
+                  <td>
+                    <button class="btn btn-primary btn-icon" (click)="autorDetails(aut)" data-toggle="modal" data-target="#autor-details-modal"><i class="fa fa-eye"></i></button>&nbsp;
+                    <button class="btn btn-success btn-icon" (click)="autorUpdateModal(aut)" data-toggle="modal" data-target="#autor-update-modal"><i class="fa fa-edit"></i></button>&nbsp;
+                    <button class="btn btn-danger btn-icon" (click)="removeAutor(aut.nombre,aut.correo)"><i class="fa fa-trash"></i></button>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="autores.length==0">
+                <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#bd0a0a;font-size:20px">No hay autores que mostrar, agregue al menos uno</td></tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Archivos, Anexos, documentos y Fotos , para sustentar el trabajo&nbsp;</b>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" data-toggle="modal" data-target="#new-files-modal" (click)="newFileModal()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                   aria-describedby="dt-basic-example_info" >
+              <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Nombre</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+                <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr role="row" class="odd" *ngFor="let archivo of archivosTrabajos; trackBy: trackByFn">
+                <td><a class="fs-lg text-dark">{{archivo.nombre}}</a></td>
+                <td><a class="fs-lg text-dark">{{archivo.descripcion}}</a></td>
+                <td>
+                  <button class="btn btn-primary btn-icon" (click)="viewFileNew(archivo.file)">
+                    <i class="fas fa-file" style="color: white;" ></i>
+                  </button>&nbsp;
+                  <button class="btn btn-danger btn-icon" (click)="removeArchivoByClave(archivo.clave)">
+                    <i class="fas fa-trash-alt" style="color: white;"></i>
+                  </button>
+                </td>
+              </tr>
+              <ng-container *ngIf="archivosTrabajos.length==0">
+                <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [attr.data-dismiss]="(validTotal) ? null : 'modal'"
+                  (click)="saveWork()" [disabled]="typeWorkSelected==0 || autores.length==0 || fuentesSelected==0 || validTotal || (datosTitulo1=='' && datosTitulo2=='') || (!trabajoRefrendoFalse && !trabajoRefrendoTrue)">
+            <i class="fa fa-check"></i>&nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade overflow-auto" data-spy="scroll" style="height:100%" id="edit-work-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Actualizar trabajo </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <div class="row mb-2 border-bottom pb-3">
+          <div class="col-6">
+            <label class="text-muted"><b>Tipo de trabajo</b>&nbsp;&nbsp;<b style="color:red;">*</b></label>
+            <div class="input-group flex-nowrap">
+              <div class="input-group flex-nowrap">
+                <select class="form-control" [(ngModel)]="typeWorkSelected" disabled>
+                  <ng-container *ngIf="typeWorkAsing.length!=0">
+                    <option value="0">Selecciona un tipo de trabajo...</option>
+                    <ng-container *ngFor="let camp of typeWorkAsing">
+                      <option value="{{camp.id}}">{{camp.nombre}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="typeWorkAsing.length==0">B
+                    <option value="0">No hay tipos de trabajo disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <label class="text-muted"><b>Refrendo</b></label>
+            &nbsp;&nbsp;<b style="color:red;">*</b>
+            <div class="input-group flex-nowrap mt-2">
+              <div class="input-group flex-nowrap">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio1"
+                         [checked]="trabajoRefrendoTrue" (click)="activeRefrendo('true')">
+                  <label class="custom-control-label" for="radio1">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio2"
+                         [checked]="trabajoRefrendoFalse" (click)="activeRefrendo('false')">
+                  <label class="custom-control-label" for="radio2">No</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Español</b></label>
+            <input type="text" class="form-control mb-2" [class.is-invalid]="validTitulo1" (keyup)="validateMetaSection()" placeholder="Escribe el título en español..." [(ngModel)]="datosTitulo1">
+            <div class="invalid-feedback m2" *ngIf="validTitulo1">El campo es obligatorio.</div>
+            <textarea class="form-control mb-2" rows="4" [class.is-invalid]="validResumen1" (keyup)="validateMetaSection()" placeholder="Escribe el resumen en español..." [(ngModel)]="datosresumen1"></textarea>
+            <div class="invalid-feedback m2" *ngIf="validResumen1">El campo es obligatorio.</div>
+            <input type="text" class="form-control mb-2" placeholder="Url de la publicación en español..." [(ngModel)]="datosUrl1" (keyup)="validateMetaSection()">
+          </div>
+          <div class="col">
+            <label class="text-muted"><b>Inglés</b></label>
+            <input type="text" class="form-control mb-2" [class.is-invalid]="validTitulo2" (keyup)="validateMetaSection()" placeholder="Escribe el título en inglés..." [(ngModel)]="datosTitulo2">
+            <div class="invalid-feedback m2" *ngIf="validTitulo2">El campo es obligatorio.</div>
+            <textarea class="form-control mb-2" rows="4" [class.is-invalid]="validResumen2" (keyup)="validateMetaSection()" placeholder="Escribe el resumen  en inglés..." [(ngModel)]="datosresumen2"></textarea>
+            <div class="invalid-feedback m2" *ngIf="validResumen2">El campo es obligatorio.</div>
+            <input type="text" class="form-control mb-2"  placeholder="Url de la publicación en inglés..." [(ngModel)]="datosUrl2" (keyup)="validateMetaSection()">
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Fuentes</b></label>
+            <div class="input-group mb-2">
+              <input type="text" class="form-control" placeholder="Buscar fuentes scopus..." [(ngModel)]="search1">
+              <div class="input-group-append">
+                <button class="btn btn-primary waves-effect waves-themed" type="button" (click)="searchFuentes()"><i class="fal fa-search"></i></button>
+              </div>
+            </div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap" *ngIf="datosWorkFuente==0">
+                <select class="form-control" [(ngModel)]="fuentesSelected" [disabled]="(fuentesList.length==0)">
+                  <ng-container *ngIf="fuentesList.length!=0">
+                    <option value="0">Seleccione una fuente...</option>
+                    <ng-container *ngFor="let font of fuentesList">
+                      <option value="{{font.id}}" *ngIf="font.id!=0">{{font.titulo}} - {{font.publisher}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="fuentesList.length==0">
+                    <option value="0">No hay fuentes disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>
+              <div class="input-group flex-nowrap" *ngIf="datosWorkFuente!=0">
+                <select class="form-control" [(ngModel)]="datosWorkFuente" disabled>
+                  <option [value]="datosWorkFuente">{{datosWorkFuenteNombre}}</option>
+                </select>
+              </div>
+              &nbsp;&nbsp;<b style="color:red;">*</b>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Áreas del conocimiento</b></label>
+            <div class="input-group flex-nowrap">
+              <div class="input-group flex-nowrap">
+                <select class="form-control" [(ngModel)]="areaSelected">
+                  <ng-container *ngIf="areasConocimientoList.length!=0">
+                    <option value="0">Seleccione un área del conocimiento...</option>
+                    <ng-container *ngFor="let area of areasConocimientoList">
+                      <option value="{{area.id}}">{{area.nombre}}</option>
+                    </ng-container>
+                  </ng-container>
+                  <ng-container *ngIf="areasConocimientoList.length==0">
+                    <option value="0">No hay áreas del conocimiento disponibles...</option>
+                  </ng-container>
+                </select>
+              </div>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" (click)="agregarArea()" style="width:40px"><i class="fa fa-plus"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let area of areasConocimiento">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:5px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeArea(area.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{area.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Agregue los autores según la posición en el trabajo&nbsp;</b>&nbsp;&nbsp;<span style="color: red">*</span>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" data-toggle="modal" data-target="#autor-modal" (click)="openModalAutor()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" *ngIf="saveAutorFlag">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+              </button>
+              <div class="d-flex align-items-center">
+                <div class="alert-icon width-8">
+                    <span class="icon-stack icon-stack-sm">
+                      <i class="fal fa-user-plus"></i>
+                    </span>
+                </div>
+                <div class="flex-1 pl-1">
+                  <h4>Autor agregado exitosamente</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="dontSaveAutorFlag">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+              </button>
+              <div class="d-flex align-items-center">
+                <div class="alert-icon width-8">
+                    <span class="icon-stack icon-stack-sm">
+                      <i class="fal fa-user-plus"></i>
+                    </span>
+                </div>
+                <div class="flex-1 pl-1">
+                  <h4>No se pudo agregar el autor, el correo especificado pertenece a otro autor</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                   aria-describedby="dt-basic-example_info" >
+              <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-sort-numeric-down"></i>&nbsp;&nbsp;Posición</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" ><i class="fa fa-user"></i>&nbsp;&nbsp;Nombre completo</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-envelope"></i>&nbsp;&nbsp;Correo electrónico</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-clipboard-user"></i>&nbsp;&nbsp;ORCID</th>
+                <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              <ng-container *ngIf="autores.length!=0">
+                <tr *ngFor="let aut of autores; index as i">
+                  <td>{{i+1}}</td>
+                  <td>{{aut.nombre}}</td>
+                  <td>{{aut.correo}}</td>
+                  <td>{{aut.orcid}}</td>
+                  <td>
+                    <button class="btn btn-primary btn-icon" (click)="autorDetails(aut)" data-toggle="modal" data-target="#autor-details-modal"><i class="fa fa-eye"></i></button>&nbsp;
+                    <button class="btn btn-success btn-icon" (click)="autorUpdateModal(aut)" data-toggle="modal" data-target="#autor-update-modal"><i class="fa fa-edit"></i></button>&nbsp;
+                    <button class="btn btn-danger btn-icon" (click)="removeAutor(aut.nombre,aut.correo)"><i class="fa fa-trash"></i></button>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="autores.length==0">
+                <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#bd0a0a;font-size:20px">No hay autores que mostrar, agregue al menos uno</td></tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label class="text-muted"><b>Archivos, Anexos, documentos y Fotos , para sustentar el trabajo&nbsp;</b>&nbsp;&nbsp;
+              <button class="btn btn-success btn-icon" data-toggle="modal" data-target="#new-files-modal" (click)="newFileModal()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                   aria-describedby="dt-basic-example_info" >
+              <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-archive"></i>&nbsp;&nbsp;Nombre</th>
+                <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+                <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr role="row" class="odd" *ngFor="let archivo of archivosTrabajos; trackBy: trackByFn">
+                <td><a class="fs-lg text-dark">{{archivo.nombre}}</a></td>
+                <td><a class="fs-lg text-dark">{{archivo.descripcion}}</a></td>
+                <td>
+                  <ng-container *ngIf="archivo.id">
+                    <button class="btn btn-primary btn-icon" (click)="viewFileSaved(archivo.uri)">
+                      <i class="fas fa-file" style="color: white;" ></i>
+                    </button>&nbsp;
+                    <button class="btn btn-danger btn-icon" (click)="removeArchivoById(archivo.id)">
+                      <i class="fas fa-trash-alt" style="color: white;"></i>
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="archivo.clave">
+                    <button class="btn btn-primary btn-icon" (click)="viewFileNew(archivo.file)">
+                      <i class="fas fa-file" style="color: white;" ></i>
+                    </button>&nbsp;
+                    <button class="btn btn-danger btn-icon" (click)="removeArchivoByClave(archivo.clave)">
+                      <i class="fas fa-trash-alt" style="color: white;"></i>
+                    </button>
+                  </ng-container>
+                </td>
+              </tr>
+              <ng-container *ngIf="archivosTrabajos.length==0">
+                <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+              </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [attr.data-dismiss]="(validTotal) ? null : 'modal'"  (click)="updateWork()"
+                  [disabled]="autores.length==0 || fuentesSelected==0 || validTotal || (datosTitulo1=='' && datosTitulo2=='') " >
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="autor-modal" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar autor </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2 border-bottom pb-4">
+          <div class="col">
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-user fs-xl"></i></span>
+                </div>
+                <input type="text" class="form-control" [class.is-invalid]="valid1" placeholder="Escribe el nombre completo del autor {{autores.length+1}}..." [(ngModel)]="autorNombre" (keyup)="validacion()">
+              </div>
+              &nbsp;&nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid1">El campo es obligatorio.</div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-envelope fs-xl"></i></span>
+                </div>
+                <input type="email" name="email" id="email" class="form-control"
+                       [class.is-invalid]="validEmail" placeholder="Escribe el correo del autor {{autores.length+1}}..."
+                       [(ngModel)]="autorCorreo" (keyup)="validacion()">
+              </div>
+              &nbsp;&nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid2">El campo es obligatorio.</div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fab fa-orcid fs-xl"></i></span>
+                </div>
+                <input type="text" class="form-control" [class.is-invalid]="validOrcid" 
+                       placeholder="Escribe el ORCID del autor {{autores.length+1}}..."
+                       [(ngModel)]="autorORCID" (keyup)="validacion()">
+              </div>
+              &nbsp;&nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid4">El campo es obligatorio.</div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid5">Formato incorrecto</div>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Afiliaciones</b></label>
+          </div>
+        </div>
+        <div class="input-group mb-2 pb-2">
+          <input type="text" class="form-control" placeholder="Buscar instituciones..." [(ngModel)]="search2">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="searchAfiliaciones()"><i class="fal fa-search"></i></button>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mt-2 mb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="afiliacionSelected" [disabled]="(afiliacionesList.length==0)">
+              <ng-container *ngIf="afiliacionesList.length!=0">
+                <option value="0">Seleccione una institución...</option>
+                <ng-container *ngFor="let afil of afiliacionesList">
+                  <option value="{{afil.id}}" *ngIf="afil.id!=0">{{afil.institution_name}} - {{afil.country}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="afiliacionesList.length==0">
+                <option value="0">No hay instituciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarRor()" style="width:130px;" [disabled]="(afiliacionesList.length==0)">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let afil of afiliaciones">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeRor(afil.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <ng-container *ngIf="afil.institution_name">
+                  {{afil.institution_name}} - <strong>{{afil.country}}</strong>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Campus</b></label>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mb-2 pb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="campusSelected">
+              <ng-container *ngIf="campusList.length!=0">
+                <option value="0">Seleccione un campus...</option>
+                <ng-container *ngFor="let cam of campusList">
+                  <option value="{{cam.id}}" *ngIf="cam.id!=0">{{cam.nombre}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="campusList.length==0">
+                <option value="0">No hay campus disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarCampus()" style="width:130px;">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let camp of campus">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeCampus(camp.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{camp.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" *ngIf="autorNombre=='' || autorCorreo=='' || autorORCID=='' || validEmail || valid2" (click)="validacion()" [disabled]="validOrcid">
+            <i class="fa fa-check"></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" *ngIf="autorNombre!='' && autorCorreo!='' && autorORCID!='' && !validEmail && !valid2" (click)="asignarAutor()" [disabled]="validOrcid">
+            <i class="fa fa-check"></i>&nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="autor-update-modal" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Actualizar autor </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2 border-bottom pb-4">
+          <div class="col">
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-user fs-xl"></i></span>
+                </div>
+                <input type="text" class="form-control" [(ngModel)]="autorNombre"
+                       placeholder="Escribe el nombre completo del autor..." disabled readonly>
+              </div>
+            </div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fa fa-envelope fs-xl"></i></span>
+                </div>
+                <input type="email" class="form-control" [(ngModel)]="autorCorreo"
+                       placeholder="Escribe el correo del autor..." disabled readonly>
+              </div>
+            </div>
+            <div class="input-group flex-nowrap mb-2">
+              <div class="input-group flex-nowrap">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fab fa-orcid fs-xl"></i></span>
+                </div>
+                <input type="text" class="form-control" [class.is-invalid]="validOrcid"
+                       placeholder="Escribe el ORCID del autor"
+                       [(ngModel)]="autorORCID" (keyup)="validacion()">
+              </div>
+              &nbsp;&nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid4">El campo es obligatorio.</div>
+            <div class="invalid-feedback" style="margin-left:50px" *ngIf="valid5">Formato incorrecto</div>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Afiliaciones</b></label>
+          </div>
+        </div>
+        <div class="input-group mb-2 pb-2">
+          <input type="text" class="form-control" placeholder="Buscar instituciones..." [(ngModel)]="search2">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="searchAfiliaciones()"><i class="fal fa-search"></i></button>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mt-2 mb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="afiliacionSelected" [disabled]="(afiliacionesList.length==0)">
+              <ng-container *ngIf="afiliacionesList.length!=0">
+                <option value="0">Seleccione una institución...</option>
+                <ng-container *ngFor="let afil of afiliacionesList">
+                  <option value="{{afil.id}}" *ngIf="afil.id!=0">{{afil.institution_name}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="afiliacionesList.length==0">
+                <option value="0">No hay instituciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarRor()" style="width:130px;" [disabled]="(afiliacionesList.length==0)">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 border-bottom pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let afil of afiliaciones">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeRor(afil.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{afil.institution_name}}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row pb-2">
+          <div class="col">
+            <label class="text-muted"><b>Campus</b></label>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mb-2 pb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="campusSelected">
+              <ng-container *ngIf="campusList.length!=0">
+                <option value="0">Seleccione un campus...</option>
+                <ng-container *ngFor="let cam of campusList">
+                  <option value="{{cam.id}}" *ngIf="cam.id!=0">{{cam.nombre}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="campusList.length==0">
+                <option value="0">No hay campus disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="asignarCampus()" style="width:130px;">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 pb-2">
+          <div class="col">
+            <ng-container class="row" *ngFor="let camp of campus">
+              <div class="alert alert-primary alert-dismissible fade show col-12" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeCampus(camp.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{camp.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal"
+                  [disabled]="true" *ngIf="validOrcid || autorORCID==''">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" (click)="updateAutor()"
+                  *ngIf="!validOrcid && autorORCID!=''">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="autor-details-modal" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalles de autor</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12 m-2" style="margin-top:-50px">
+          <div class="row">
+            <label><b>Nombre del autor:</b>&nbsp;&nbsp;{{autorDatosNombre}}</label>
+          </div>
+          <div class="row">
+            <label><b>Correo electrónico:</b>&nbsp;&nbsp;{{autorDatosCorreo}}</label>
+          </div>
+          <div class="row">
+            <label><b>ORCID:</b>&nbsp;&nbsp;{{autorDatosOrcid}}</label>
+          </div>
+
+          <div class="panel-hdr row">
+            <h2 class="text-muted" style="font-size:16px"><i class="fal fa-school"></i>&nbsp;&nbsp;Afiliaciones</h2>
+          </div>
+          <ng-container *ngFor="let i of autorDatosInstituciones">
+            <ng-container *ngIf="i.institution_name">
+              <div class="row">
+                <label>*&nbsp;&nbsp;{{i.institution_name}}</label>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!i.institution_name">
+              <ng-container *ngFor="let ad of afiliacionesDatos">
+                <ng-container *ngIf="i.id==ad.id">
+                  <div class="row">
+                    <label>*&nbsp;&nbsp;{{ad.institution_name}}</label>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <div class="panel-hdr row">
+            <h2 class="text-muted" style="font-size:16px"><i class="fal fa-city"></i>&nbsp;&nbsp;Campus</h2>
+          </div>
+          <ng-container *ngFor="let c of autorDatosCampus">
+            <ng-container *ngIf="c.nombre">
+              <div class="row">
+                <label>*&nbsp;&nbsp;{{c.nombre}}</label>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!c.nombre">
+              <ng-container *ngFor="let cl of campusList">
+                <ng-container *ngIf="c.id==cl.id">
+                  <div class="row">
+                    <label>*&nbsp;&nbsp;{{cl.nombre}}</label>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="details-modal" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="margin-bottom:-25px">
+        <h5 class="modal-title">Detalles del trabajo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <ng-container *ngFor="let w of typeWorkAsing">
+          <div class="row">
+            <label *ngIf="datosWorkTipo==w.id"><b><i class="fa fa-copy width-1"></i>Tipo:</b>&nbsp;&nbsp;{{w.nombre}}</label>
+          </div>
+        </ng-container>
+        <ng-container>
+          <div class="row">
+            <label><b><i class="fa fa-bookmark width-1"></i>Refrendo:</b>&nbsp;&nbsp;{{(datosWorkRefrendo)?'Sí':'No'}}</label>
+          </div>
+        </ng-container>
+
+        <ng-container *ngFor="let fc of fuentesCarga" >
+          <div class="row">
+            <label *ngIf="datosWorkFuente==fc.id"><b><i class="fa fa-book-open width-1"></i>Fuente:</b>&nbsp;&nbsp;{{fc.titulo}}</label>
+          </div>
+        </ng-container>
+        <ng-container *ngFor="let ew of estatusWork">
+          <div class="row">
+            <label *ngIf="datosWorkEstatus==ew.id"><b><i class="fa fa-star width-1"></i>Estatus:</b>&nbsp;&nbsp;{{ew.nombre}}</label>
+          </div>
+        </ng-container>
+        <ng-container *ngFor="let met of metadatos">
+          <ng-container *ngIf="datosWorkId==met.id_trabajo && met.id_idioma==150">
+            <div class="row" *ngIf="met.titulo">
+              <b><i class="fa fa-file-signature width-1"></i>Título en español:</b>
+              <label class="text-justify ml-4" [class.ml-4]="(met.titulo.length>50)"><span *ngIf="(met.titulo.length<=50)">&nbsp;&nbsp;</span>{{met.titulo}}</label>
+            </div>
+            <div class="row" *ngIf="met.resumen">
+              <b><i class="fa fa-text-width width-1"></i>Resumen en español:</b>
+              <label class="text-justify" [class.ml-4]="(met.resumen.length>50)"><span *ngIf="(met.resumen.length<=50)">&nbsp;&nbsp;</span>{{met.resumen}}</label>
+            </div>
+            <div class="row" *ngIf="met.url">
+              <b><i class="fa fa-globe width-1"></i>Url del trabajo:</b>
+              <span class="text-justify">&nbsp;&nbsp;<a href="{{met.url}}" target="_blank">{{met.url | slice:0:50}}<label *ngIf="met.url.length>50">...</label></a></span>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngFor="let met of metadatos">
+          <ng-container *ngIf="datosWorkId==met.id_trabajo && met.id_idioma==41">
+            <div class="row mt-1" *ngIf="met.titulo">
+              <b><i class="fa fa-file-signature width-1"></i>Título en inglés:</b>
+              <label class="text-justify ml-4" [class.ml-4]="(met.titulo.length>50)"><span *ngIf="(met.titulo.length<=50)">&nbsp;&nbsp;</span>{{met.titulo}}</label>
+            </div>
+            <div class="row" *ngIf="met.resumen">
+              <b><i class="fa fa-text-width width-1"></i>Resumen en inglés:</b>
+              <label class="text-justify" [class.ml-4]="(met.resumen.length>50)"><span *ngIf="(met.resumen.length<=50)">&nbsp;&nbsp;</span>{{met.resumen}}</label>
+            </div>
+            <div class="row" *ngIf="met.url">
+              <b><i class="fa fa-globe width-1"></i>Url del trabajo:</b>
+              <span class="text-justify">&nbsp;&nbsp;<a href="{{met.url}}" target="_blank">{{met.url | slice:0:50}}<label *ngIf="met.url.length>50">...</label></a></span>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-container>
+          <div class="row mt-1">
+            <label><b><i class="fa fa-book width-1"></i>Áreas del conocimiento</b></label>
+          </div>
+        </ng-container>
+        <ng-container *ngFor="let d of datosWorkAreas">
+          <ng-container *ngFor="let a of areasConocimientoTot">
+            <div class="row ml-3" *ngIf="d.id==a.id">
+              *&nbsp;&nbsp;<label>{{a.nombre}}</label>
+            </div>
+          </ng-container>
+        </ng-container>
+        <div class="row">
+          <label><b><i class="fa fa-user width-1"></i>Autores</b></label>
+        </div>
+        <ng-container *ngFor="let aut of autoresList;index as i">
+          <div class="row ml-3" *ngIf="aut.id_trabajo==datosWorkId">
+            *&nbsp;&nbsp;<label>
+            <ng-container *ngFor="let ap of autorPopover">
+              <ng-container *ngIf="aut.id==ap.id">
+                <a type="button" href="javascript:void(0);" class="mr-2 fs-md fw-500" data-toggle="popover" data-placement="right"
+                   [attr.data-content]="ap.contenido" [attr.data-original-title]="ap.titulo"
+                   aria-describedby="popover513675" data-trigger="hover" appPopover><u>{{aut.nombre}}</u></a>
+              </ng-container>
+            </ng-container>
+            </label>
+          </div>
+        </ng-container>
+        <div class="row">
+          <label><b><i class="fa fa-file width-1"></i>Archivos</b></label>
+        </div>
+        <ng-container *ngFor="let archivo of archivosTrabajos; trackBy: trackByFn">
+          <div class="row ml-3">
+            *&nbsp;&nbsp;<label><a href="javascript:void(0);" class="mr-2 fs-md fw-500" (click)="viewFileSaved(archivo.uri)"><u>{{archivo.nombre}}</u></a></label>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="archivosTrabajos.length==0">
+          <div class="row ml-3">
+            <label>No hay archivos que mostrar</label>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="new-files-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="padding: 10px">
+      <div class="modal-header">
+        <h4 class="modal-title">Nuevo archivo</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <input type="text" class="form-control" placeholder="Escribe un nombre..." [(ngModel)]="nombreArchivo">
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+        <div class="form-group mb-2" style="margin-right:12px">
+          <textarea class="form-control" placeholder="Escribe una descripción..." [(ngModel)]="descripcionArchivo"></textarea>
+        </div>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" (change)="extractFileFromEvent($event)" [(ngModel)]="archivoVacio">
+              <label class="custom-file-label">
+                <ng-container *ngIf="archivoTrabajo">{{archivoTrabajo.name}}</ng-container>
+                <ng-container *ngIf="!archivoTrabajo">Selecciona un archivo...</ng-container>
+              </label>
+            </div>
+          </div>
+          &nbsp;&nbsp;<b style="color:red">*</b>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal"
+                  [disabled]="(tipoArchivoSelected==0 || !archivoTrabajo || nombreArchivo=='')" (click)="agregarArchivo()">
+            &nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

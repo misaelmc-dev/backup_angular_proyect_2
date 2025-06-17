@@ -1,0 +1,56 @@
+<div class="row mb-2">
+  <h5 class="col-12 pr-2">
+    <i class="fa fa-flag width-1"></i>Países asociados a la fuente
+  </h5>
+</div>
+<div *ngIf="modal=='ver'">
+  <div class="row mb-2">
+    <div class="col-12">
+      <ng-container *ngFor="let lc of listaItems">
+        <ng-container *ngIf="lc.accion=='agregado'">
+          <li class="m-0 p-0 ml-2">{{lc.nombre}}</li>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!itemsGuardados">
+        <label class="ml-4">No hay países asociados.</label>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="modal!='ver'">
+  <div class="row mb-2">
+    <label class="form-label col-3 mt-2">
+      <i class="fa fa-school width-1"></i>Países:
+    </label>
+    <select class="custom-select col-5 pr-0" [(ngModel)]="itemSeleccionado">
+      <option value="0">Selecciona un país...</option>
+      <ng-container *ngFor="let lc of listaItems">
+        <ng-container *ngIf="lc.accion=='no agregado' || lc.accion=='eliminar'">
+          <option value="{{lc.ISO_3166_1_num}}">{{lc.nombre}}</option>
+        </ng-container>
+      </ng-container>
+    </select>
+    <div class="col-3 pr-0 mr-0 d-flex flex-row-reverse">
+      <button class="btn btn-primary" (click)="agregarItem()"
+              [disabled]="itemSeleccionado==0">
+        <i class="fa fa-plus"></i> Agregar
+      </button>
+    </div>
+    <label class="col-1"></label>
+  </div>
+  <div class="row" *ngFor="let lc of listaItems">
+    <ng-container *ngIf="lc.accion=='agregado' || lc.accion=='agregar'">
+      <label class="col-3"></label>
+      <div class="alert alert-primary alert-dismissible fade show col-8 m-0 mt-1" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerItem(lc.ISO_3166_1_num)">
+          <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+        </button>
+        {{lc.nombre}}
+      </div>
+      <label class="col-1"></label>
+    </ng-container>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

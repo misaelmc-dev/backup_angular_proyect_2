@@ -1,0 +1,164 @@
+<div class="page-wrapper auth">
+  <div class="page-inner bg-brand-gradient">
+    <div class="page-content-wrapper bg-transparent m-0" style="padding-left: 0;">
+      <div class="height-10 w-100 shadow-lg px-4 bg-brand-gradient">
+        <div class="d-flex align-items-center container p-0">
+          <div class="page-logo width-mobile-auto m-0 align-items-center justify-content-center p-0 bg-transparent bg-img-none shadow-0 height-9 border-0">
+            <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
+              <img src="assets/img/logo.png" alt="Scintra Logo" aria-roledescription="logo">
+              <span class="page-logo-text mr-1">Scintra</span>
+            </a>
+          </div>
+          <!--<a href="page_register.html" class="btn-link text-white ml-auto">
+            Create Account
+          </a>-->
+        </div>
+      </div>
+      <div class="flex-1" style="background: url('assets/img/svg/pattern-1.svg') no-repeat center bottom fixed; background-size: cover;">
+        <div class="container py-4 py-lg-5 my-lg-5 px-4 px-sm-0">
+          <div class="row">
+            <div class="col col-md-6 col-lg-7 hidden-sm-down">
+              <h2 class="fs-xxl fw-500 mt-4 text-white" style="font-family: Poppins">
+                Scintra
+                <small class="h3 fw-300 mt-3 mb-5 text-white opacity-60" style="font-family: Poppins">
+                  Plataforma para la gestión integrada de la investigación, la ciencia y la innovación.
+                </small>
+              </h2>
+              <!--<a href="#" class="fs-lg fw-500 text-white opacity-70">Learn more &gt;&gt;</a>-->
+              <div class="d-sm-flex flex-column align-items-center justify-content-center d-md-block">
+                <div class="px-0 py-1 mt-5 text-white fs-nano opacity-50">
+                  Únete a la conversación en nuestras redes sociales
+                </div>
+                <div class="d-flex flex-row opacity-70">
+                  <a href="https://www.facebook.com/Scintra-106799051770154/" target="_blank" class="mr-2 fs-xxl text-white">
+                    <i class="fab fa-facebook-square"></i>
+                  </a>
+                  <a href="https://twitter.com/Scintraa" target="_blank" class="mr-2 fs-xxl text-white">
+                    <i class="fab fa-twitter-square"></i>
+                  </a>
+                  <a href="https://www.youtube.com/channel/UCzwT4KwrvHnKfRkBj36aBLA" class="mr-2 fs-xxl text-white">
+                    <i class="fab fa-youtube-square"></i>
+                  </a>
+                  <a href="https://www.linkedin.com/in/scintra-scintra-235b25221/" target="_blank" class="mr-2 fs-xxl text-white">
+                    <i class="fab fa-linkedin"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-4 ml-auto">
+              <h1 class="text-white fw-300 mb-3 d-sm-block">
+                Inicio de sesión seguro
+              </h1>
+              <div class="card p-4 rounded-plus bg-faded">
+                <div *ngIf="!validCredentials" class="invalid-feedback poppins">Los datos ingresados de inicio de sesión son inválidos, corrija los datos e intente nuevamente.</div>
+                <div *ngIf="serverErrors" class="invalid-feedback poppins">Ocurrió un error al intentar autenticarlo, espere unos minutos e intente nuevamente. Si el problema persiste contacte a soporte.</div>
+                <form id="js-login" [formGroup]="loginForm" (ngSubmit)="login(loginForm.value)">
+                  <div class="form-group">
+                    <label class="form-label" for="username">Correo</label>
+                    <input type="email" id="username" formControlName="email" class="form-control form-control-lg" placeholder="Correo" value="" required>
+                    <!--<div class="invalid-feedback">No, datos incorrectos.</div>-->
+                    <div class="help-block">Tu correo es tu nombre de usuario único</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="password">Contraseña</label>
+                    <input type="password" id="password" formControlName="password" class="form-control form-control-lg" placeholder="Contraseña" value="" required>
+                    <!--<div class="invalid-feedback">Lo sentimos, datos incorrectos.</div>-->
+                    <div class="help-block">Tu contraseña</div>
+                  </div>
+                  <div class="row no-gutters">
+                    <div class="col-lg-6 pl-lg-1 my-2">
+                      <button id="js-login-btn" type="submit" class="btn btn-block btn-lg" style="background-color: #ff4f00; color: white">Login</button>
+                    </div>
+                    <!--<div class="col-lg-6 pl-lg-1 my-2">
+                      <button id="js-login-provider-btn" class="btn btn-block btn-lg" style="background-color: darkcyan; color: white">Comunidad</button>
+                    </div>-->
+                    <div class="col-lg-6 pl-lg-1 my-2 btn-group">
+                      <button class="btn dropdown-toggle" style="background-color: darkcyan; color: white" data-toggle="dropdown">
+                        Comunidad
+                      </button>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" (click)="redirectToUvmLoginPage()"><i class="fa fa-city"></i>&nbsp;UVM / UNITEC</a>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div class="blankpage-footer text-center">
+                  <p class="m-0"><a routerLink="/forgot-password"><span class="fw-900"><u>¿Olvidaste tu contraseña?</u></span></a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="position-absolute pos-bottom pos-left pos-right p-3 text-center text-white">
+            2022 © Scintra por&nbsp;<a href='https://www.habilisoluciones.com' class='text-white opacity-40 fw-500' title="Habilis" target='_blank'>Habilis</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-loading-modal [show]="showLoading"></app-loading-modal>
+<!-- BEGIN Color profile -->
+<!-- this area is hidden and will not be seen on screens or screen readers -->
+<!-- we use this only for CSS color refernce for JS stuff -->
+<p id="js-color-profile" class="d-none">
+  <span class="color-primary-50"></span>
+  <span class="color-primary-100"></span>
+  <span class="color-primary-200"></span>
+  <span class="color-primary-300"></span>
+  <span class="color-primary-400"></span>
+  <span class="color-primary-500"></span>
+  <span class="color-primary-600"></span>
+  <span class="color-primary-700"></span>
+  <span class="color-primary-800"></span>
+  <span class="color-primary-900"></span>
+  <span class="color-info-50"></span>
+  <span class="color-info-100"></span>
+  <span class="color-info-200"></span>
+  <span class="color-info-300"></span>
+  <span class="color-info-400"></span>
+  <span class="color-info-500"></span>
+  <span class="color-info-600"></span>
+  <span class="color-info-700"></span>
+  <span class="color-info-800"></span>
+  <span class="color-info-900"></span>
+  <span class="color-danger-50"></span>
+  <span class="color-danger-100"></span>
+  <span class="color-danger-200"></span>
+  <span class="color-danger-300"></span>
+  <span class="color-danger-400"></span>
+  <span class="color-danger-500"></span>
+  <span class="color-danger-600"></span>
+  <span class="color-danger-700"></span>
+  <span class="color-danger-800"></span>
+  <span class="color-danger-900"></span>
+  <span class="color-warning-50"></span>
+  <span class="color-warning-100"></span>
+  <span class="color-warning-200"></span>
+  <span class="color-warning-300"></span>
+  <span class="color-warning-400"></span>
+  <span class="color-warning-500"></span>
+  <span class="color-warning-600"></span>
+  <span class="color-warning-700"></span>
+  <span class="color-warning-800"></span>
+  <span class="color-warning-900"></span>
+  <span class="color-success-50"></span>
+  <span class="color-success-100"></span>
+  <span class="color-success-200"></span>
+  <span class="color-success-300"></span>
+  <span class="color-success-400"></span>
+  <span class="color-success-500"></span>
+  <span class="color-success-600"></span>
+  <span class="color-success-700"></span>
+  <span class="color-success-800"></span>
+  <span class="color-success-900"></span>
+  <span class="color-fusion-50"></span>
+  <span class="color-fusion-100"></span>
+  <span class="color-fusion-200"></span>
+  <span class="color-fusion-300"></span>
+  <span class="color-fusion-400"></span>
+  <span class="color-fusion-500"></span>
+  <span class="color-fusion-600"></span>
+  <span class="color-fusion-700"></span>
+  <span class="color-fusion-800"></span>
+  <span class="color-fusion-900"></span>
+</p>

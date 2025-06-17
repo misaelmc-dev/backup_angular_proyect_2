@@ -1,0 +1,367 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-fireplace mr-2'></i>Catálogo de centros de investigación <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button" (click)="filtrarCentros()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-avanzado
+              (backFilter)="recuperarSeleccionFiltroInstituciones($event)"
+              [optionStringSize]="46"
+              [dataLoadFunction]="filtroDataLoadInstituciones"
+              [pageSize]="25"
+              [iconFilter]="'fal fa-school'"
+              [textoSinFiltroSeleccionado]="'Filtrar por institución...'"
+              [update]="update1">
+            </app-filtro-avanzado>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban width-1"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-avanzado
+              (backFilter)="recuperarSeleccionFiltroColegios($event)"
+              [optionStringSize]="46"
+              [dataLoadFunction]="filtroDataLoadColegios"
+              [pageSize]="25"
+              [iconFilter]="'fal fa-city'"
+              [textoSinFiltroSeleccionado]="'Filtrar por colegios...'"
+              [update]="update2">
+            </app-filtro-avanzado>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroProyectos($event)"
+              [iconFilter]="'fal fa-briefcase'"
+              [placeholder]="'Solo con proyecto'"
+              [numberOption]="1"
+              [update]="update3">
+            </app-filtro-checkbox>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <app-filtro-checkbox
+              (backFilter)="cambiarFiltroProductos($event)"
+              [iconFilter]="'fal fa-edit'"
+              [placeholder]="'Solo con producto Scintra'"
+              [numberOption]="2"
+              [update]="update4">
+            </app-filtro-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending" style="width:25%;">Nombre</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1">Misión</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width:25%;">Institución</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width:140px;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let lc of listaCentros | paginate : {
+                          id: 'CentrosPagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+            };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{lc.nombre}}</td>
+                <td class="sorting_1 dtr-control b-bot-l">{{lc.mision}}</td>
+                <td class="sorting_1 dtr-control">
+                  <ng-container *ngIf="lc.id_institucion !== null">
+                    <ng-container *ngFor="let li of listaInstitucionesTotal">
+                      <ng-container *ngIf="lc.id_institucion == li.id">
+                        {{li.razon_social}}
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal" data-target="#consultar-modal" type="button" (click)="verInfoCentro(lc)"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal" data-target="#editar-modal" type="button" (click)="abrirModalActualizar(lc)"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button" (click)="eliminarCentros(lc)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="CentrosPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles del centro de investigación
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-key width-1"></i>ID:</label>
+          <label class="col-9">{{centroId}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-university width-1"></i>Nombre:</label>
+          <label class="col-9">{{centroNombre}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-eye width-1"></i>Misión:</label>
+          <label class="col-9" *ngIf="centroMision!=''">{{centroMision}}</label>
+          <label class="col-9" *ngIf="centroMision==''">No ingresado</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-globe-americas width-1"></i>Sitio web:</label>
+          <label class="col-9" *ngIf="centroWebsite!=''">{{centroWebsite}}</label>
+          <label class="col-9" *ngIf="centroWebsite==''">No ingresado</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-school width-1"></i>Institución:</label>
+          <label class="col-9">
+            <ng-container *ngIf="centroInstitucion!=null">
+              <ng-container *ngFor="let li of listaInstitucionesTotal">
+                <ng-container *ngIf="centroInstitucion==li.id">
+                  {{li.razon_social}}
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-3 pr-2"><i class="fa fa-city width-1"></i>Colegios:</label>
+          <label class="col-9">
+            <ng-container *ngFor="let cc of centroColegios">
+              <li>{{cc.nombre}}</li>
+            </ng-container>
+            <ng-container *ngIf="centroColegios.length==0">
+              No hay colegios asignados
+            </ng-container>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos del centro de investigación
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa nombre..." [(ngModel)]="centroNombre">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Misión:</label>
+          <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa misión..." [(ngModel)]="centroMision"></textarea>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Sitio web:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa el sitio web..."
+                 [(ngModel)]="centroWebsite" [ngClass]="(validUrl==1)?'is-invalid':''" (keyup)="validarUrl()">
+          <ng-container *ngIf="validUrl==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Institución:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-8" [(ngModel)]="centroInstitucion" (change)="filtrarColegios()">
+            <option value="0">Selecciona una institución...</option>
+            <ng-container *ngFor="let ld of listaInstitucionesTotal">
+              <option value="{{ld.id}}">{{ld.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Colegios:</label>
+          <select class="custom-select form-control col-5 mr-2" [(ngModel)]="selectColegio">
+            <ng-container *ngIf="centroInstitucion==0">
+              <option value="0">Selecciona primero una institución...</option>
+            </ng-container>
+            <ng-container *ngIf="centroInstitucion!=0">
+              <option value="0">Selecciona un colegio...</option>
+              <ng-container *ngFor="let ld of listaColegios">
+                <option value="{{ld.id}}">{{ld.nombre}}</option>
+              </ng-container>
+            </ng-container>
+          </select>
+          <div class="col-3 m-0">
+            <button class="btn btn-primary waves-effect waves-themed w-100"
+                    [disabled]="centroInstitucion==0" (click)="agregarColegio()">Agregar</button>
+          </div>
+        </div>
+        <ng-container *ngFor="let cc of centroColegios">
+          <ng-container *ngIf="cc.accion!='eliminar'">
+            <div class="row m-2">
+              <label class="col-3 mt-1"></label>
+              <div class="alert alert-primary alert-dismissible fade show col-8" role="alert" style="margin-bottom: 0px !important">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerColegio(cc)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{cc.nombre}}
+              </div>
+              <label class="col-1"></label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal" (click)="crearCentros()"
+                  [disabled]="centroNombre=='' || centroInstitucion==0 ">
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos del centro de investigación
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="col-3 mt-1">ID:</label>
+          <input type="text" class="form-control col-8" [(ngModel)]="centroId" readonly disabled="true">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Nombre:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa nombre..." [(ngModel)]="centroNombre">
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Misión:</label>
+          <textarea type="text" rows="3" class="form-control col-8" placeholder="Ingresa misión..."
+                    [(ngModel)]="centroMision"></textarea>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Sitio web:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa el sitio web..." [(ngModel)]="centroWebsite"
+                 [ngClass]="(validUrl==1)?'is-invalid':''" (keyup)="validarUrl()">
+          <ng-container *ngIf="validUrl==1">
+            <label class="col-3 mt-1"></label>
+            <div class="invalid-feedback col-8">Formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Institución:<b style="color:red">*</b></label>
+          <select class="custom-select form-control col-8" [(ngModel)]="centroInstitucion" [disabled]="obligatorioInstitucion">
+            <option value="0">Selecciona una institución...</option>
+            <ng-container *ngFor="let ld of listaInstitucionesTotal">
+              <option value="{{ld.id}}">{{ld.razon_social}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="col-3 mt-1">Colegios:</label>
+          <select class="custom-select form-control col-5 mr-2" [(ngModel)]="selectColegio">
+            <option value="0">Selecciona un colegio...</option>
+            <ng-container *ngFor="let ld of listaColegios">
+              <option value="{{ld.id}}">{{ld.nombre}}</option>
+            </ng-container>
+          </select>
+          <div class="col-3 m-0">
+            <button class="btn btn-primary waves-effect waves-themed w-100"
+                    [disabled]="centroInstitucion==0" (click)="agregarColegio()">Agregar</button>
+          </div>
+        </div>
+        <ng-container *ngFor="let cc of centroColegios">
+          <ng-container *ngIf="cc.accion!=null && cc.accion!='eliminar'">
+            <div class="row m-2">
+              <label class="col-3 mt-1"></label>
+              <div class="alert alert-primary alert-dismissible fade show col-8" role="alert" style="margin-bottom: 0px !important">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removerColegio(cc)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{cc.nombre}}
+              </div>
+              <label class="col-1"></label>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal" (click)="actualizarCentros()"
+                  [disabled]="centroNombre=='' || centroInstitucion==0">
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+

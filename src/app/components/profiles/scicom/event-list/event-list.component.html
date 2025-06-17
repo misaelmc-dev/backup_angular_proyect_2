@@ -1,0 +1,228 @@
+<div class="panel">
+  <div class="panel-hdr">
+    <h2><i class="fa fa-calendar-alt"></i>&nbsp;&nbsp;&nbsp;Mis eventos</h2>
+    <div class="panel-toolbar">
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+      <button class="btn btn-panel waves-effect waves-themed" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+    </div>
+  </div>
+  <div class="panel-container show">
+    <div class="panel-content">
+      <div class="row">
+        <div class="col-3">
+          <div class="input-group input-group-sm bg-white shadow-inset-2">
+            <input type="text" placeholder="Buscar" class="form-control ng-pristine ng-valid ng-touched"
+                   [(ngModel)]="filtroSearch">
+            <div class="input-group-append">
+              <button type="button" data-toggle="modal" data-target="#fuente-modal"
+                      class="btn btn-primary waves-effect waves-themed" (click)="filtrarEventos()">
+                <i class="fal fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="input-group input-group-md mb-g">
+            <select class="form-control ng-pristine ng-valid ng-touched"
+                    [(ngModel)]="filtroEstatusEvento" (change)="filtrarEventos()">
+              <option value="0">Filtre por estatus...</option>
+              <ng-container *ngFor="let ee of estatusEventos">
+                <option value="{{ee.id}}">{{ee.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-check-circle"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="input-group input-group-md mb-g">
+            <select class="form-control ng-pristine ng-valid ng-touched"
+                    [(ngModel)]="filtroTiposEvento" (change)="filtrarEventos()">
+              <option value="0">Filtre por tipo de evento...</option>
+              <ng-container *ngFor="let te of tiposEventos">
+                <option value="{{te.id}}">{{te.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-calendar"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-3 row">
+          <div class="input-group input-group-md mb-g col-11">
+            <select class="form-control ng-pristine ng-valid ng-touched"
+                    [(ngModel)]="filtroCampusEvento" (change)="filtrarEventos()">
+              <option value="0">Filtre por campus...</option>
+              <ng-container *ngFor="let ce of campusEventos">
+                <option value="{{ce.id}}">{{ce.nombre}}</option>
+              </ng-container>
+            </select>
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fal fa-city"></i></span>
+            </div>
+          </div>
+          <span class="col-1" style="margin-left:-10px;">
+            <button class="btn btn-danger btn-icon" (click)="limpiarFiltros()"><i class="fa fa-ban"></i></button>
+          </span>
+        </div>
+      </div>
+
+      <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+             aria-describedby="dt-basic-example_info" *ngIf="items!=''">
+        <thead class="bg-primary-600 border-top">
+        <tr role="row">
+          <th class="sorting border-tl" aria-controls="dt-basic-example" aria-sort="descending" width="170px"><span><i class="fa fa-file-signature"></i>&nbsp;TÍTULO&nbsp;DEL&nbsp;EVENTO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example" width="150px"><span><i class="fa fa-school"></i>&nbsp;INSTITUCIÓN</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar"></i>&nbsp;TIPO&nbsp;DE&nbsp;EVENTO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar-alt"></i>&nbsp;INICIO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar-alt"></i>&nbsp;FINAL</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-check-circle"></i>&nbsp;ESTATUS</span></th>
+          <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><span><i class="fa fa-trash-alt"></i>&nbsp;ELIMINAR</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr role="row" class="even" *ngFor="let item of items | paginate : {
+            id: 'EventosPaginacion',
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+          <td [routerLink]="getEventUrl(item.id,item.id_tipo_evento)" style="cursor:pointer">
+            <span>
+              <ng-container *ngFor="let status of estatusEventos">
+                <ng-container *ngIf="status.id==item.id_estatus_evento">
+                  <ng-container *ngIf="item.id_tipo_evento==1">
+                    <p class="badge badge-secondary badge-pill aling-badge"  *ngIf="status.id==1">&nbsp;</p>
+                    <p class="badge badge-primary badge-pill aling-badge" *ngIf="status.id==2">&nbsp;</p>
+                    <p class="badge badge-info badge-pill aling-badge" *ngIf="status.id==3">&nbsp;</p>
+                    <p class="badge badge-success badge-pill aling-badge" *ngIf="status.id==4">&nbsp;</p>
+                  </ng-container>
+                  <ng-container *ngIf="item.id_tipo_evento!=1">
+                    <p class="badge {{(status.id==5 || status.id==7)?' badge-secondary':' badge-primary'}} badge-pill aling-badge" >&nbsp;</p>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </span>
+            <span>&nbsp;{{item.nombre}}</span>
+          </td>
+          <td>
+            <ng-container *ngFor="let institucion of institucionesEventos">
+              <ng-container *ngIf="institucion.ror == item.ror">
+                {{institucion.razon_social}}
+              </ng-container>
+            </ng-container>
+          </td>
+          <td [routerLink]="getEventUrl(item.id,item.id_tipo_evento)" style="cursor: pointer">
+            <div *ngFor="let tipo of tiposEventos">
+              <div *ngIf="tipo.id==item.id_tipo_evento">
+                <span class="badge badge-warning badge-pill">{{tipo.nombre}}</span>
+              </div>
+            </div>
+          </td>
+          <td *ngIf="rangosEventos" [routerLink]="getEventUrl(item.id,item.id_tipo_evento)" style="cursor: pointer">
+            <ng-container *ngFor="let rango of rangosEventos">
+              <ng-container *ngIf="rango.id_evento==item.id">
+                {{rango.tiempo_inicio | date: 'dd-MM-yyyy'}}<br>
+                {{rango.tiempo_inicio | date: 'hh:mm aa'}}
+              </ng-container>
+            </ng-container>
+          </td>
+          <td *ngIf="rangosEventos" [routerLink]="getEventUrl(item.id,item.id_tipo_evento)" style="cursor: pointer">
+            <ng-container *ngFor="let rango of rangosEventos">
+              <ng-container *ngIf="rango.id_evento==item.id">
+                {{rango.tiempo_final | date: 'dd-MM-yyyy'}}<br>
+                {{rango.tiempo_final | date: 'hh:mm aa'}}
+              </ng-container>
+            </ng-container>
+          </td>
+          <td [routerLink]="getEventUrl(item.id,item.id_tipo_evento)" style="cursor: pointer">
+            <div *ngFor="let status of estatusEventos">
+              <div *ngIf="status.id==item.id_estatus_evento">
+                <ng-container *ngIf="item.id_tipo_evento==1">
+                <span class="badge badge-secondary badge-pill" *ngIf="status.id==1">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="fal fa-lock" *ngIf="item.id_estatus_evento==1"></i>
+                  <i class="fal fa-lock-open" *ngIf="item.id_estatus_evento!=1"></i>
+                </span>
+                  <span class="badge badge-primary badge-pill" *ngIf="status.id==2">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="fal fa-lock" *ngIf="item.id_estatus_evento==1"></i>
+                  <i class="fal fa-lock-open" *ngIf="item.id_estatus_evento!=1"></i>
+                </span>
+                  <span class="badge badge-info badge-pill" *ngIf="status.id==3">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="fal fa-lock" *ngIf="item.id_estatus_evento==1"></i>
+                  <i class="fal fa-lock-open" *ngIf="item.id_estatus_evento!=1"></i>
+                </span>
+                  <span class="badge badge-success badge-pill" *ngIf="status.id==4">{{status.nombre}}&nbsp;&nbsp;
+                  <i class="fal fa-lock" *ngIf="item.id_estatus_evento==1"></i>
+                  <i class="fal fa-lock-open" *ngIf="item.id_estatus_evento!=1"></i>
+                </span>
+                </ng-container>
+                <ng-container *ngIf="item.id_tipo_evento!=1">
+                  <span class="badge {{(status.id==5 || status.id==7)?' badge-secondary':' badge-primary'}} badge-pill">{{status.nombre}}&nbsp;&nbsp;
+                    <i class="fal fa-lock" *ngIf="!status.evento_publico"></i>
+                    <i class="fal fa-lock-open" *ngIf="status.evento_publico"></i>
+                  </span>
+                </ng-container>
+              </div>
+            </div>
+          </td>
+          <td>
+            <!--
+            <button type="button" class="btn btn-primary btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" routerLink="/scicom/{{cordId}}/event-details/{{evento.id}}">
+              <i class="fal fa-eye"></i>
+            </button>&nbsp;
+
+            <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" routerLink="/scicom/{{cordId}}/event/{{evento.id}}/event">
+              <i class="fal fa-edit"></i>
+            </button>&nbsp;
+            <button type="button" class="btn btn-info btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <i class="fal fa-analytics"></i>
+            </button>&nbsp;-->
+            <button [disabled]="!this.permisosScicomService.canEliminarEvento()" type="button"
+                    class="btn btn-danger btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" (click)="deleteEvent(item.id,item.nombre)">
+              <i class="fa fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+             aria-describedby="dt-basic-example_info" *ngIf="items=='' || !items">
+        <thead class="bg-primary-600 ">
+        <tr role="row">
+          <th class="sorting border-tl" aria-controls="dt-basic-example" aria-sort="descending" width="250px"><span><i class="fa fa-file-signature"></i>&nbsp;&nbsp;TÍTULO DEL EVENTO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example" width="150px"><span><i class="fa fa-school"></i>&nbsp;&nbsp;INSTITUCIÓN</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar"></i>&nbsp;&nbsp;TIPO DE EVENTO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar-alt"></i>&nbsp;&nbsp;INICIO</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-calendar-alt"></i>&nbsp;&nbsp;FINAL</span></th>
+          <th class="sorting" aria-controls="dt-basic-example"><span><i class="fa fa-check-circle"></i>&nbsp;&nbsp;ESTATUS</span></th>
+          <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;ELIMINAR</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd"><td valign="top" colspan="7" class="dataTables_empty" style="color:#0a70bd">No hay eventos que mostrar</td></tr>
+        </tbody>
+      </table>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="EventosPaginacion"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

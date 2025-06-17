@@ -1,0 +1,44 @@
+.flex-list {
+  display: flex;
+/*  vertical-align: top;*/
+  align-items: stretch;
+  justify-content: space-evenly;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.app-list-name {
+  text-align: center;
+  font-size: 0.8125rem;
+  display: block;
+  white-space: normal;
+  overflow: hidden; }
+
+.top-text-banner {
+  font-size: 0.5em;
+  position: relative;
+  margin-bottom: 1px;
+  width: 100%;
+}
+
+.main-text-banner {
+  font-size: 0.1rem;
+}
+
+.icon-stack {
+  width: 1em;
+  height: 1em;
+}
+
+.app-list-item {
+  margin: 10px 1px;
+}
+
+.app-list-name {
+  text-align: center;
+  font-size: 0.8rem;
+  display: block;
+  white-space: normal;
+  overflow: hidden;
+}
+

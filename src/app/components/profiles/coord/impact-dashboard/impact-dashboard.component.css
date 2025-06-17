@@ -1,0 +1,10 @@
+.pagination-size{
+  width: 95%; height: 100%; display: block;
+}
+.panel-hdr{
+  width: 100% !important;
+}
+.panel-hdr > :last-child {
+  padding-right: 0rem !important;
+  margin-right: -1px !important;
+}

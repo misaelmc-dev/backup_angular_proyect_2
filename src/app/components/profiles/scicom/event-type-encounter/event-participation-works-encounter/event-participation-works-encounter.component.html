@@ -1,0 +1,896 @@
+<div class="panel-hdr">
+  <div>
+    <h2>Conferencias&nbsp;&nbsp;&nbsp;&nbsp;
+      <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="modal"
+              data-target="#new-coferencia-modal" (click)="openNewConferenciaModal()">
+        <i class="fal fa-plus"></i>
+      </button>
+    </h2>
+  </div>
+</div>
+<table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+       aria-describedby="dt-basic-example_info" >
+  <thead class="bg-primary-600 ">
+    <tr role="row">
+      <th class="border-tl"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Título</th>
+      <th><i class="fa fa-users"></i>&nbsp;&nbsp;Conferencistas</th>
+      <th class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+  <ng-container *ngIf="conferencias.length>0">
+    <tr *ngFor="let c of conferencias | paginate : {
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                    }">
+      <td>
+        <ng-container *ngFor="let cm of conferenciasMetadatos">
+          <ng-container *ngIf="c.id==cm.id_trabajo">
+            {{cm.titulo}}
+          </ng-container>
+        </ng-container>
+      </td>
+      <td><label [innerHTML]="getCommaSeparatedAuthorListHtml(c.id)"></label></td>
+      <td>
+        <button type="button" class="btn btn-primary btn-icon" data-toggle="modal"
+                data-target="#view-conferencia-modal"
+                (click)="openViewConferenciaModal(c)"><i class="fa fa-eye"></i>
+        </button>&nbsp;
+        <button type="button" class="btn btn-success btn-icon waves-effect waves-themed" data-toggle="modal"
+                data-target="#update-conferencia-modal"
+                (click)="openUpdateConferenciaModal(c)"><i class="fas fa-edit"></i>
+        </button>&nbsp;
+        <button type="button" class="btn btn-danger btn-icon"
+                (click)="deleteConferencia(c.id)"><i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </ng-container>
+  <ng-container *ngIf="conferencias.length==0">
+    <tr class="odd"><td colspan="4" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay conferencias que mostrar</td></tr>
+  </ng-container>
+  </tbody>
+</table>
+
+<div class="row" *ngIf="conferencias.length>0">
+  <div class="col-6">
+    <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPagination}}</div>
+  </div>
+  <div class="col-6">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-end">
+        <li class="paginate_button page-item previous disabled" *ngIf="pageNumber==1" >
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item previous" *ngIf="pageNumber!=1" (click)="loadPagination('prev',conferencias)">
+          <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-left"></i>
+          </a>
+        </li>
+        <ng-container *ngFor="let page of pageNumbersArrayActive">
+          <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber">
+            <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+          </li>
+          <li class="page-item" *ngIf="page.id!=pageNumber">
+            <a class="page-link" (click)="loadPagination(page.id,conferencias)">{{page.id}}</a>
+          </li>
+        </ng-container>
+        <li class="paginate_button page-item next" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next',conferencias)">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+        <li class="paginate_button page-item next disabled" *ngIf="pageNumber==pageNumbers">
+          <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+            <i class="fal fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="modal fade overflow-auto" data-spy="scroll" id="new-coferencia-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregue una conferencia</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Título:<b class="red">*</b></label>
+          <div class="col-8">
+            <input type="text" class="form-control" [class.is-invalid]="validTitulo==1"
+                   [(ngModel)]="conferenciaTitulo" (keyup)="validarTitulo()">
+            <div class="invalid-feedback" *ngIf="validTitulo==1">Este campo es obligatorio</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Descripción:</label>
+          <div class="col-8">
+            <textarea class="form-control" rows="4" [(ngModel)]="conferenciaDescripcion"></textarea>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">URL:</label>
+          <div class="col-8">
+            <input type="text" class="form-control" [(ngModel)]="conferenciaUrl">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1"><b>Áreas del conocimiento:</b></label>
+          <div class="input-group flex-nowrap col-8">
+            <div class="input-group flex-nowrap">
+              <select class="form-control" [(ngModel)]="conferenciaAreaSelected">
+                <ng-container *ngIf="conferenciaAreasDisponibles.length!=0">
+                  <option value="0">Seleccione un área del conocimiento...</option>
+                  <ng-container *ngFor="let area of conferenciaAreasDisponibles">
+                    <option value="{{area.id}}">{{area.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="conferenciaAreasDisponibles.length==0">
+                  <option value="0">No hay áreas del conocimiento disponibles...</option>
+                </ng-container>
+              </select>
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-success btn-icon" (click)="addArea()" style="width:40px"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4"></div>
+          <div class="col-8">
+            <ng-container *ngFor="let area of conferenciaAreas">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeArea(area.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{area.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Objetivos de desarrollo sostenible:</label>
+          <div class="input-group flex-nowrap col-8">
+            <div class="input-group flex-nowrap">
+              <select class="form-control" [(ngModel)]="conferenciaODSSelected">
+                <ng-container *ngIf="conferenciaODSDisponibles.length!=0">
+                  <option value="0">Seleccione un objetivos de sutentable...</option>
+                  <ng-container *ngFor="let area of conferenciaODSDisponibles">
+                    <option value="{{area.id}}">{{area.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="conferenciaODSDisponibles.length==0">
+                  <option value="0">No hay objetivos de desarrollo disponibles...</option>
+                </ng-container>
+              </select>
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-success btn-icon" (click)="addODS()" style="width:40px"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4"></div>
+          <div class="col-8">
+            <ng-container *ngFor="let ods of conferenciaODS">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeODS(ods.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{ods.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="row m-0">
+          <label class="form-label"><b>Conferencistas</b><b class="red">*</b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="modal"
+                    data-target="#new-autor-modal" (click)="openNewAutoresModal()">
+              <i class="fal fa-plus"></i>
+            </button>
+          </label>
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                 aria-describedby="dt-basic-example_info" >
+            <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="border-tl" style="width: 200px"><i class="fa fa-user"></i>&nbsp;&nbsp;Nombre Completo</th>
+                <th><i class="fa fa-school"></i>&nbsp;&nbsp;Afiliaciones</th>
+                <th class="border-tr" style="width: 130px"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngIf="conferenciaAutores.length>0">
+              <tr *ngFor="let a of conferenciaAutores">
+                <td>{{a.nombre}}</td>
+                <td>
+                  <ng-container *ngFor="let aa of a.afiliaciones;let i=index">
+                    <ng-container *ngIf="i>0">,<br></ng-container><label>{{aa.institution_name}}</label>
+                  </ng-container>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-icon" data-toggle="modal"
+                          data-target="#view-autor-modal"
+                          (click)="openViewAutoresModal(a)"><i class="fa fa-eye"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-success btn-icon waves-effect waves-themed" data-toggle="modal"
+                          data-target="#update-autor-modal"
+                          (click)="openUpdateAutoresModal(a)"><i class="fas fa-edit"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="removeAutores(a.fecha)"><i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="conferenciaAutores.length==0">
+              <tr class="odd"><td colspan="4" class="dataTables_empty" style="color:#bd0a0a;font-size:20px">No hay conferencistas que mostrar, agregue al menos uno</td></tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+        <div class="row m-0">
+          <label class="form-label">Archivos de conferencia<b class="red">*</b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="modal"
+                    data-target="#new-conferencia-file-modal" (click)="openNewArchivosModal()">
+              <i class="fal fa-plus"></i>
+            </button>
+          </label>
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                 aria-describedby="dt-basic-example_info" >
+            <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="border-tl"><i class="fa fa-presentation"></i>&nbsp;&nbsp;Tipo</th>
+                <th><i class="fa fa-text-height"></i>&nbsp;&nbsp;Nombre</th>
+                <th><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripcion</th>
+                <th class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngIf="this.conferenciaArchivos.length>0">
+              <tr *ngFor="let ca of conferenciaArchivos">
+                <td>{{ca.tipo}}</td>
+                <td>{{ca.nombre}}</td>
+                <td>{{ca.descripcion}}</td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-icon" (click)="viewArchivo(ca)">
+                    <i class="fa fa-file"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-danger btn-icon" (click)="removeArchivo(ca.fecha)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="this.conferenciaArchivos.length==0">
+              <tr class="odd"><td colspan="4" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [disabled]="true"
+                  *ngIf="conferenciaTitulo=='' || conferenciaAutores.length==0 || conferenciaArchivos.length==0">
+            <i class="fa fa-save" ></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal"  (click)="validarFormulario()"
+                  *ngIf="conferenciaTitulo!='' && conferenciaAutores.length>0 && conferenciaArchivos.length>0">
+            <i class="fa fa-save" ></i>&nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade overflow-auto" id="update-conferencia-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Actualizar conferencia</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Título:<b class="red">*</b></label>
+          <div class="col-8">
+            <input type="text" class="form-control" [class.is-invalid]="validTitulo==1"
+                   [(ngModel)]="conferenciaTitulo" (keyup)="validarTitulo()">
+            <div class="invalid-feedback" *ngIf="validTitulo==1">Este campo es obligatorio</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Descripción:</label>
+          <div class="col-8">
+            <textarea class="form-control" rows="4" [(ngModel)]="conferenciaDescripcion"></textarea>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">URL:</label>
+          <div class="col-8">
+            <input type="text" class="form-control" [(ngModel)]="conferenciaUrl">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1"><b>Áreas del conocimiento:</b></label>
+          <div class="input-group flex-nowrap col-8">
+            <div class="input-group flex-nowrap">
+              <select class="form-control" [(ngModel)]="conferenciaAreaSelected">
+                <ng-container *ngIf="conferenciaAreasDisponibles.length!=0">
+                  <option value="0">Seleccione un área del conocimiento...</option>
+                  <ng-container *ngFor="let area of conferenciaAreasDisponibles">
+                    <option value="{{area.id}}">{{area.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="conferenciaAreasDisponibles.length==0">
+                  <option value="0">No hay áreas del conocimiento disponibles...</option>
+                </ng-container>
+              </select>
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-success btn-icon" (click)="addArea()" style="width:40px"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4"></div>
+          <div class="col-8">
+            <ng-container *ngFor="let area of conferenciaAreas">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeArea(area.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{area.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-4 mt-1">Objetivos de desarrollo sostenible:</label>
+          <div class="input-group flex-nowrap col-8">
+            <div class="input-group flex-nowrap">
+              <select class="form-control" [(ngModel)]="conferenciaODSSelected">
+                <ng-container *ngIf="conferenciaODSDisponibles.length!=0">
+                  <option value="0">Seleccione un objetivos de sutentable...</option>
+                  <ng-container *ngFor="let area of conferenciaODSDisponibles">
+                    <option value="{{area.id}}">{{area.nombre}}</option>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="conferenciaODSDisponibles.length==0">
+                  <option value="0">No hay objetivos de desarrollo disponibles...</option>
+                </ng-container>
+              </select>
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-success btn-icon" (click)="addODS()" style="width:40px"><i class="fa fa-plus"></i></button>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-4"></div>
+          <div class="col-8">
+            <ng-container *ngFor="let ods of conferenciaODS">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeODS(ods.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                <strong>{{ods.nombre}}</strong>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row m-0">
+          <label class="form-label"><b>Conferencistas</b><b class="red">*</b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="modal"
+                    data-target="#new-autor-modal" (click)="openNewAutoresModal()">
+              <i class="fal fa-plus"></i>
+            </button>
+          </label>
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                 aria-describedby="dt-basic-example_info" >
+            <thead class="bg-primary-600 ">
+            <tr role="row">
+              <th class="border-tl" style="width: 200px"><i class="fa fa-user"></i>&nbsp;&nbsp;Nombre Completo</th>
+              <th><i class="fa fa-school"></i>&nbsp;&nbsp;Afiliaciones</th>
+              <th class="border-tr" style="width: 130px"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngIf="conferenciaAutores.length>0">
+              <tr *ngFor="let a of conferenciaAutores">
+                <td>{{a.nombre}}</td>
+                <td>
+                  <ng-container *ngFor="let aa of a.afiliaciones;let i=index">
+                    <ng-container *ngIf="i>0">,<br></ng-container><label>{{aa.institution_name}}</label>
+                  </ng-container>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-icon" data-toggle="modal"
+                          data-target="#view-autor-modal"
+                          (click)="openViewAutoresModal(a)"><i class="fa fa-eye"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-success btn-icon waves-effect waves-themed" data-toggle="modal"
+                          data-target="#update-autor-modal"
+                          (click)="openUpdateAutoresModal(a)"><i class="fas fa-edit"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-danger btn-icon"
+                          (click)="removeAutores(a.fecha)"><i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="conferenciaAutores.length==0">
+              <tr class="odd"><td colspan="4" class="dataTables_empty" style="color:#bd0a0a;font-size:20px">No hay conferencistas que mostrar, agregue al menos uno</td></tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+        <div class="row m-0">
+          <label class="form-label">Archivos de conferencia<b class="red">*</b>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed" data-toggle="modal"
+                    data-target="#new-conferencia-file-modal" (click)="openNewArchivosModal()">
+              <i class="fal fa-plus"></i>
+            </button>
+          </label>
+          <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+                 aria-describedby="dt-basic-example_info" >
+            <thead class="bg-primary-600 ">
+              <tr role="row">
+                <th class="border-tl"><i class="fa fa-presentation"></i>&nbsp;&nbsp;Tipo</th>
+                <th><i class="fa fa-text-height"></i>&nbsp;&nbsp;Nombre</th>
+                <th><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripcion</th>
+                <th class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            <ng-container *ngIf="this.conferenciaArchivos.length>0">
+              <tr *ngFor="let ca of conferenciaArchivos">
+                <td>{{ca.tipo}}</td>
+                <td>{{ca.nombre}}</td>
+                <td>{{ca.descripcion}}</td>
+                <td>
+                  <button type="button" class="btn btn-primary btn-icon" (click)="viewArchivo(ca)">
+                    <i class="fa fa-file"></i>
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-danger btn-icon" (click)="removeArchivo(ca.fecha)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="this.conferenciaArchivos.length==0">
+              <tr class="odd"><td colspan="4" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay archivos que mostrar</td></tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [disabled]="true"
+                  *ngIf="conferenciaTitulo=='' || conferenciaAutores.length==0 || conferenciaArchivos.length==0">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal"  (click)="validarFormulario()"
+                  *ngIf="conferenciaTitulo!='' && conferenciaAutores.length>0 && conferenciaArchivos.length>0">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show" id="view-conferencia-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Ver detalles de la conferencia</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-start">
+          <div class="col-titulo"><label class="card-title"><i class="fal fa-text-height width-1"></i>&nbsp;Título:&nbsp;&nbsp;</label></div>
+          <div class="col-contenido"><label>{{conferenciaTitulo}}</label></div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <div class="col-titulo"><label class="card-title"><i class="fal fa-text-width width-1"></i>&nbsp;Descripción:&nbsp;</label></div>
+          <div class="col-contenido">{{conferenciaDescripcion}}</div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <div class="col-titulo"><p class="card-title"><i class="fal fa-link width-1"></i>&nbsp;Url:&nbsp;</p></div>
+          <div class="col-contenido" style="padding-top:5px">
+            <a [href]="conferenciaUrl" target="_blank">
+              {{(conferenciaUrl && conferenciaUrl.length > 50)
+              ? ((conferenciaUrl | slice :0:50) + '...') : conferenciaUrl}}
+            </a>
+          </div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <div class="col-titulo"><label class="card-title"><i class="fal fa-book width-1"></i>&nbsp;Áreas&nbsp;del conocimiento:&nbsp;</label></div>
+          <div class="col-contenido">
+            <ng-container *ngFor="let can of conferenciaAreas">
+              <label class="mt-1">{{can.nombre}}</label><br>
+            </ng-container>
+          </div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <i class="fal fa-bullseye-arrow width-1 mt-1"></i>
+          <div style="width:27%"><label class="card-title">Objetivos de desarrollo sostenible:&nbsp;</label></div>
+          <div class="col-contenido">
+            <ng-container *ngFor="let co of conferenciaODS">
+              <label class="mt-1">{{co.nombre}}</label><br>
+            </ng-container>
+          </div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <div class="col-titulo"><p class="card-title"><i class="fal fa-users width-1"></i>&nbsp;Conferencistas:&nbsp;</p></div>
+          <div class="col-contenido">
+            <ng-container *ngFor="let can of conferenciaAutores">
+              <label class="mt-1">{{can.nombre}}&nbsp;{{(can.correo)?"("+can.correo+")":""}}</label><br>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="new-autor-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregue un conferencista</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Nombre:<b class="red">*</b></label>
+          <div class="col-9">
+            <input type="text" class="form-control" [class.is-invalid]="validNombre!=0" (keyup)="validarNombre()"
+                   [(ngModel)]="conferenciaAutorNombre" placeholder="Escribe el nombre del conferencista...">
+            <div class="invalid-feedback" *ngIf="validNombre==1">Campo obligatorio</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Correo:</label>
+          <div class="col-9">
+            <input type="email" class="form-control" [class.is-invalid]="validCorreo!=0" (keyup)="validarCorreo()"
+                   [(ngModel)]="conferenciaAutorCorreo" placeholder="Escribe el correo del conferencista...">
+            <div class="invalid-feedback" *ngIf="validCorreo==1">Campo obligatorio</div>
+            <div class="invalid-feedback" *ngIf="validCorreo==2">Formato de correo invalido</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Género:<b class="red">*</b></label>
+          <div class="col-9" *ngIf="conferenciaAutorId==0">
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero1"
+                     [checked]="(conferenciaAutorGenero=='m')" (click)="cambiarGenero('m')">
+              <label class="custom-control-label" for="genero1">Hombre</label>
+            </div>
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero2"
+                      [checked]="(conferenciaAutorGenero=='f')" (click)="cambiarGenero('f')">
+              <label class="custom-control-label" for="genero2">Mujer</label>
+            </div>
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero3"
+                      [checked]="(conferenciaAutorGenero=='notsaid')" (click)="cambiarGenero('notsaid')">
+              <label class="custom-control-label" for="genero3">Prefiero no declararlo</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Puesto/Cargo:</label>
+          <div class="col-9">
+            <input type="text" class="form-control" [(ngModel)]="conferenciaAutorPuesto" placeholder="Escribe el puesto/cargo...">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-12"><b>Afiliaciones:</b><b class="red">*</b></label>
+          <div class="input-group col-12">
+            <input type="text" class="form-control" placeholder="Buscar instituciones..." [(ngModel)]="conferenciaAutorAfiliacionSearch">
+            <div class="input-group-append">
+              <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="searchAfiliaciones()"><i class="fal fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="conferenciaAutorAfiliacionSelected" [disabled]="(conferenciaAutorAfiliacionesList.length==0)">
+              <ng-container *ngIf="conferenciaAutorAfiliacionesList.length!=0">
+                <option value="0">Seleccione una institución...</option>
+                <ng-container *ngFor="let afil of conferenciaAutorAfiliacionesList">
+                  <option value="{{afil.id}}" *ngIf="afil.id!=0">{{afil.institution_name}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="conferenciaAutorAfiliacionesList.length==0">
+                <option value="0">No hay instituciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="addAfiliaciones()" style="width:130px;" [disabled]="(conferenciaAutorAfiliacionesList.length==0)">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 border-bottom">
+          <div class="col">
+            <ng-container class="row" *ngFor="let afil of conferenciaAutorAfiliaciones">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeAfiliaciones(afil.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{afil.institution_name}}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [disabled]="true"
+                  *ngIf="conferenciaAutorNombre==null || conferenciaAutorNombre=='' || !conferenciaAutorNombre || validCorreo!=0 || conferenciaAutorAfiliaciones.length==0">
+            <i class="fa fa-save" ></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" (click)="validarAutor()"
+                  *ngIf="conferenciaAutorNombre!=null && conferenciaAutorNombre!='' && conferenciaAutorNombre && validCorreo==0 && conferenciaAutorAfiliaciones.length>0">
+            <i class="fa fa-save" ></i>&nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="update-autor-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Actualizar conferencista</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <div class="row mb-2">
+          <label class="form-label col-3">Nombre:<b class="red">*</b></label>
+          <div class="col-9">
+            <input type="text" class="form-control" [class.is-invalid]="validNombre!=0" (keyup)="validarNombre()"
+                   [(ngModel)]="conferenciaAutorNombre" placeholder="Escribe el nombre del conferencista...">
+            <div class="invalid-feedback" *ngIf="validNombre==1">Campo obligatorio</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3">Correo:</label>
+          <div class="col-9">
+            <input type="email" class="form-control" [class.is-invalid]="validCorreo!=0" (keyup)="validarCorreo()"
+                   [(ngModel)]="conferenciaAutorCorreo" placeholder="Escribe el correo del conferencista...">
+            <div class="invalid-feedback" *ngIf="validCorreo==1">Campo obligatorio</div>
+            <div class="invalid-feedback" *ngIf="validCorreo==2">Formato de correo invalido</div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Género:<b class="red">*</b></label>
+          <div class="col-9" *ngIf="conferenciaAutorId!=0">
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero4"
+                     [checked]="(conferenciaAutorGenero=='m')" (click)="cambiarGenero('m')">
+              <label class="custom-control-label" for="genero4">Hombre</label>
+            </div>
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero5"
+                     [checked]="(conferenciaAutorGenero=='f')" (click)="cambiarGenero('f')">
+              <label class="custom-control-label" for="genero5">Mujer</label>
+            </div>
+            <div class="custom-control custom-radio mb-2 ml-2">
+              <input type="radio" class="custom-control-input" id="genero6"
+                     [checked]="(conferenciaAutorGenero=='notsaid')" (click)="cambiarGenero('notsaid')">
+              <label class="custom-control-label" for="genero6">Prefiero no declararlo</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-3 mt-1">Puesto/Cargo:</label>
+          <div class="col-9">
+            <input type="text" class="form-control" [(ngModel)]="conferenciaAutorPuesto" placeholder="Escribe el puesto/cargo...">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="form-label col-12"><b>Afiliaciones:</b><b class="red">*</b></label>
+          <div class="input-group col-12">
+            <input type="text" class="form-control" placeholder="Buscar instituciones..." [(ngModel)]="conferenciaAutorAfiliacionSearch">
+            <div class="input-group-append">
+              <button type="button" class="btn btn-primary waves-effect waves-themed" (click)="searchAfiliaciones()"><i class="fal fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="input-group flex-nowrap mb-2">
+          <div class="input-group flex-nowrap">
+            <select class="form-control" [(ngModel)]="conferenciaAutorAfiliacionSelected" [disabled]="(conferenciaAutorAfiliacionesList.length==0)">
+              <ng-container *ngIf="conferenciaAutorAfiliacionesList.length!=0">
+                <option value="0">Seleccione una institución...</option>
+                <ng-container *ngFor="let afil of conferenciaAutorAfiliacionesList">
+                  <option value="{{afil.id}}" *ngIf="afil.id!=0">{{afil.institution_name}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="conferenciaAutorAfiliacionesList.length==0">
+                <option value="0">No hay instituciones disponibles...</option>
+              </ng-container>
+            </select>
+          </div>&nbsp;&nbsp;
+          <button class="btn btn-primary" (click)="addAfiliaciones()" style="width:130px;" [disabled]="(conferenciaAutorAfiliacionesList.length==0)">
+            <i class="fa fa-plus"></i>&nbsp;Agregar
+          </button>
+        </div>
+        <div class="row mb-2 border-bottom">
+          <div class="col">
+            <ng-container class="row" *ngFor="let afil of conferenciaAutorAfiliaciones">
+              <div class="alert alert-primary alert-dismissible fade show col-12 mb-2" role="alert" style="margin-bottom:3px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="removeAfiliaciones(afil.id)">
+                  <span aria-hidden="true"><i class="fal fa-trash-alt"></i></span>
+                </button>
+                {{afil.institution_name}}
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" [disabled]="true"
+                  *ngIf="conferenciaAutorNombre==null || conferenciaAutorNombre=='' || !conferenciaAutorNombre || validCorreo!=0 || conferenciaAutorAfiliaciones.length==0">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" (click)="updateAutor()"
+                  *ngIf="conferenciaAutorNombre!=null && conferenciaAutorNombre!='' && conferenciaAutorNombre && validCorreo==0 && conferenciaAutorAfiliaciones.length>0">
+            <i class="fa fa-check"></i>&nbsp;Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show" id="view-autor-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Ver detalles del conferencista</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body m-2">
+        <tr>
+          <td style="width:130px;"><p class="card-title"><i class="fal fa-user width-1"></i>&nbsp;Nombre:&nbsp;&nbsp;</p></td>
+          <td><label>{{conferenciaAutorNombre}}</label></td>
+        </tr>
+        <tr>
+          <td><p class="card-title"><i class="fal fa-envelope width-1"></i>&nbsp;Correo:&nbsp;</p></td>
+          <td><label>{{conferenciaAutorCorreo}}</label></td>
+        </tr>
+        <tr>
+          <td class="d-flex justify-content-start">
+            <p class="card-title d-flex justify-content-start"><i class="fal fa-school width-1"></i>&nbsp;Afiliaciones:</p>
+          </td>
+          <td>
+            <label *ngFor="let can of conferenciaAutorAfiliaciones">{{can.institution_name}}&nbsp;{{(can.country)?"("+can.country+")":""}}<br></label>
+          </td>
+        </tr>
+        <tr>
+          <td><p class="card-title"><i class="fal fa-transgender width-1"></i>&nbsp;Género:&nbsp;</p></td>
+          <td>
+            <label class="mt-1" *ngIf="conferenciaAutorGenero=='m'">Hombre</label>
+            <label class="mt-1" *ngIf="conferenciaAutorGenero=='f'">Mujer</label>
+            <label class="mt-1" *ngIf="conferenciaAutorGenero=='notsaid'">Prefiero no declararlo</label>
+          </td>
+        </tr>
+        <tr>
+          <td><p class="card-title"><i class="fal fa-hospital-user width-1"></i>&nbsp;Puesto:&nbsp;</p></td>
+          <td><label>{{conferenciaAutorPuesto}}</label></td>
+        </tr>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i>&nbsp;Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="new-conferencia-file-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Agregar archivo</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="paso==1">
+          <div class="form-group row">
+            <label class="form-label col-4">Tipo de archivo:<b class="red">*</b></label>
+            <div class="col-8">
+              <select class="custom-select" [(ngModel)]="archivoTipo" (change)="cambiarTipo()">
+                <option value="0">Selcciona un tipo de archivo...</option>
+                <ng-container *ngFor="let ta of archivosTipos">
+                  <option value="{{ta.id}}">{{ta.real}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="paso==2">
+          <div class="row mb-3">
+            <label class="form-label col-3">Tipo de archivo:</label>
+            <label class="form-label col-9">&nbsp;&nbsp;
+              <ng-container *ngFor="let ta of archivosTipos">
+                <ng-container *ngIf="ta.id==archivoTipo">
+                  {{ta.real}}
+                </ng-container>
+              </ng-container>
+            </label>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Nombre:<b class="red">*</b></label>
+            <div class="col-9">
+              <input class="form-control" [(ngModel)]="archivoNombre">
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Descripción:</label>
+            <div class="col-9">
+              <textarea class="form-control" [(ngModel)]="archivoDescripcion"></textarea>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <label class="form-label col-3">Archivo:<b class="red">*</b></label>
+            <div class="col-9">
+              <div class="custom-file">
+                <!-- [accept]="getValidFileType(archivoTipo)"-->
+                <input type="file" class="custom-file-input" (change)="extractFileFromEvent($event)">
+                <label class="custom-file-label">
+                  <ng-container *ngIf="archivoFile">{{archivoFile.name}}</ng-container>
+                  <ng-container *ngIf="!archivoFile">Selecciona un archivo...</ng-container>
+                </label>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <span>(<b class="red">*</b>) campo obligatorios&nbsp;&nbsp;&nbsp;&nbsp;
+          <ng-container *ngIf="paso==1">
+            <button class="btn btn-primary" (click)="cambiarPaso('siguiente')" [disabled]="archivoTipo==0">
+              Siguiente&nbsp;<i class="fa fa-angle-right"></i>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="paso==2">
+            <button class="btn btn-primary" (click)="cambiarPaso('anterior')">
+              <i class="fa fa-angle-left"></i>&nbsp;Anterior
+            </button>&nbsp;
+            <button type="button" class="btn btn-success" data-dismiss="modal" (click)="addArchivo()"
+                    [disabled]="archivoNombre=='' || !archivoFile">
+              <i class="fa fa-save"></i>&nbsp;Guardar
+            </button>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

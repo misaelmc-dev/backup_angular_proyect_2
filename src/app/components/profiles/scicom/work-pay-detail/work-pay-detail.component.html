@@ -1,0 +1,289 @@
+<main id="fichaEval" role="main" class="page-content panel border-10" style="box-shadow: 0 0 15px #002746;">
+  <div class="container mt-6" style="font-size:16px">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="d-flex align-items-center mb-5">
+          <h2 class="keep-print-font display-4 fw-500 mb-0 text-primary flex-1 position-relative">
+            Ficha de pago
+            <small class="text-muted mb-0" style="font-size:18px">{{eventoInstitucionNombre}}</small>
+          </h2>
+          <div class="pos-top pos-right">
+            <div class="d-flex justify-content-end">
+            <span>
+              <button class="btn btn-default btn-icon hidden-md-down" (click)="printFichaEval()" data-toggle="tooltip" data-placement="left" title="" data-original-title="Print page" aria-describedby="fichaEval"><i class="fa fa-print"></i></button>&nbsp;&nbsp;
+              <!--<button class="btn btn-default btn-icon hidden-md-down"><i class="fa fa-envelope"></i></button>-->&nbsp;&nbsp;
+              <b>Estatus:</b>&nbsp;&nbsp;
+              <span class="badge bg-warning badge-pill text-white"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;Pagado</span>
+            </span>
+            </div>
+            <div class="d-flex justify-content-end" style="font-size:medium">
+              <b>Fecha de impresión:&nbsp;&nbsp;{{nowDate}}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0 mb-2">Datos generales del evento</h3>
+    <div class="row">
+      <table class="col-sm-12" style="font-size:medium">
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-calendar-day" style="width:18px"></i>&nbsp;&nbsp;<b>Nombre del evento:</b></td>
+          <td class="col" style="width:75%">{{eventoNombre}}</td>
+        </tr>
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-calendar-edit" style="width:18px"></i>&nbsp;&nbsp;<b>Tipo de evento:</b></td>
+          <td class="col" style="width:75%">{{eventoTipoNombre}}</td>
+        </tr>
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-calendar-edit" style="width:18px"></i>&nbsp;&nbsp;<b>Fechas de evaluación:</b></td>
+          <td class="col" style="width:75%">{{fechaInicioEvento | date: 'dd-MM-yyyy'}} <-> {{fechaFinalEvento | date: 'dd-MM-yyyy'}}</td>
+        </tr>
+      </table>
+    </div>
+    <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0 mb-2">Datos del pago</h3>
+    <div class="row">
+      <table class="col-sm-12" style="font-size:medium">
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-funnel-dollar" style="width:18px"></i>&nbsp;&nbsp;<b>Tipo de pago:</b></td>
+          <td class="col" style="width:75%">{{tipoPagoNombre}}</td>
+        </tr>
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-comment-alt-dollar" style="width:18px"></i>&nbsp;&nbsp;<b>Descripción:</b></td>
+          <td class="col" style="width:75%">{{tipoPagoDescripcion}}</td>
+        </tr>
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-file-invoice-dollar" style="width:18px"></i>&nbsp;&nbsp;<b>Estatus de pago:</b></td>
+          <td class="col" style="width:75%">Pagado</td>
+        </tr>
+        <tr>
+          <td class="col" style="width:25%"><i class="fa fa-sack-dollar" style="width:18px"></i>&nbsp;&nbsp;<b>Monto vigente del pago:</b></td>
+          <td class="col" style="width:75%">{{eventoPagoMonto | currency}} MXN</td>
+        </tr>
+        <ng-container *ngFor="let pago of eventoPago">
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-sack-dollar" style="width:18px"></i>&nbsp;&nbsp;<b>Monto real pagado:</b></td>
+            <td class="col" style="width:75%">{{pago.monto | currency}} MXN</td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-credit-card" style="width:18px"></i>&nbsp;&nbsp;<b>Forma de pago:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let fp of formasPagos">
+                <ng-container *ngIf="pago.id_forma_pago==fp.id">
+                  {{fp.nombre}}
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+    <ng-container *ngFor="let item of itemsToShow">
+      <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0 mb-2">Datos de {{(idTipoEvaluacion==1)?'preevaluación':'evaluación'}}:</h3>
+      <div class="row">
+        <table class="col-sm-12" style="font-size:medium">
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-edit" style="width:18px"></i>&nbsp;&nbsp;<b>Tipo de evaluación:</b></td>
+            <td class="col" style="width:75%">{{tipoEvaluacionNombre}}</td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-text-width" style="width:18px"></i>&nbsp;&nbsp;<b>Descripción:</b></td>
+            <td class="col" style="width:75%">{{tipoEvaluacionDescripcion}}</td>
+          </tr>
+          <ng-container *ngFor="let et of evaluacionesTrabajos">
+            <tr>
+              <td class="col" style="width:25%"><i class="fa fa-check" style="width:18px"></i>&nbsp;&nbsp;<b>Resultado de la evaluación:</b></td>
+              <td class="col" style="width:75%">Aprobado</td>
+            </tr>
+            <tr>
+              <td class="col d-flex mb-auto" style="width:25%"><i class="fa fa-file-signature" style="width:18px"></i>&nbsp;&nbsp;<b>Resumen&nbsp;del&nbsp;dictamen:</b></td>
+              <td class="col text-justify" style="width:75%">{{et.descripcion}}</td>
+            </tr>
+            <tr>
+              <td class="col" style="width:25%">
+                <i class="fa fa-user-check" style="width:18px"></i>&nbsp;&nbsp;<b>Evaluador:</b>
+              </td>
+              <td class="col" style="width:75%">
+                <ng-container *ngFor="let ut of evaluacionesTrabajos">
+                  <ng-container *ngIf="item.id == ut.id_trabajo">
+                    <ng-container *ngIf="ut.id_usuario!=null">
+                      <ng-container *ngFor="let ue of usuariosEvaluadores">
+                        <ng-container *ngIf="ut.id_usuario == ue.id">
+                          {{ue.user.name}}&nbsp;({{ue.user.email}})
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="ut.id_usuario==null">
+                      Reservado
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-container>
+        </table>
+      </div>
+      <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0 mb-2">Datos del trabajo</h3>
+      <div class="row">
+        <table class="col-sm-12" style="font-size:medium">
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-address-book" style="width:18px"></i>&nbsp;&nbsp;<b>Tipo de participación:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let tipPar of tiposParticipaciones">
+                <span>{{tipPar.nombre}}</span>
+              </ng-container>
+            </td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-user" style="width:18px"></i>&nbsp;&nbsp;<b>Usuario que registra:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let ue of eventoUsuarios">
+                <span>{{item.participacion.usuario.user.name}}&nbsp;({{item.participacion.usuario.user.email}})</span>
+              </ng-container>
+            </td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-id-card" style="width:18px"></i>&nbsp;&nbsp;<b>No. empleado:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let ue of eventoUsuarios">
+                <span>{{(item.participacion.usuario.num_empleado)?item.participacion.usuario.num_empleado:'Desconocido'}}</span>
+              </ng-container>
+            </td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-star" style="width:18px"></i>&nbsp;&nbsp;<b>Estatus de participación:</b></td>
+            <td class="col" style="width:75%">
+              <div *ngFor="let part of eventoParticipaciones">
+                <ng-container *ngFor="let pe of participationEstatus">
+                  <ng-container *ngIf="part.id_estatus_participacion == pe.id">
+                    <span>{{pe.nombre}}</span>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-suitcase" style="width:18px"></i>&nbsp;&nbsp;<b>Tipo de trabajo:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let tt of tiposTrabajo">
+                <span>{{tt.nombre}}</span>
+              </ng-container>
+            </td>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-bookmark" style="width:18px"></i>&nbsp;&nbsp;<b>Refrendo:</b></td>
+            <td class="col" style="width:75%">{{(item.refrendado_api_uvmunitec)?'Sí':'No'}}</td>
+          </tr>
+          <ng-container *ngFor="let met of trabajosMetadatos">
+            <ng-container *ngIf="met.id_idioma == 150">
+              <tr>
+                <td class="col d-flex mb-auto" style="width:25%"><i class="fa fa-text-width mt-1" style="width:18px"></i>&nbsp;&nbsp;<b>Título&nbsp;en&nbsp;español:</b></td>
+                <td class="col text-justify" style="width:75%">
+                  {{met.titulo}}
+                </td>
+              </tr>
+              <tr>
+                <td class="col d-flex mb-auto" style="width:25%"><i class="fa fa-text-height mt-1" style="width:18px"></i>&nbsp;&nbsp;<b>Resumen&nbsp;en&nbsp;español:</b></td>
+                <td class="col text-justify" style="width:75%">
+                  {{met.resumen}}
+                </td>
+              </tr>
+              <tr>
+                <td class="col" style="width:25%"><i class="fa fa-link" style="width:18px"></i>&nbsp;&nbsp;<b>URL en español:</b></td>
+                <td class="col" style="width:75%">
+                  <a [href]="met.url">{{met.url}}</a>
+                </td>
+              </tr>
+            </ng-container>
+            <ng-container *ngIf="met.id_idioma == 41">
+              <tr>
+                <td class="col d-flex mb-auto" style="width:25%"><i class="fa fa-text-width mt-1" style="width:18px"></i>&nbsp;&nbsp;<b>Título&nbsp;en&nbsp;inglés:</b></td>
+                <td class="col text-justify" style="width:75%">
+                  {{met.titulo}}
+                </td>
+              </tr>
+              <tr>
+                <td class="col d-flex mb-auto" style="width:25%"><i class="fa fa-text-height mt-1" style="width:18px"></i>&nbsp;&nbsp;<b>Resumen&nbsp;en&nbsp;inglés:</b></td>
+                <td class="col text-justify" style="width:75%">
+                  {{met.resumen}}
+                </td>
+              </tr>
+              <tr>
+                <td class="col" style="width:25%"><i class="fa fa-link" style="width:18px"></i>&nbsp;&nbsp;<b>URL en inglés:</b></td>
+                <td class="col" style="width:75%">
+                  <a [href]="met.url">{{met.url}}</a>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+          <tr>
+            <ng-container *ngFor="let ef of eventoFuentes">
+              <td class="col" style="width:25%"><i class="fa fa-book-open" style="width:18px"></i>&nbsp;&nbsp;<b>Fuente:</b></td>
+              <td class="col" style="width:75%">
+                {{ef.titulo}}
+              </td>
+            </ng-container>
+          </tr>
+          <tr>
+            <td class="col" style="width:25%"><i class="fa fa-book" style="width:18px"></i>&nbsp;&nbsp;<b>Áreas del conocimiento:</b></td>
+            <td class="col" style="width:75%">
+              <ng-container *ngFor="let ac of item.areas_de_conocimiento; let i = index">
+                <ng-container *ngFor="let lac of listaAreasConocimiento">
+                  <ng-container *ngIf="ac.id == lac.id">
+                    {{lac.nombre + ((i == item.areas_de_conocimiento.length - 1) ? '.' : ', ')}}
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <h3 class="fw-300 display-5 fw-500 color-primary-600 keep-print-font pt-4 l-h-n m-0">Autores</h3>
+      <div class="row col">
+        <table class="col-sm-12 table" style="font-size:medium">
+          <thead>
+          <tr>
+            <th class="border-top-0 table-scale-border-bottom">Orden</th>
+            <th class="border-top-0 table-scale-border-bottom">Nombre</th>
+            <th class="border-top-0 table-scale-border-bottom">Correo</th>
+            <th class="border-top-0 table-scale-border-bottom">ORCID</th>
+            <th class="border-top-0 table-scale-border-bottom">Afiliación</th>
+            <th class="border-top-0 table-scale-border-bottom">Campus</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let ae of autoresEvento; let i = index">
+            <td><a class="fs-lg text-dark">{{i+1}}</a></td>
+            <td><a class="fs-lg text-dark">{{ae.nombre}}</a></td>
+            <td><a class="fs-lg text-dark">{{ae.correo}}</a></td>
+            <td style="width: 20%"><a class="fs-lg text-dark">{{ae.orcid}}</a></td>
+            <td style="width: 20%">
+              <a class="fs-lg text-dark" *ngFor="let ror of ae.rors; let i = index">
+                <ng-container *ngIf="i==0">
+                  <ng-container *ngFor="let aa of autoresAfiliaciones">
+                    <ng-container *ngIf="ror.id == aa.id">
+                      {{aa.institution_name}}
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </a>
+            </td>
+            <td>
+              <a class="fs-lg text-dark" *ngFor="let camp of ae.campus; let i = index">
+                <ng-container *ngIf="i==0">
+                  <ng-container *ngFor="let c of campusTotalList">
+                    <ng-container *ngIf="camp.id == c.id">
+                      {{c.nombre}}
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+    <app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
+  </div>
+</main>

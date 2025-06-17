@@ -1,0 +1,1289 @@
+<div id="panel-1" class="panel" xmlns="http://www.w3.org/1999/html">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-book mr-2'></i>Catálogo de fuentes <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#datos-modal" (click)="limpiarDatos()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="filtroSearch">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button"
+                          (click)="filtrarFuentes(false,'filtroBuscar')">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-checkbox
+            (backFilter)="cambiarFiltroOpen($event)"
+            [iconFilter]="'fal fa-key'"
+            [placeholder]="'Solo open access'"
+            [numberOption]="1"
+            [update]="update1">
+          </app-filtro-checkbox>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <app-filtro-checkbox
+            (backFilter)="cambiarFiltroDepredadoras($event)"
+            [iconFilter]="'fal fa-exclamation-triangle'"
+            [placeholder]="'Solo depredadoras'"
+            [numberOption]="2"
+            [update]="update2">
+          </app-filtro-checkbox>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <button class="btn btn-default waves-effect waves-themed b-top-l b-bot-l" type="button">
+                  <i class="fal fa-code-branch"></i>
+                </button>
+              </div>
+              <div class="input-group-append input-group-prepend">
+                <span class="input-group-text">Cite score</span>
+              </div>
+              <input type="number" class="form-control" [(ngModel)]="filtroMinCiteScore"
+                     (keyup)="filtrarFuentes(false,'filtroMinCiteScore')">
+              <div class="input-group-append input-group-prepend">
+                <span class="input-group-text">a</span>
+              </div>
+              <input type="number" class="form-control" [(ngModel)]="filtroMaxCiteScore"
+                     (keyup)="filtrarFuentes(false,'filtroMaxCiteScore')">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroCuartil($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadCuartil"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-user-graduate'"
+            [textoSinFiltroSeleccionado]="'Filtrar por Quartil Scopus...'"
+            [update]="update3">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroPais($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadPais"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-flag'"
+            [textoSinFiltroSeleccionado]="'Filtrar por pais...'"
+            [update]="update4">
+          </app-filtro-avanzado>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <app-filtro-avanzado
+            (backFilter)="recuperarSeleccionFiltroIdiomas($event)"
+            [optionStringSize]="46"
+            [dataLoadFunction]="filtroDataLoadIdiomas"
+            [pageSize]="25"
+            [iconFilter]="'fal fa-spell-check'"
+            [textoSinFiltroSeleccionado]="'Filtrar por idioma...'"
+            [update]="update5">
+          </app-filtro-avanzado>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">ID</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Título</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >ISSN</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Publisher</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Depredadoras</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let item of listaFuentes | paginate : {
+                          id: 'fuentesPagination',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{item.id}}</td>
+                <td class="sorting_1 dtr-control b-bot-l">{{item.titulo}}</td>
+                <td class="sorting_1 dtr-control">
+                  {{item.issn_e}}{{(item.issn_e && item.issn_i)?' - ':''}}{{item.issn_i}}
+                </td>
+                <td class="sorting_1 dtr-control">{{item.publisher}}</td>
+                <td class="sorting_1 dtr-control">{{(item.depredadora)?'Sí':'No'}}</td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#consultar-modal" type="button" (click)="consultar(item.id,'ver')"
+                  ><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#datos-modal" type="button" (click)="consultar(item.id,'editar')">
+                    <i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button"
+                          (click)="eliminar(item)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="fuentesPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content" style="width:1000px !important; margin-left:-100px !important;">
+      <div class="modal-header">
+        <h3 class="modal-title">Detalles de la fuente</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-auto">
+            <div class="nav flex-column nav-pills" id="pills-tab-consult" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active" id="tab-datos-consult" data-toggle="pill" href="#consult-tab-datos" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                <i class="fal fa-book width-1"></i><span class="hidden-sm-down ml-1"> Datos generales</span>
+              </a>
+              <a class="nav-link" id="tab-indicadores-consult" data-toggle="pill" href="#consult-tab-indicadores" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-clipboard-list-check width-1"></i><span class="hidden-sm-down ml-1"> Indicadores relevantes</span>
+              </a>
+              <a class="nav-link" id="tab-visibilidad-consult" data-toggle="pill" href="#consult-tab-visibilidad" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-eye width-1"></i><span class="hidden-sm-down ml-1"> Visibilidad último año</span>
+              </a>
+              <a class="nav-link" id="tab-similar-consult" data-toggle="pill" href="#consult-tab-similar" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-books width-1"></i><span class="hidden-sm-down ml-1"> Fuentes similares</span>
+              </a>
+              <a class="nav-link" id="tab-idiomas-consult" data-toggle="pill" href="#consult-tab-idiomas" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                <i class="fal fa-spell-check width-1"></i><span class="hidden-sm-down ml-1"> Idiomas</span>
+              </a>
+              <a class="nav-link" id="tab-paises-consult" data-toggle="pill" href="#consult-tab-paises" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-flag width-1"></i><span class="hidden-sm-down ml-1"> Países</span>
+              </a>
+              <a class="nav-link" id="tab-topics-consult" data-toggle="pill" href="#consult-tab-topics" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-chart-area width-1"></i><span class="hidden-sm-down ml-1"> Research topics</span>
+              </a>
+              <a class="nav-link" id="tab-history-consult" data-toggle="pill" href="#consult-tab-history" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-clock width-1"></i><span class="hidden-sm-down ml-1"> Históricos Scimago</span>
+              </a>
+              <a class="nav-link" id="tab-vigencias-consult" data-toggle="pill" href="#consult-tab-vigencias" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-user-clock width-1"></i><span class="hidden-sm-down ml-1"> Vigencias de visibilidad</span>
+              </a>
+              <a class="nav-link" id="tab-cuartiles-consult" data-toggle="pill" href="#consult-tab-cuartiles" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-border-all width-1"></i><span class="hidden-sm-down ml-1"> Cuartiles por año</span>
+              </a>
+            </div>
+          </div>
+          <div class="col">
+            <div class="tab-content" id="content-consult">
+              <div class="tab-pane fade show active" id="consult-tab-datos" role="tabpanel" aria-labelledby="tab-datos-consult">
+                <div class="row mb-2">
+                  <h5 class="col-12 pr-2">
+                    <i class="fa fa-book width-1"></i> Datos generales
+                  </h5>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>ID:</b></label>
+                  <label class="col-8"> {{fuenteId}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Título:</b></label
+                  ><label class="col-8"> {{fuenteTitulo}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>ISSN-e:</b></label
+                  ><label class="col-8"> {{fuenteIssne}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>ISSN-i:</b></label
+                  ><label class="col-8"> {{fuenteIssni}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>ISBN:</b></label
+                  ><label class="col-8"> {{fuenteIsbn}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Frecuencia:</b></label
+                  ><label class="col-8"> {{fuenteFrecuencia}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Publisher:</b></label
+                  ><label class="col-8"> {{fuentePublisher}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Cuartil Scopus:</b></label>
+                  <label class="col-8"> {{fuenteScopusQ}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Acceso abierto:</b></label>
+                  <label class="col-8"> {{(fuenteAccesoAbierto)?'Sí':'No'}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Acceso abieto autor:</b></label>
+                  <label class="col-8"> {{(fuenteAaAutor)?'Sí':'No'}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Acceso abieto lector:</b></label>
+                  <label class="col-8"> {{(fuenteAaLector)?'Sí':'No'}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4 mt-1"><b>URL normas:</b></label>
+                  <label class="col-5 mt-1">
+                    <a [href]="fuenteUrlNormas" target="_blank" *ngIf="fuenteUrlNormas!=null && fuenteUrlNormas!=''"
+                       data-toggle="popover" data-placement="right"
+                       [attr.data-content]="" [attr.data-original-title]="fuenteUrlNormas"
+                       aria-describedby="popover513675" data-trigger="hover" appPopover>
+                      <ng-container *ngIf="fuenteUrlNormas.length>30">
+                        {{fuenteUrlNormas | slice :0:30}}..
+                      </ng-container>
+                      <ng-container *ngIf="fuenteUrlNormas.length<=30">{{fuenteUrlNormas}}</ng-container>
+                    </a>
+                  </label>
+                  <div class="col-3 d-flex justify-content-end">
+                    <a class="btn btn-sm btn-primary text-white" (click)="copiarText(fuenteUrlNormas)"
+                       *ngIf="fuenteUrlNormas!=null && fuenteUrlNormas!=''"><i class="fa fa-copy"></i> Copiar</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>APC costo:</b></label>
+                  <label class="col-8"> {{fuenteApcCosto}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Licencias:</b></label>
+                  <label class="col-8"> {{fuenteLicenseCondition}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Clasificación CONACYT:</b></label>
+                  <label class="col-8"> {{fuenteClasifConacyt}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4 mt-1"><b>Rights URI:</b></label>
+                  <label class="col-5 mt-1">
+                    <a [href]="fuenteRightsUri" target="_blank" *ngIf="fuenteRightsUri!=null && fuenteRightsUri!=''"
+                       data-toggle="popover" data-placement="right"
+                       [attr.data-content]="" [attr.data-original-title]="fuenteRightsUri"
+                       aria-describedby="popover513675" data-trigger="hover" appPopover>
+                      <ng-container *ngIf="fuenteRightsUri.length>30">
+                        {{fuenteRightsUri | slice :0:30}}..
+                      </ng-container>
+                      <ng-container *ngIf="fuenteRightsUri.length<=30">{{fuenteRightsUri}}</ng-container>
+                    </a>
+                  </label>
+                  <div class="col-3 d-flex justify-content-end">
+                    <a class="btn btn-sm btn-primary text-white" (click)="copiarText(fuenteRightsUri)"
+                       *ngIf="fuenteRightsUri!=null && fuenteRightsUri!=''"><i class="fa fa-copy"></i> Copiar</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Tipo:</b></label
+                  ><label class="col-8"> {{fuenteTipo}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4 mt-1"><b>URL:</b></label>
+                  <label class="col-5 mt-1">
+                    <a [href]="fuenteUrl" target="_blank" *ngIf="fuenteUrl!=null && fuenteUrl!=''"
+                       data-toggle="popover" data-placement="right"
+                       [attr.data-content]="" [attr.data-original-title]="fuenteUrl"
+                       aria-describedby="popover513675" data-trigger="hover" appPopover>
+                      <ng-container *ngIf="fuenteUrl.length>30">
+                        {{fuenteUrl | slice :0:30}}..
+                      </ng-container>
+                      <ng-container *ngIf="fuenteUrl.length<=30">{{fuenteUrl}}</ng-container>
+                    </a>
+                  </label>
+                  <div class="col-3 d-flex justify-content-end">
+                    <a class="btn btn-sm btn-primary text-white" (click)="copiarText(fuenteUrl)"
+                       *ngIf="fuenteUrl!=null && fuenteUrl!=''"><i class="fa fa-copy"></i> Copiar</a>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Scimago Source Id:</b></label
+                  ><label class="col-8"> {{fuenteScimagoSourceId}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>ScopusQ Scintra:</b></label
+                  ><label class="col-8"> {{fuenteScopusQScintra}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-4"><b>Depredadora:</b></label
+                  ><label class="col-8"> {{(fuenteDepredadora)?'Sí':'No'}}</label>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-indicadores" role="tabpanel" aria-labelledby="tab-indicadores-consult">
+                <div class="row mb-2">
+                  <h5 class="col-12 pr-2">
+                    <i class="fa fa-clipboard-list-check width-1"></i> Indicadores relevantes
+                  </h5>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Factor de impacto:</b></label
+                  ><label class="col-6"> {{fuenteFi}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Cite score:</b></label>
+                  <label class="col-6"> {{fuenteCitesScore}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Cite Score año:</b></label
+                  ><label class="col-6"> {{fuenteCitesScorYear}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Cite Score tendencia:</b></label
+                  ><label class="col-6"> {{fuenteCitesScoreTrack}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Cite Score año de tendencia:</b></label
+                  ><label class="col-6"> {{fuenteCitesScoreTrackYear}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>SJR:</b></label
+                  ><label class="col-6"> {{fuenteSjr}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>SJR año:</b></label
+                  ><label class="col-6"> {{fuenteSjrYear}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Snip:</b></label
+                  ><label class="col-6"> {{fuenteSnip}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Snip año:</b></label
+                  ><label class="col-6"> {{fuenteSnipYear}}</label>
+                </div>
+                <div class="row">
+                  <label class="col-6"><b>Índice H:</b></label
+                  ><label class="col-6"> {{fuenteHIndex}}</label>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-visibilidad" role="tabpanel" aria-labelledby="tab-visibilidad-consult">
+                <div class="row mb-2">
+                  <h5 class="col-12 pr-2">
+                    <i class="fa fa-eye width-1"></i> Visibilidad último año
+                  </h5>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12" style="overflow-y: auto">
+                    <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+                      <thead class="bg-primary-600 b-top-l b-top-r">
+                      <tr role="row">
+                        <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">Base de datos</th>
+                        <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Activo</th>
+                      </tr>
+                      </thead>
+                      <tbody class="b-bot-l b-bot-r">
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>DOAJ:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteDoaj">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteDoaj">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>JCR:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteJcr">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteJcr">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>SCOPUS:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteScopusAlgunaVez">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteScopusAlgunaVez">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>CONACYT:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteConacyt">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteConacyt">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>SCIELO:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteScielo">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteScielo">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr role="row" class="odd b-bot-l b-bot-r">
+                          <td><label class="col-4"><b>WOSCC:</b></label></td>
+                          <td>
+                            <a class="btn btn-icon btn-sm btn-success shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="fuenteWoscc">
+                              <i class="fal fa-check-circle text-white"></i>
+                            </a>
+                            <a class="btn btn-icon btn-sm btn-danger shadow-0 rounded-circle waves-effect waves-themed"
+                               *ngIf="!fuenteWoscc">
+                              <i class="fal fa-times-circle text-white"></i>
+                            </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-similar" role="tabpanel" aria-labelledby="tab-similar-consult">
+                <app-source-similar *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0" [metadata]="fuenteMetadata"></app-source-similar>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-idiomas" role="tabpanel" aria-labelledby="tab-idiomas-consult">
+                <app-source-languages *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0" [metadata]="fuenteMetadata"></app-source-languages>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-paises" role="tabpanel" aria-labelledby="tab-paises-consult">
+                <app-source-country *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0" [metadata]="fuenteMetadata"></app-source-country>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-topics" role="tabpanel" aria-labelledby="tab-topics-consult">
+                <app-source-research-topics *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0" [metadata]="fuenteMetadata"></app-source-research-topics>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-history" role="tabpanel" aria-labelledby="tab-history-consult">
+                <app-source-history *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0"></app-source-history>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-vigencias" role="tabpanel" aria-labelledby="tab-vigencias-consult">
+                <app-source-lifetimes *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0"></app-source-lifetimes>
+              </div>
+              <div class="tab-pane fade" id="consult-tab-cuartiles" role="tabpanel" aria-labelledby="tab-cuartiles-consult">
+                <app-source-quartils *ngIf="tipoModal=='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="0"></app-source-quartils>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="datos-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="width:1000px !important; margin-left:-100px !important;">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{modal_titulo}}
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-auto">
+            <div class="nav flex-column nav-pills" id="pills-tab-datos" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active" id="tab-datos-datos" data-toggle="pill" href="#datos-tab-datos" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                <i class="fal fa-book width-1"></i><span class="hidden-sm-down ml-1"> Datos generales</span>
+              </a>
+              <a class="nav-link" id="tab-indicadores-datos" data-toggle="pill" href="#datos-tab-indicadores" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-clipboard-list-check width-1"></i><span class="hidden-sm-down ml-1"> Indicadores relevantes</span>
+              </a>
+              <a class="nav-link" id="tab-visibilidad-datos" data-toggle="pill" href="#datos-tab-visibilidad" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-eye width-1"></i><span class="hidden-sm-down ml-1"> Visibilidad último año</span>
+              </a>
+              <a class="nav-link" id="tab-similar-datos" data-toggle="pill" href="#datos-tab-similar" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                <i class="fal fa-books width-1"></i><span class="hidden-sm-down ml-1"> Fuentes similares</span>
+              </a>
+              <a class="nav-link" id="tab-idiomas-datos" data-toggle="pill" href="#datos-tab-idiomas" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                <i class="fal fa-spell-check width-1"></i><span class="hidden-sm-down ml-1"> Idiomas</span>
+              </a>
+              <a class="nav-link" id="tab-paises-datos" data-toggle="pill" href="#datos-tab-paises" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-flag width-1"></i><span class="hidden-sm-down ml-1"> Países</span>
+              </a>
+              <a class="nav-link" id="tab-topics-datos" data-toggle="pill" href="#datos-tab-topics" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-chart-area width-1"></i><span class="hidden-sm-down ml-1"> Research topics</span>
+              </a>
+              <a class="nav-link" id="tab-history-datos" data-toggle="pill" href="#datos-tab-history" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-clock width-1"></i><span class="hidden-sm-down ml-1"> Históricos Scimago</span>
+              </a>
+              <a class="nav-link" id="tab-vigencias-datos" data-toggle="pill" href="#datos-tab-vigencias" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-user-clock width-1"></i><span class="hidden-sm-down ml-1"> Vigencias de visibilidad</span>
+              </a>
+              <a class="nav-link" id="tab-cuartiles-datos" data-toggle="pill" href="#datos-tab-cuartiles" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                <i class="fal fa-border-all width-1"></i><span class="hidden-sm-down ml-1"> Cuartiles por año</span>
+              </a>
+            </div>
+          </div>
+          <div class="col">
+            <div class="tab-content" id="content-datos">
+              <div class="tab-pane fade show active" id="datos-tab-datos" role="tabpanel" aria-labelledby="tab-datos-datos">
+
+                <div class="row mb-2">
+                   <h5 class="col-12 pr-2">
+                      <i class="fa fa-book width-1"></i> Datos generales
+                   </h5>
+                </div>
+                <div class="row mt-2" *ngIf="modal_titulo=='Actualice los datos de la fuente'">
+                  <label class="form-label col-4 mt-1">ID:</label>
+                  <div class="col-8">
+                    <input class="form-control" [(ngModel)]="fuenteId" disabled readonly/>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Título:<b style="color:red">*</b></label>
+                  <div class="col-8">
+                    <textarea class="form-control" placeholder="Ingresa un título..." [(ngModel)]="fuenteTitulo" cols="3">
+                    </textarea>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">ISSN-e:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un ISSN-e..." [(ngModel)]="fuenteIssne"
+                           [ngClass]="(validIssne==1)?'is-invalid':''" (keyup)="validarIssne()"/>
+                  </div>
+                  <ng-container *ngIf="validIssne==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El ISSN-e no puede tener más de 10 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">ISSN-i:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un ISSN-i..." [(ngModel)]="fuenteIssni"
+                           [ngClass]="(validIssni==1)?'is-invalid':''" (keyup)="validarIssni()"/>
+                  </div>
+                  <ng-container *ngIf="validIssni==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El ISSN-i no puede tener más de 10 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    ISBN:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el ISBN..." [(ngModel)]="fuenteIsbn"
+                           [ngClass]="(validIsbn==1)?'is-invalid':''" (keyup)="validarIsbn()"/>
+                  </div>
+                  <ng-container *ngIf="validIsbn==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El ISBN no puede tener más de 15 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Frecuencia:</label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="fuenteFrecuencia">
+                      <option value="">Selecciona una frecuencia...</option>
+                      <option value="mensual">Mensual</option>
+                      <option value="bimensual">Bimensual</option>
+                      <option value="trimestral">Trimestral</option>
+                      <option value="cuatrimestral">Cuatrimestral</option>
+                      <option value="semestral">Semestral</option>
+                      <option value="anual">Anual</option>
+                      <option value="continua">Continua</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Buscar publisher:</label>
+                  <div class="col-6">
+                    <input class="form-control" placeholder="Ingresa un criterio de busqueda..." [(ngModel)]="fuenteSearchPublisher"/>
+                  </div>
+                  <div class="col-2">
+                    <button type="button" class="btn btn-primary"
+                            [disabled]="fuenteSearchPublisher==''" (click)="obtenerPublisher()">
+                      <i class="fa fa-search"></i> Buscar</button>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Publisher:</label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="fuentePublisher">
+                      <ng-container *ngIf="fuentePublisher!=''">
+                        <option value="{{fuentePublisher}}">{{fuentePublisher}}</option>
+                      </ng-container>
+                      <ng-container *ngIf="listaPublisher.length==0">
+                        <option value="">Ingresa un criterio de búsqueda...</option>
+                      </ng-container>
+                      <ng-container *ngIf="listaPublisher.length>0">
+                        <option value="">Selecciona el publisher...</option>
+                      </ng-container>
+                      <ng-container *ngFor="let item of listaPublisher">
+                        <option value="{{item}}">{{item}}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                  <ng-container *ngIf="validPublisher==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo publisher no puede tener mas de 255 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Acceso abierto:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteAccesoAbierto">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteAccesoAbierto1"
+                                 name="fuenteAccesoAbierto" checked="">
+                          <label class="custom-control-label" for="fuenteAccesoAbierto1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteAccesoAbierto2"
+                                 name="fuenteAccesoAbierto" (click)="cambiarAccesoAbierto(false)">
+                          <label class="custom-control-label" for="fuenteAccesoAbierto2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteAccesoAbierto">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteAccesoAbierto3"
+                                 name="fuenteAccesoAbierto" (click)="cambiarAccesoAbierto(true)">
+                          <label class="custom-control-label" for="fuenteAccesoAbierto3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteAccesoAbierto4"
+                                 name="fuenteAccesoAbierto" checked="">
+                          <label class="custom-control-label" for="fuenteAccesoAbierto4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Acceso abierto autor:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteAaAutor">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaaautor1"
+                                 name="fuenteaaautor" checked="">
+                          <label class="custom-control-label" for="fuenteaaautor1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaaautor2"
+                                 name="fuenteaaautor" (click)="cambiarAAAutor(false)">
+                          <label class="custom-control-label" for="fuenteaaautor2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteAaAutor">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaaautor3"
+                                 name="fuenteaaautor" (click)="cambiarAAAutor(true)" >
+                          <label class="custom-control-label" for="fuenteaaautor3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaaautor4"
+                                 name="fuenteaaautor" checked="">
+                          <label class="custom-control-label" for="fuenteaaautor4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Acceso abierto lector:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteAaLector">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaalector1"
+                                 name="fuenteaalector" checked="">
+                          <label class="custom-control-label" for="fuenteaalector1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaalector2"
+                                 name="fuenteaalector" (click)="cambiarAALector(false)">
+                          <label class="custom-control-label" for="fuenteaalector2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteAaLector">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaalector3"
+                                 name="fuenteaalector" (click)="cambiarAALector(true)">
+                          <label class="custom-control-label" for="fuenteaalector3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteaalector4"
+                                 name="fuenteaalector" checked="">
+                          <label class="custom-control-label" for="fuenteaalector4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">URL normas:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa la URL de las normas..." [(ngModel)]="fuenteUrlNormas"
+                           [ngClass]="(validUrlNorm==1)?'is-invalid':''" (keyup)="validarUrlNormas()"/>
+                  </div>
+                  <ng-container *ngIf="validUrlNorm==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El formato de la URL es incorrecto.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">APC costo:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa un APC costo..." [(ngModel)]="fuenteApcCosto"
+                           [ngClass]="(validApcCosto==1)?'is-invalid':''" (keyup)="validarApcCosto()"/>
+                  </div>
+                  <ng-container *ngIf="validApcCosto==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El APC costo no puede tener más de 100 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Licencias:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa los códigos de licencias..." [(ngModel)]="fuenteLicenseCondition"
+                           [ngClass]="(validLicense==1)?'is-invalid':''" (keyup)="validarLicense()"/>
+                  </div>
+                  <ng-container *ngIf="validLicense==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">Los codigos de licencias no puede tener mas de 100 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Clasificación CONACYT:</label>
+                  <div class="col-8">
+                    <select class="custom-select" [(ngModel)]="fuenteClasifConacyt">
+                      <option value="">Seleccione la clasificación conacyt...</option>
+                      <ng-container *ngFor="let item of listaConacyt">
+                        <option value="{{item}}">{{item}}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                  <ng-container *ngIf="validClasif==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">La clasificación conacyt no puede tener mas de 50 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Rights URI:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el Rights URI..." [(ngModel)]="fuenteRightsUri"
+                           [ngClass]="(validRigtsUrl==1)?'is-invalid':''" (keyup)="validarRigtsUrl()"/>
+                  </div>
+                  <ng-container *ngIf="validRigtsUrl==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El formato de la URL es incorrecto.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Tipo:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el tipo..." [(ngModel)]="fuenteTipo"
+                           [ngClass]="(validTipo==1)?'is-invalid':''" (keyup)="validarTipo()"/>
+                  </div>
+                  <ng-container *ngIf="validTipo==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">La tipo no puede tener más de 45 caracteres.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    URL:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa la URL..." [(ngModel)]="fuenteUrl"
+                           [ngClass]="(validUrl==1)?'is-invalid':''" (keyup)="validarUrl()"/>
+                  </div>
+                  <ng-container *ngIf="validUrl==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El formato de la URL es incorrecto</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Scimago Source Id:</label>
+                  <div class="col-8">
+                    <input type="number" class="form-control" [(ngModel)]="fuenteScimagoSourceId"
+                            placeholder="Ingresa un scimago source id...">
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Depredadora:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteDepredadora">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDepredadora1"
+                                 name="fuenteDepredadora" checked="">
+                          <label class="custom-control-label" for="fuenteDepredadora1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDepredadora2"
+                                 name="fuenteDepredadora" (click)="cambiarDepredadora(false)">
+                          <label class="custom-control-label" for="fuenteDepredadora2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteDepredadora">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDepredadora3"
+                                 name="fuenteDepredadora" (click)="cambiarDepredadora(true)">
+                          <label class="custom-control-label" for="fuenteDepredadora3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDepredadora4"
+                                 name="fuenteDepredadora" checked="">
+                          <label class="custom-control-label" for="fuenteDepredadora4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-indicadores" role="tabpanel" aria-labelledby="tab-indicadores-datos">
+                <div class="row mb-2">
+                  <h5 class="col-12 pr-2">
+                    <i class="fa fa-clipboard-list-check width-1"></i> Indicadores relevantes
+                  </h5>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Factor de impacto:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el factor de impacto..."
+                           type="number" [(ngModel)]="fuenteFi" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">Cite score:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el cite score..."
+                           type="number" [(ngModel)]="fuenteCitesScore" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Cite Score año:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el cite score año..."
+                           type="number" [(ngModel)]="fuenteCitesScorYear"
+                           [ngClass]="(validScoreYear==1)?'is-invalid':''" (keyup)="validarScoreYear()"/>
+                  </div>
+                  <ng-container *ngIf="validScoreYear==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo no admite decimales.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Cite Score tendencia:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el cite score tendencia..."
+                           type="number" [(ngModel)]="fuenteCitesScoreTrack" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Cite Score año de tendencia:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el cite score año de tendencia..."
+                           type="number" [(ngModel)]="fuenteCitesScoreTrackYear"
+                           [ngClass]="(validScoreTrackYear==1)?'is-invalid':''" (keyup)="validarScoreTrackYear()"/>
+                  </div>
+                  <ng-container *ngIf="validScoreTrackYear==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo no admite decimales.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    SJR:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el SJR..."
+                           type="number" [(ngModel)]="fuenteSjr" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    SJR año:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el SJR año..."
+                           type="number" [(ngModel)]="fuenteSjrYear"
+                           [ngClass]="(validSjrYear==1)?'is-invalid':''" (keyup)="validarSjrYear()"/>
+                  </div>
+                  <ng-container *ngIf="validSjrYear==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo no admite decimales.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Snip:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el snip..."
+                           type="number" [(ngModel)]="fuenteSnip" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Snip año:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el snip año..."
+                           type="number" [(ngModel)]="fuenteSnipYear"
+                           [ngClass]="(validSnipYear==1)?'is-invalid':''" (keyup)="validarSnipYear()"/>
+                  </div>
+                  <ng-container *ngIf="validSnipYear==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo no admite decimales.</div>
+                  </ng-container>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    Índice H:</label>
+                  <div class="col-8">
+                    <input class="form-control" placeholder="Ingresa el índice H..."
+                           type="number" [(ngModel)]="fuenteHIndex"
+                           [ngClass]="(validHIndex==1)?'is-invalid':''" (keyup)="validarHIndex()"/>
+                  </div>
+                  <ng-container *ngIf="validHIndex==1">
+                    <label class="col-4 mt-1"></label>
+                    <div class="invalid-feedback col-8">El campo no admite decimales.</div>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-visibilidad" role="tabpanel" aria-labelledby="tab-visibilidad-datos">
+                <div class="row mb-2">
+                  <h5 class="col-12 pr-2">
+                    <i class="fa fa-box-check width-1"></i> Visibilidad último año
+                  </h5>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">DOAJ:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteDoaj">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDoaj1"
+                                 name="fuenteDoaj" checked="">
+                          <label class="custom-control-label" for="fuenteDoaj1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDoaj2"
+                                 name="fuenteDoaj" (click)="cambiarDoaj(false)">
+                          <label class="custom-control-label" for="fuenteDoaj2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteDoaj">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDoaj3"
+                                 name="fuenteDoaj" (click)="cambiarDoaj(true)">
+                          <label class="custom-control-label" for="fuenteDoaj3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteDoaj4"
+                                 name="fuenteDoaj" checked="">
+                          <label class="custom-control-label" for="fuenteDoaj4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">JCR:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteJcr">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteJcr1"
+                                 name="fuenteJcr" checked="">
+                          <label class="custom-control-label" for="fuenteJcr1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteJcr2"
+                                 name="fuenteJcr" (click)="cambiarJcr(false)">
+                          <label class="custom-control-label" for="fuenteJcr2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteJcr">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteJcr3"
+                                 name="fuenteJcr" (click)="cambiarJcr(true)">
+                          <label class="custom-control-label" for="fuenteJcr3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteJcr4"
+                                 name="fuenteJcr" checked="">
+                          <label class="custom-control-label" for="fuenteJcr4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">SCOPUS:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteScopusAlgunaVez">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScopusAlgunaVez1"
+                                 name="fuenteScopusAlgunaVez" checked="">
+                          <label class="custom-control-label" for="fuenteScopusAlgunaVez1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScopusAlgunaVez2"
+                                 name="fuenteScopusAlgunaVez" (click)="cambiarScopus(false)">
+                          <label class="custom-control-label" for="fuenteScopusAlgunaVez2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteScopusAlgunaVez">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScopusAlgunaVez3"
+                                 name="fuenteScopusAlgunaVez" (click)="cambiarScopus(true)">
+                          <label class="custom-control-label" for="fuenteScopusAlgunaVez3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScopusAlgunaVez4"
+                                 name="fuenteScopusAlgunaVez" checked="">
+                          <label class="custom-control-label" for="fuenteScopusAlgunaVez4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">CONACYT:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteConacyt">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteConacyt1"
+                                 name="fuenteConacyt" checked="">
+                          <label class="custom-control-label" for="fuenteConacyt1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteConacyt2"
+                                 name="fuenteConacyt" (click)="cambiarConacyt(false)">
+                          <label class="custom-control-label" for="fuenteConacyt2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteConacyt">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteConacyt3"
+                                 name="fuenteConacyt" (click)="cambiarConacyt(true)">
+                          <label class="custom-control-label" for="fuenteConacyt3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteConacyt4"
+                                 name="fuenteConacyt" checked="">
+                          <label class="custom-control-label" for="fuenteConacyt4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">SCIELO:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteScielo">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScielo1"
+                                 name="fuenteScielo" checked="">
+                          <label class="custom-control-label" for="fuenteScielo1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScielo2"
+                                 name="fuenteScielo" (click)="cambiarScielo(false)">
+                          <label class="custom-control-label" for="fuenteScielo2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteScielo">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScielo3"
+                                 name="fuenteScielo" (click)="cambiarScielo(true)">
+                          <label class="custom-control-label" for="fuenteScielo3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteScielo4"
+                                 name="fuenteScielo" checked="">
+                          <label class="custom-control-label" for="fuenteScielo4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <label class="form-label col-4 mt-1">
+                    WOSCC:</label>
+                  <div class="col-8">
+                    <div class="frame-wrap">
+                      <ng-container *ngIf="fuenteWoscc">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteWoscc1"
+                                 name="fuenteWoscc" checked="">
+                          <label class="custom-control-label" for="fuenteWoscc1">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteWoscc2"
+                                 name="fuenteWoscc" (click)="cambiarWoscc(false)">
+                          <label class="custom-control-label" for="fuenteWoscc2">No</label>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!fuenteWoscc">
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteWoscc3"
+                                 name="fuenteWoscc" (click)="cambiarWoscc(true)">
+                          <label class="custom-control-label" for="fuenteWoscc3">Sí</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                          <input type="radio" class="custom-control-input" id="fuenteWoscc4"
+                                 name="fuenteWoscc" checked="">
+                          <label class="custom-control-label" for="fuenteWoscc4">No</label>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-similar" role="tabpanel" aria-labelledby="tab-similar-datos" style="min-height:500px">
+                <app-source-similar *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo" [metadata]="fuenteMetadata"></app-source-similar>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-idiomas" role="tabpanel" aria-labelledby="tab-idiomas-datos">
+                <app-source-languages *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo" [metadata]="fuenteMetadata"></app-source-languages>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-paises" role="tabpanel" aria-labelledby="tab-paises-datos">
+                <app-source-country *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo" [metadata]="fuenteMetadata"></app-source-country>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-topics" role="tabpanel" aria-labelledby="tab-topics-datos">
+                <app-source-research-topics *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo" [metadata]="fuenteMetadata"></app-source-research-topics>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-history" role="tabpanel" aria-labelledby="tab-history-datos"  style="min-height:500px">
+                <app-source-history *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo"></app-source-history>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-vigencias" role="tabpanel" aria-labelledby="tab-vigencias-datos" style="min-height:400px">
+                <app-source-lifetimes *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo"></app-source-lifetimes>
+              </div>
+              <div class="tab-pane fade" id="datos-tab-cuartiles" role="tabpanel" aria-labelledby="tab-cuartiles-datos">
+                <app-source-quartils *ngIf="tipoModal!='ver'" [id]="fuenteId" [modal]="tipoModal" [salvar]="guardarTodo"></app-source-quartils>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <ng-container *ngIf="modal_boton=='Guardar'">
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="crear()"
+                  [disabled]="this.fuenteTitulo=='' ||
+                              this.validIssni==1 ||
+                              this.validIssne==1 ||
+                              this.validPublisher==1 ||
+                              this.validUrlNorm==1 ||
+                              this.validApcCosto==1 ||
+                              this.validLicense==1 ||
+                              this.validClasif==1 ||
+                              this.validRigtsUrl==1 ||
+                              this.validIsbn==1 ||
+                              this.validTipo==1 ||
+                              this.validScoreYear==1 ||
+                              this.validScoreTrackYear==1 ||
+                              this.validSjrYear==1 ||
+                              this.validSnipYear==1 ||
+                              this.validHIndex==1 ||
+                              this.validUrl==1">
+            <i [ngClass]="modal_icon"></i>{{modal_boton}}
+          </button>
+          </ng-container>
+          <ng-container *ngIf="modal_boton=='Actualizar'">
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizar()"
+                  [disabled]="this.fuenteTitulo=='' ||
+                              this.validIssni==1 ||
+                              this.validIssne==1 ||
+                              this.validPublisher==1 ||
+                              this.validUrlNorm==1 ||
+                              this.validApcCosto==1 ||
+                              this.validLicense==1 ||
+                              this.validClasif==1 ||
+                              this.validRigtsUrl==1 ||
+                              this.validIsbn==1 ||
+                              this.validTipo==1 ||
+                              this.validScoreYear==1 ||
+                              this.validScoreTrackYear==1 ||
+                              this.validSjrYear==1 ||
+                              this.validSnipYear==1 ||
+                              this.validHIndex==1 ||
+                              this.validUrl==1">
+            <i [ngClass]="modal_icon"></i>{{modal_boton}}
+          </button>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

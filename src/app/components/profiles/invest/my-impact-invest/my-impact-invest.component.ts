@@ -1,0 +1,423 @@
+import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from "@angular/router";
+import {AdviserService} from "../../../../services/adviser.service";
+import {CatalogsService} from "../../../../services/catalogs.service";
+import {CommonService} from "../../../../services/common.service";
+import {ExportService} from "../../../../services/export.service";
+import {ExcelJson} from "../../../../interfaces/excel-json";
+import {CitasService} from "../../../../services/citas.service";
+import {LineasInvestigacionService} from "../../../../services/lineas-investigacion.service";
+import {PaisesService} from "../../../../services/paises.service";
+import {TiposDeProductoService} from "../../../../services/tipos-de-producto.service";
+
+@Component({
+  selector: 'app-my-impact-invest',
+  templateUrl: './my-impact-invest.component.html',
+  styleUrls: ['./my-impact-invest.component.css']
+})
+export class MyImpactInvestComponent implements OnInit {
+
+  id: any;
+
+  pageNumber = 1;
+  pageSize = 10;
+  totalItems = 0;
+  paginationId = 'myzone';
+
+  anios = "";
+  idsProductos = "";
+  idsInstituciones = "";
+  idsPaises = "";
+  idsLineas = "";
+  idsColegios = "";
+  idsCampus = "";
+  idsInvestigadores = ""
+  idsInvestigadoresArray: Array<any> = []
+  search = "";
+  doaj = false;
+  scopus = false;
+  jcr = false;
+  scielo = false;
+  conacyt = false;
+  otros = false;
+  showDoaj = false;
+  showScopus = false;
+  showJcr = false;
+  showScielo = false;
+  showConacyt = false;
+  showOtros = false;
+
+  orderByTitle = false;
+  orderByType = false;
+
+  dataSource: any[] = [];
+  years: any[] = [];
+  productTypes: any[] = [];
+  lineasInvestigacion: any[] = [];
+  countries: any[] = [];
+  instituciones: any[] = [];
+  investigadores: any[] = [];
+  colegios: any[] = [];
+  campus: any[] = [];
+  responsive = true;
+  showLoadingBar = false;
+  countriesShortList: any[] = [
+    {
+      "ISO_3166_1_num": 144,
+      "ISO_3166_1_alfa2": "MX",
+      "nombre": "Mexico"
+    },
+    {
+      "ISO_3166_1_num": 209,
+      "ISO_3166_1_alfa2": "ES",
+      "nombre": "España"
+    },
+    {
+      "ISO_3166_1_num": 236,
+      "ISO_3166_1_alfa2": "US",
+      "nombre": "United States"
+    },
+    {
+      "ISO_3166_1_num": 178,
+      "ISO_3166_1_alfa2": "PT",
+      "nombre": "Portugal"
+    },
+    {
+      "ISO_3166_1_num": 46,
+      "ISO_3166_1_alfa2": "CN",
+      "nombre": "China"
+    }
+  ];
+
+  criteria = ``;
+  order = "";
+
+  constructor(private activatedRoute: ActivatedRoute,
+              private adviserService: AdviserService,
+              private catalogsService: CatalogsService,
+              private commonService: CommonService,
+              private exportService: ExportService,
+              private citasService: CitasService,
+              private lineasInvestigacionService: LineasInvestigacionService,
+              private paisesService: PaisesService,
+              private tiposDeProductoService: TiposDeProductoService )
+  {
+    this.idsInvestigadores = this.activatedRoute.snapshot.paramMap.get('id');
+    this.idsInvestigadoresArray.push(this.idsInvestigadores)
+  }
+
+  ngOnInit(): void {
+    this.loadVisibilidades()
+    this.loadYears();
+    this.loadProductTypes();
+    this.loadLines();
+    this.loadCountries();
+    this.loadInstitutions();
+    this.loadData();
+  }
+
+  loadData = () => {
+    this.dataSource = [];
+    this.totalItems = 0;
+    this.showLoadingBar = true;
+    this.criteria = `myzone/citas?page=${this.pageNumber}&page_size=${this.pageSize}&anios=${this.anios}&search=${this.search}&idsPaises=${this.idsPaises}&idsLineas=${this.idsLineas}&idsTiposProducto=${this.idsProductos}&idsInstituciones=${this.idsInstituciones}&idsColegios=${this.idsColegios}&idsCampus=${this.idsCampus}&idsInvestigadores=${this.idsInvestigadores}`;
+    this.criteria = this.order ? this.criteria.concat('&' + this.order) : this.criteria
+    this.criteria = this.doaj ? this.criteria.concat('&doaj=') : this.criteria.replace('&doaj=', '');
+    this.criteria = this.scopus ? this.criteria.concat('&scopus=') : this.criteria.replace('&scopus=', '');
+    this.criteria = this.jcr ? this.criteria.concat('&jcr=') : this.criteria.replace('&jcr=', '');
+    this.criteria = this.scielo ? this.criteria.concat('&scielo=') : this.criteria.replace('&scielo=', '');
+    this.criteria = this.conacyt ? this.criteria.concat('&conacyt=') : this.criteria.replace('&conacyt=', '');
+    this.criteria = this.otros ? this.criteria.concat('&otros=') : this.criteria.replace('&otros=', '');
+
+    this.adviserService.getMyZoneData(this.criteria).subscribe((result: any) => {
+      this.dataSource = result.data;
+      this.loadCoautores();
+      this.totalItems = result.total;
+      this.showLoadingBar = false;
+    });
+  }
+
+  loadCoautores(){
+    for(let ds of this.dataSource){
+      ds.coautores_ordenados = ds.coautores_ordenados.sort((a:any,b:any)=>a.orden-b.orden);
+      let auxCoautores = ds.coautores_ordenados;
+      auxCoautores = auxCoautores.filter((item:any) => item.orden != null)
+      for(let co of ds.coautores_ordenados){
+        if(co.orden==null){ auxCoautores.push(co) }
+      }
+      ds.coautores_ordenados = auxCoautores;
+    }
+    //console.log("this.dataSource",this.dataSource)
+  }
+
+  /**
+   * Carga las visibilidades que deben mostrarse como opciones en los filtros de visbilidad
+   */
+  loadVisibilidades() {
+    this.citasService.getVisibilidadesConCita(this.idsInvestigadoresArray)
+      .subscribe((data: any) =>
+      {
+        console.debug('Visibilidades de citas cargados en mi producción de investigador: ' + data)
+        this.showScopus = data.scopus
+        this.showScielo = data.scielo
+        this.showConacyt = data.conacyt
+        this.showDoaj = data.doaj
+        this.showJcr = data.jcr
+        this.showOtros = data.otros
+      },() => {
+        console.error('Error al cargar las visibilidades de citas en mi producción de investigador')
+      })
+  }
+
+  handlePageChange(event: any) {
+    this.pageNumber = event;
+    this.loadData();
+  }
+
+  loadYears = () => {
+    this.years = [];
+    this.citasService.getAniosConCitasAsignadas(null, null, this.idsInvestigadoresArray).subscribe((anios: any) => {
+      console.debug('Anios con cita asignada cargados en mi impacto de investigador: ' + anios)
+      for(let a of anios) {this.years.push({year:a,checked:''});}
+    },() => {
+      console.error('Error al cargar los años con cita asignada en mi impacto de investigador')
+    })
+  }
+
+  loadLines = () => {
+    this.lineasInvestigacion = [];
+    this.lineasInvestigacionService.get(null, null, [this.idsInvestigadores], null, null,
+      null, null, null, false, true).subscribe(
+      (result: any) => {
+        console.debug('Cargadas líneas de investigación para filtrar en mi impacto de investigador')
+        this.lineasInvestigacion = result;
+      },
+      (err: any) => {
+        console.error(err)
+      })
+  }
+
+  loadCountries = () => {
+    this.countries = [];
+    this.paisesService.get(false, true, null, null, null,
+      null, [this.idsInvestigadores], null).subscribe(
+      (result: any) => {
+        this.countries = result;
+        for(let c of this.countries){ c.checked=""; }
+      },
+      (err: any) => {
+        console.error(err)
+      }
+    );
+  }
+
+  loadProductTypes = () => {
+    this.tiposDeProductoService.get(false, true, null, null,
+      null, [this.idsInvestigadores]).subscribe(
+      (result: any) => {
+        this.productTypes = result;
+      },
+      (err: any) => {
+        console.error(err)
+      }
+    );
+  }
+
+  loadInstitutions = () => {
+    this.instituciones = [];
+    this.catalogsService.getAllRors(null, null, null, null,
+      null, null,  [this.idsInvestigadores], null, null,
+      null, false, true).subscribe(
+      (result: any) => {
+        this.instituciones = result;
+        for(let i of this.instituciones){ i.checked=""; }
+      },
+      (err: any) => {
+        console.error(err)
+      }
+    );
+  }
+
+  selectYear = (year: string) => {
+    for(let anio of this.years){
+      if(anio.year == year){
+        if(anio.checked == "checked") {
+          anio.checked = "";
+        }else{
+          anio.checked = "checked";
+        }
+      }
+    }
+    this.anios="";
+    for(let anio of this.years){
+      if(anio.checked == "checked") { this.anios = this.anios.concat(' ' + anio.year); }
+    }
+    this.loadData();
+  }
+
+  selectLine = (lineId: any) => {
+    if (!this.idsLineas.includes(lineId.toString())) {
+      this.idsLineas = this.idsLineas.concat(' ' + lineId);
+    } else {
+      this.idsLineas = this.idsLineas.replace(' ' + lineId, '');
+    }
+    this.loadData();
+  }
+
+  selectProductType = (productTypeId: any) => {
+    if (!this.idsProductos.includes(productTypeId.toString())) {
+      this.idsProductos = this.idsProductos.concat(' ' + productTypeId);
+    } else {
+      this.idsProductos = this.idsProductos.replace(' ' + productTypeId, '');
+    }
+    this.loadData();
+  }
+
+  selectInstituciones = (institucionesId: any) => {
+    for(let insti of this.instituciones){
+      if(insti.id == institucionesId){
+        if(insti.checked == "checked") {
+          insti.checked = "";
+        }else{
+          insti.checked = "checked";
+        }
+      }
+    }
+    this.idsInstituciones="";
+    for(let insti of this.instituciones){
+      if(insti.checked == "checked") { this.idsInstituciones = this.idsInstituciones.concat(' ' + insti.id); }
+    }
+    this.loadData();
+  }
+
+  selectCountry = (countryId: any) => {
+    for(let count of this.countries){
+      if(count.ISO_3166_1_num == countryId){
+        if(count.checked == "checked") {
+          count.checked = "";
+        }else{
+          count.checked = "checked";
+        }
+      }
+    }
+    this.idsPaises="";
+    for(let count of this.countries){
+      if(count.checked == "checked") { this.idsPaises = this.idsPaises.concat(' ' + count.ISO_3166_1_num); }
+    }
+    this.loadData();
+  }
+
+  doajChange(): void {
+    if (this.doaj) {
+      this.criteria = this.criteria.concat('&doaj=');
+    } else {
+      this.criteria = this.criteria.replace('&doaj=', '');
+    }
+    this.loadData();
+  }
+
+  scopusChange(): void {
+    if (this.scopus) {
+      this.criteria = this.criteria.concat('&scopus=');
+    } else {
+      this.criteria = this.criteria.replace('&scopus=', '');
+    }
+    this.loadData();
+  }
+
+  jcrChange(): void {
+    if (this.jcr) {
+      this.criteria = this.criteria.concat('&jcr=');
+    } else {
+      this.criteria = this.criteria.replace('&jcr=', '');
+    }
+    this.loadData();
+  }
+
+  scieloChange(): void {
+    if (this.scielo) {
+      this.criteria = this.criteria.concat('&scielo=');
+    } else {
+      this.criteria = this.criteria.replace('&scielo=', '');
+    }
+    this.loadData();
+  }
+
+  conacytChange(): void {
+    if (this.conacyt) {
+      this.criteria = this.criteria.concat('&conacyt=');
+    } else {
+      this.criteria = this.criteria.replace('&conacyt=', '');
+    }
+    this.loadData();
+  }
+
+  otrosChange(): void {
+    if (this.otros) {
+      this.criteria = this.criteria.concat('&otros=');
+    } else {
+      this.criteria = this.criteria.replace('&otros=', '');
+    }
+    this.loadData();
+  }
+
+  clearFilter = () => {
+    window.location.reload();
+  }
+
+  orderEvent = (param: string) => {
+    this.order = param;
+    this.loadData();
+  }
+
+  exportToExcel(): void {
+    this.showLoadingBar = true;
+    const excelCriteria = this.criteria.concat('&no_paginate');
+    this.adviserService.getMyZoneData(excelCriteria).subscribe((result: any) => {
+      //console.log(result);
+      const excelData = result;
+      const edata: Array<ExcelJson> = [];
+      const udt: ExcelJson = {
+        data: [
+          {
+            A: 'Título',
+            B: 'DOI',
+            C: 'Url',
+            D: 'Año',
+            E: 'Id tipo',
+            F: 'Tipo',
+            G: 'Nombre investigador',
+            I: 'Fuente'
+          }, // table header
+        ],
+        skipHeader: true,
+      };
+      excelData.forEach((item: any) => {
+        var temp_doi = ' ';
+        var temp_anio = ' ';
+        var temp_idtipo = ' ';
+        var temp_nombtipo = ' ';
+        var temp_fuente = ' ';
+        if(item.DOI==='' || item.DOI===null){temp_doi=" ";}else{temp_doi=item.DOI;}
+        if(item.anio==='' || item.anio===null){temp_anio=" ";}else{temp_anio=item.anio;}
+        if(item.idTipo==='' || item.idTipo===null){temp_idtipo=" ";}else{temp_idtipo=item.idTipo;}
+        if(item.nombreTipo==='' || item.nombreTipo===null){temp_nombtipo=" ";}else{temp_nombtipo=item.nombreTipo;}
+        if(item.fuente==='' || item.fuente===null){temp_fuente=" ";}else{temp_fuente=item.fuente;}
+        udt.data.push({
+          A: item.titulo,
+          B: temp_doi,
+          C: item.url,
+          D: temp_anio,
+          E: temp_idtipo,
+          F: temp_nombtipo,
+          G: item.nombreInvest,
+          I: temp_fuente
+        });
+      });
+      edata.push(udt);
+      this.exportService.exportJsonToExcelMyZone(edata, 'My_Impact_Investigador');
+      this.showLoadingBar = false;
+    });
+  }
+
+}

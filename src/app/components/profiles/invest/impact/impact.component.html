@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-xl-12">
+
+    <div class="row g-3">
+      <div class="col">
+        <div class="input-group input-group-md mb-g">
+          <input type="text" id="simpleinput" class="form-control" placeholder="Filtro" [(ngModel)]="filter" (keyup)="loadAllData()">
+          <div class="input-group-append">
+            <span class="input-group-text"><i class="fal fa-search"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-md mb-g">
+          <div class="btn-group">
+            <span class="input-group-text">Exportar:</span>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToExcel()">Excel&nbsp;
+              <span class="fas fa-file-excel"></span>
+            </button>
+            <button type="button" class="btn btn-success waves-effect waves-themed" (click)="exportToCsv()">CSV&nbsp;
+              <span class="fas fa-file-csv"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-lg mb-g">
+          <div class="btn-group">
+            <span class="input-group-text">Ordenar:</span>
+            <button type="button" class="btn btn-secondary waves-effect waves-themed" (click)="orderDataByTitle()">Título
+              <span *ngIf="titleMode==='asc'" class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="titleMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </button>
+            <button type="button" class="btn btn-secondary waves-effect waves-themed" (click)="orderDataByDate()">Fecha
+              <span *ngIf="dateMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="dateMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </button>
+            <button type="button" class="btn btn-secondary waves-effect waves-themed" (click)="orderDataByType()">Tipo
+              <span *ngIf="typeMode==='asc'"  class="fas fa-long-arrow-alt-up"></span>
+              <span *ngIf="typeMode==='desc'" class="fas fa-long-arrow-alt-down"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-lg mb-g">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <span class="input-group-text">Años:</span>
+            <select style="width:100px" class="custom-select form-control" [(ngModel)]="since" name="since" (change)="setToYear()">
+              <option *ngFor="let year of sinceYear" [value]="year">
+                {{year}}
+              </option>
+            </select>
+            <select style="width:100px" class="custom-select form-control" [(ngModel)]="to" name="to" (change)="getProductByRangeYear()">
+              <option *ngFor="let year of toYear" [value]="year">
+                {{year}}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- post -->
+    <div class="card mb-g border shadow-0" *ngFor="let impact of dataSource | paginate : {
+                  id: paginationId,
+                  itemsPerPage: pageSize,
+                  currentPage: pageNumber,
+                  totalItems: totalItems
+                }">
+      <div class="card-header p-0">
+        <div class="p-3 d-flex flex-row">
+          <div class="d-block ml-2">
+            <span class="h6 font-weight-bold text-uppercase d-block m-0"><a href="javascript:void(0);">{{ impact.titulo }}</a></span>
+            <a href="javascript:void(0);" class="fs-sm text-info h6 fw-500 mb-0 d-block">{{ impact.nombreTipo }}</a>
+            <div class="d-flex mt-1 text-warning align-items-center">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body ">
+        <p>{{ impact.anio }}</p>
+        <p>{{ impact.coautores.join() }}</p>
+        <p *ngIf="impact.DOI"><span class="font-weight-bold">DOI:&nbsp;</span><a target="_blank" [href]="'https://www.doi.org/'+impact.DOI">{{ impact.DOI }}</a></p>
+        <!--<p>{{ impact.DOI }}</p>-->
+      </div>
+      <div class="card-footer">
+        <div class="d-flex align-items-center">
+          <!--<span class="text-sm text-muted font-italic"><i class="fal fa-clock mr-1"></i> Posted 1 week ago</span>
+          <a href="javascript:void(0);" class="flex-shrink-0 ml-auto">Reply <i class="fal fa-reply ml-2"></i> </a>-->
+        </div>
+      </div>
+    </div>
+    <!-- post -end -->
+
+    <pagination-controls
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]="responsive"
+      [id]="paginationId"
+      (pageChange)="handlePageChange($event)"
+      class="paginationStyle"
+    ></pagination-controls>
+
+  </div>
+</div>

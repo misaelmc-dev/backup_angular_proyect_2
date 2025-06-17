@@ -1,0 +1,118 @@
+<div class="panel-hdr">
+  <h2>{{(titulo)?'Campus asociados al evento :':'Agregue los campus asociados al evento :'}} &nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button *ngIf="this.permisosScicomService.canAgregarCampusEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#campus-modal">
+      <i class="fal fa-plus"></i>
+    </button>
+  </h2>
+</div>
+<div style="padding:10px">
+  <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+         aria-describedby="dt-basic-example_info" >
+    <thead class="bg-primary-600 ">
+    <tr role="row">
+      <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-school"></i>&nbsp;&nbsp;Institución</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-city"></i>&nbsp;&nbsp;Campus</th>
+      <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-trash-alt"></i>&nbsp;&nbsp;Eliminar</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="campusAsing.length!=0">
+      <tr class="odd" *ngFor="let campus of campusAsing | paginate : {
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+        <td>{{campus.institucion}}</td>
+        <td>{{campus.nombre}}</td>
+        <td>
+          <button [disabled]="!this.permisosScicomService.canEliminarCampusEvento(eventoId)" type="button" class="btn btn-danger btn-icon rounded waves-effect waves-themed" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false" data-dismiss="alert" aria-label="Close"
+                  (click)="removeCampus(campus.id)">
+            <i class="fal fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="campusAsing.length==0">
+      <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay campus que mostrar</td></tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <div class="row" *ngIf="campusAsing.length!=0">
+    <div class="col-6">
+      <div class="dataTables_info" id="dt-basic-example_info" role="status" aria-live="polite" style="padding-left:10px">{{labelPagination}}</div>
+    </div>
+    <div class="col-6">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+          <li class="paginate_button page-item previous disabled" *ngIf="pageNumber==1" >
+            <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+              <i class="fal fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="paginate_button page-item previous" *ngIf="pageNumber!=1" (click)="loadPagination('prev')">
+            <a aria-controls="dt-basic-example" data-dt-idx="0" tabindex="0" class="page-link">
+              <i class="fal fa-chevron-left"></i>
+            </a>
+          </li>
+          <ng-container *ngFor="let page of pageNumbersArray">
+            <li class="page-item active" aria-current="page" *ngIf="page.id==pageNumber">
+              <span class="page-link">{{page.id}}<span class="sr-only">(current)</span></span>
+            </li>
+            <li class="page-item" *ngIf="page.id!=pageNumber">
+              <a class="page-link" (click)="loadPagination(page.id)">{{page.id}}</a>
+            </li>
+          </ng-container>
+          <li class="paginate_button page-item next" *ngIf="pageNumber!=pageNumbers" (click)="loadPagination('next')">
+            <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+              <i class="fal fa-chevron-right"></i>
+            </a>
+          </li>
+          <li class="paginate_button page-item next disabled" *ngIf="pageNumber==pageNumbers">
+            <a aria-controls="dt-basic-example" data-dt-idx="7" tabindex="0" class="page-link">
+              <i class="fal fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="campus-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Seleccione un campus </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cleanValues()">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <select class="form-control" [(ngModel)]="campusSelected">
+            <ng-container *ngIf="campusNoAsing.length!=0">
+              <option value="0">Selecciona un campus...</option>
+              <ng-container *ngFor="let camp of campusNoAsing">
+                <option value="{{camp.id}}">{{camp.nombre}}</option>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="campusNoAsing.length==0">
+              <option value="0">No hay campus disponibles...</option>
+            </ng-container>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(campusSelected==0)" (click)="asingCampus()">
+            <i class="fal fa-plus" ></i>&nbsp;Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

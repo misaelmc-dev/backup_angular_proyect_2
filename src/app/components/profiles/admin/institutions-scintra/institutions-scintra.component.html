@@ -1,0 +1,524 @@
+<div id="panel-1" class="panel">
+  <div class="panel-container show">
+    <div class="panel-content p-5">
+      <div class="subheader">
+        <h1 class="subheader-title">
+          <i class='subheader-icon fal fa-school mr-2'></i>Catálogo de instituciones Scintra <span class='fw-300'></span>
+        </h1>
+        <div class="subheader-block">
+          <button class="btn btn-success bg-green waves-effect waves-themed" type="button"
+                  data-toggle="modal" data-target="#agregar-modal" (click)="abrirModalCrear()">
+            <i class="fal fa-plus mr-2"></i>Agregar
+          </button>
+        </div>
+      </div>
+      <div class="dataTables_wrapper dt-bootstrap4">
+        <div class="row mb-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar..." [(ngModel)]="criterioBusqueda">
+                <div class="input-group-prepend mr-2">
+                  <button class="btn btn-primary waves-effect waves-themed b-top-r b-bot-r" type="button"
+                          (click)="filtrarInstituciones()">
+                    <i class="fal fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <app-filtro-avanzado
+              (backFilter)="recuperarSeleccionFiltroInstitucionesRor($event)"
+              [optionStringSize]="46"
+              [dataLoadFunction]="filtroDataLoadInstitucionesRor"
+              [pageSize]="25"
+              [iconFilter]="'fal fa-school'"
+              [textoSinFiltroSeleccionado]="'Filtrar por institución ROR...'"
+              [update]="update1">
+            </app-filtro-avanzado>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+            <button class="btn btn-primary bg-red waves-effect waves-themed" type="button" (click)="limpiarFiltros()">
+              <i class="fal fa-ban mr-2"></i> Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12" style="overflow-y: auto">
+          <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+            <thead class="bg-primary-600 b-top-l b-top-r">
+            <tr role="row">
+              <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 50%;" aria-sort="ascending">Razón social</th>
+              <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 30%;">ROR</th>
+              <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 20%;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody class="b-bot-l b-bot-r">
+            <ng-container *ngFor="let li of listaInstitucionesSc | paginate : {
+                          id: 'institucionScPagination',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+              <tr role="row" class="odd b-bot-l b-bot-r">
+                <td class="sorting_1 dtr-control b-bot-l">{{li.razon_social}}</td>
+                <td class="sorting_1 dtr-control b-bot-l">{{li.id_ror}}</td>
+                <td class="sorting_1 dtr-control b-bot-r">
+                  <button class="btn btn-icon btn-primary waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#consultar-modal" type="button" (click)="obtenerInstitucionVer(li.id)"
+                  ><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-icon btn-success bg-green waves-effect waves-themed mr-2" data-toggle="modal"
+                          data-target="#editar-modal" type="button" (click)="obtenerInstitucionActualizar(li.id)">
+                    <i class="fa fa-edit"></i></button>
+                  <button class="btn btn-icon btn-danger bg-red waves-effect waves-themed mr-2" type="button"
+                          (click)="eliminar(li)"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-5 mt-2 mb-2">
+          <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+        </div>
+        <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+          <pagination-controls
+            id="institucionScPagination"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            [responsive]=true
+            (pageChange)="cambiarPagina($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="consultar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Detalles de la institución ROR
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="col-12" *ngIf="institucionImagenGuardada!=''">
+          <div class="d-flex flex-column align-items-center justify-content-center p-4">
+            <img src="https://backend-dev.scintra.com/images/{{institucionImagenGuardada}}"
+                 class="rounded-circle shadow-2 img-thumbnail picture-institution" alt=""
+                  (error)="notFoudImage()">
+          </div>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-key width-1"></i>ID:</label>
+          <label class="col-8">{{institucionId}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-university width-1"></i>Razón social:</label>
+          <label class="col-8">{{institucionRazonSocial}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-address-card width-1"></i>RFC:</label>
+          <label class="col-8">{{institucionRFC}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-address-card width-1"></i>Dirección fiscal:</label>
+          <label class="col-8">{{institucionDireccionFiscal}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-address-book width-1"></i>Persona moral:</label>
+          <label class="col-8">{{(institucionPersonaMoral)?"sí":"no"}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-link width-1"></i>Sitio Web:</label>
+          <label class="col-8"><a href="{{institucionWebsite}}}" target="_blank">{{institucionWebsite | slice :0:40}}...</a></label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-envelope width-1"></i>Correo:</label>
+          <label class="col-8">{{institucionCorreo}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-phone width-1"></i>Teléfono:</label>
+          <label class="col-8">{{institucionPhone}}</label>
+        </div>
+        <div class="row mb-2">
+          <label class="col-4 pr-2"><i class="fa fa-key width-1"></i>Id ROR:</label>
+          <label class="col-8">{{institucionIdRor}}</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="agregar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Ingrese los datos de la institución Scintra
+          <small class="m-0 text-muted"></small>
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Razón social:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa razon social..." [(ngModel)]="institucionRazonSocial">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">RFC:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa el RFC..." [(ngModel)]="institucionRFC">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Dirección fiscal:<b style="color:red">*</b></label>
+          <textarea type="text" class="form-control col-8" placeholder="Ingresa direccion fiscal..." rows="3"
+                    [(ngModel)]="institucionDireccionFiscal">
+          </textarea>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Persona moral:<b style="color:red">*</b></label>
+          <div class="col-8">
+            <div class="frame-wrap">
+              <ng-container *ngIf="institucionPersonaMoral">
+
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-1" checked="checked">
+                  <label class="custom-control-label" for="radio-1">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-2"
+                         (change)="cambiarPersonaMoral(false)">
+                  <label class="custom-control-label" for="radio-2">No</label>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="!institucionPersonaMoral">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-3"
+                         (change)="cambiarPersonaMoral(true)">
+                  <label class="custom-control-label" for="radio-3">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-4" checked="checked">
+                  <label class="custom-control-label" for="radio-4">No</label>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Sitio web:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un sitio web..." [(ngModel)]="institucionWebsite"
+                 (keyup)="validarLink()" [ngClass]="(validLink==1)?'is-invalid':''">
+          <ng-container *ngIf="validLink==1">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Correo:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un correo electronico..." [(ngModel)]="institucionCorreo"
+                 (keyup)="validarCorreo()" [ngClass]="(validCorreo!=0)?'is-invalid':''">
+          <ng-container *ngIf="validCorreo==1">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El campo correo es obligatorio</div>
+          </ng-container>
+          <ng-container *ngIf="validCorreo==2">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato del correo es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Teléfono:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un telefono..." [(ngModel)]="institucionPhone">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Búsqueda de ROR:</label>
+          <div class="col-8 m-0 p-0">
+            <div class="input-group">
+              <input placeholder="Buscar institución ROR..." class="form-control"
+                     [(ngModel)]="criterioBusquedaRorForm">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-primary waves-effect waves-themed"
+                        (click)="obtenerTodasInstitucionesRorForm()">
+                  <i class="fal fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Institución ROR:<b style="color:red">*</b></label>
+          <select class="form-control custom-select col-8" [(ngModel)]="institucionIdRor">
+            <ng-container *ngIf="listaInstitucionesRorForm.length==0">
+              <option value="0">Busca primero un ROR..</option>
+            </ng-container>
+            <ng-container *ngIf="listaInstitucionesRorForm.length>0">
+              <option value="0">Selecciona una institución ROR..</option>
+            </ng-container>
+            <ng-container *ngFor="let lir of listaInstitucionesRorForm">
+              <option value="{{lir.id_ror}}">{{lir.institution_name}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Foto de la institución:</label>
+          <div class="col-8 m-0 p-0">
+            <div class="input-group flex-nowrap mt-2 mb-0">
+              <div class="input-group flex-nowrap">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input"
+                         accept="image/jpg,image/png,image/jpeg"
+                         (change)="extractFileFromEvent1($event)"
+                         [(ngModel)]="archivoVacio"
+                         id="validacionLogoInput1">
+                  <label class="custom-file-label">
+                    <ng-container *ngIf="institucionImagenName!=''">
+                      {{institucionImagenName}}
+                    </ng-container>
+                    <ng-container *ngIf="institucionImagenName==''">
+                      Selecciona imagen...
+                    </ng-container>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-12 invalid-feedback text-center" id="validacionLogo1" style="display: none;">
+            &nbsp;&nbsp;Archivo no tiene las dimenciones correctas
+          </div>
+        </div>
+        <ng-container *ngIf="salvarImagen">
+          <div class="alert alert-secondary d-flex justify-content-center align-content-center" role="alert">
+            <img [src]="institucionImagenTemp" class="picture-institution-form">
+          </div>
+        </ng-container>
+        <div class="alert bg-primary-400 text-white fade show mt-3 mb-0" role="alert">
+          <div class="d-flex align-items-center">
+            <div class="alert-icon">
+              <i class="fal fa-info-circle"></i>
+            </div>
+            <div class="flex-1">
+              Nota: el tamaño sugerido de la imagen es de 800 de alto por 800 de ancho, o ajustar las proporciones de la imagen en 1 de alto por 1 de ancho y sus múltiplos<br> (ejemplo. 100x100, 800x800).
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="crear()"
+                  [disabled]="institucionRazonSocial=='' ||
+                              institucionRFC=='' ||
+                              institucionRazonSocial=='' ||
+                              institucionCorreo=='' || validCorreo!=0 ||
+                              institucionIdRor=='0'">
+            <i class="fal fa-save mr-2"></i>Guardar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editar-modal" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          Actualice los datos de la institución Scintra
+        </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">ID:</label>
+          <input type="text" class="form-control col-8" [(ngModel)]="institucionId" disabled readonly>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Razón social:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa razon social..." [(ngModel)]="institucionRazonSocial">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">RFC:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa el RFC..." [(ngModel)]="institucionRFC">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Dirección fiscal:<b style="color:red">*</b></label>
+          <textarea type="text" class="form-control col-8" placeholder="Ingresa direccion fiscal..." rows="3"
+                    [(ngModel)]="institucionDireccionFiscal">
+          </textarea>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Persona moral:<b style="color:red">*</b></label>
+          <div class="col-8">
+            <ng-container *ngIf="institucionPersonaMoral">
+              <div class="frame-wrap">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-5" checked="checked">
+                  <label class="custom-control-label" for="radio-5">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-6"
+                         (change)="cambiarPersonaMoral(false)">
+                  <label class="custom-control-label" for="radio-6">No</label>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!institucionPersonaMoral">
+              <div class="frame-wrap">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-7"
+                         (change)="cambiarPersonaMoral(true)">
+                  <label class="custom-control-label" for="radio-7">Sí</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <input type="radio" class="custom-control-input" id="radio-8" checked="checked">
+                  <label class="custom-control-label" for="radio-8">No</label>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Sitio web:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un sitio web..." [(ngModel)]="institucionWebsite"
+                 (keyup)="validarLink()" [ngClass]="(validLink==1)?'is-invalid':''">
+          <ng-container *ngIf="validLink==1">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato de la url es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Correo:<b style="color:red">*</b></label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un correo electronico..." [(ngModel)]="institucionCorreo"
+                 (keyup)="validarCorreo()" [ngClass]="(validCorreo!=0)?'is-invalid':''">
+          <ng-container *ngIf="validCorreo==1">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El campo correo es obligatorio</div>
+          </ng-container>
+          <ng-container *ngIf="validCorreo==2">
+            <label class="col-4 mt-1"></label>
+            <div class="invalid-feedback col-8">El formato del correo es inválido</div>
+          </ng-container>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Teléfono:</label>
+          <input type="text" class="form-control col-8" placeholder="Ingresa un telefono..." [(ngModel)]="institucionPhone">
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Búsqueda de ROR:</label>
+          <div class="col-8 m-0 p-0">
+            <div class="input-group">
+              <input placeholder="Buscar institución ROR..." class="form-control"
+                     [(ngModel)]="criterioBusquedaRorForm">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-primary waves-effect waves-themed"
+                        (click)="obtenerTodasInstitucionesRorForm()">
+                  <i class="fal fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Institución ROR:<b style="color:red">*</b></label>
+          <select class="form-control custom-select col-8" [(ngModel)]="institucionIdRor">
+            <ng-container *ngIf="listaInstitucionesRorForm.length==0">
+              <option value="0">Busca primero un ROR..</option>
+            </ng-container>
+            <ng-container *ngIf="listaInstitucionesRorForm.length>0">
+              <option value="0">Selecciona una institución ROR..</option>
+            </ng-container>
+            <ng-container *ngFor="let lir of listaInstitucionesRorForm">
+              <option value="{{lir.id_ror}}">{{lir.institution_name}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="row m-2">
+          <label class="form-label col-4 mt-1">Foto de la institución:</label>
+          <div class="col-8 m-0 p-0">
+            <div class="input-group flex-nowrap mt-2 mb-0">
+              <div class="input-group flex-nowrap">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input"
+                         accept="image/jpg,image/png,image/jpeg"
+                         (change)="extractFileFromEvent($event)"
+                         [(ngModel)]="archivoVacio"
+                         id="validacionLogoInput">
+                  <label class="custom-file-label">
+                    <ng-container *ngIf="institucionImagenName!=''">
+                      {{institucionImagenName}}
+                    </ng-container>
+                    <ng-container *ngIf="institucionImagenName==''">
+                      Selecciona imagen...
+                    </ng-container>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-12 invalid-feedback text-center" id="validacionLogo" style="display: none;">
+            &nbsp;&nbsp;Archivo no tiene las dimenciones correctas
+          </div>
+        </div>
+        <ng-container *ngIf="!salvarImagen">
+          <div class="alert alert-secondary d-flex justify-content-center align-content-center" role="alert"
+                *ngIf="institucionImagenGuardada!=''">
+            <img src="https://backend-dev.scintra.com/images/{{institucionImagenGuardada}}"
+            class="picture-institution-form">
+          </div>
+        </ng-container>
+        <ng-container *ngIf="salvarImagen">
+          <div class="alert alert-secondary d-flex justify-content-center align-content-center" role="alert">
+            <img [src]="institucionImagenTemp" class="picture-institution-form">
+          </div>
+        </ng-container>
+        <div class="alert bg-primary-400 text-white fade show mt-1 mb-0" role="alert">
+          <div class="d-flex align-items-center">
+            <div class="alert-icon">
+              <i class="fal fa-info-circle"></i>
+            </div>
+            <div class="flex-1">
+              Nota: el tamaño sugerido de la imagen es de 800 de alto por 800 de ancho, o ajustar las proporciones de la imagen en 1 de alto por 1 de ancho y sus múltiplos<br> (ejemplo. 100x100, 800x800).
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed" data-dismiss="modal">Cerrar</button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-success bg-green waves-effect waves-themed" data-dismiss="modal"
+                  (click)="actualizar()" [disabled]="institucionRazonSocial=='' ||
+                                                     institucionRFC=='' ||
+                                                     institucionRazonSocial=='' ||
+                                                     institucionCorreo=='' || validCorreo!=0 ||
+                                                     institucionIdRor=='0'">
+            <i class="fal fa-check mr-2"></i>Actualizar</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

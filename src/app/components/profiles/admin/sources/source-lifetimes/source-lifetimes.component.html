@@ -1,0 +1,454 @@
+<div class="dataTables_wrapper dt-bootstrap4">
+  <div class="row mb-2">
+    <h5 class="col-lg-6 col-md-6 col-sm-12 col-xs-12 pt-2">
+      <i class="fa fa-user-clock width-1"></i> Vigencias de visibilidad
+    </h5>
+    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 d-flex align-items-center justify-content-end">
+      <button class="btn btn-primary bg-green waves-effect waves-themed" type="button"
+              (click)="mostrar('nuevo')" *ngIf="modal!='ver'">
+        <i class="fal fa-plus mr-2"></i> Agregar
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12" style="overflow-y: auto">
+    <table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline b-top-l b-top-r b-bot-l b-bot-r" role="grid" aria-describedby="dt-basic-example_info" style="width: 1115px;">
+      <thead class="bg-primary-600 b-top-l b-top-r">
+      <tr role="row">
+        <th class="sorting_asc b-top-l" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="ascending">Año</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Scopus</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Scimago</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >WOSCC</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >JCR</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Scielo</th>
+        <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" >Conacyt</th>
+        <th class="b-top-r" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" style="width: 90px;" *ngIf="modal!='ver'">Acciones</th>
+      </tr>
+      </thead>
+      <tbody class="b-bot-l b-bot-r">
+      <ng-container *ngFor="let item of listaItems | paginate : {
+                          id: 'items2Pagination',
+                          itemsPerPage: 10,
+                          currentPage: pageNumber,
+                          totalItems: totalItems };let i = index">
+        <tr role="row" class="odd b-bot-l b-bot-r" *ngIf="item.accion!='eliminar'">
+          <td>{{item.year}}</td>
+          <td>
+            <ng-container *ngIf="item.scopus==true">
+              Sí
+              <i class="fa fa-lock-open text-success" *ngIf="item.allow_scopus_modification==true"></i>
+              <i class="fa fa-lock text-danger"
+                 *ngIf="item.allow_scopus_modification==false || item.allow_scopus_modification==null"></i>
+            </ng-container>
+            <ng-container *ngIf="item.scopus==false || item.scopus==null">
+              No
+              <i class="fa fa-lock-open text-success" *ngIf="item.allow_scopus_modification==true"></i>
+              <i class="fa fa-lock text-danger"
+                 *ngIf="item.allow_scopus_modification==false || item.allow_scopus_modification==null"></i>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="item.scimago==true">
+              Sí
+              <i class="fa fa-lock-open text-success" *ngIf="item.allow_scimago_modification==true"></i>
+              <i class="fa fa-lock text-danger"
+                 *ngIf="item.allow_scimago_modification==false || item.allow_scimago_modification==null"></i>
+            </ng-container>
+            <ng-container *ngIf="item.scimago==false || item.scimago==null">
+              No
+              <i class="fa fa-lock-open text-success" *ngIf="item.allow_scimago_modification==true"></i>
+              <i class="fa fa-lock text-danger"
+                 *ngIf="item.allow_scimago_modification==false || item.allow_scimago_modification==null"></i>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="item.woscc==true">Sí</ng-container>
+            <ng-container *ngIf="item.woscc==false || item.woscc==null">No</ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="item.jcr==true">Sí</ng-container>
+            <ng-container *ngIf="item.jcr==false || item.jcr==null">No</ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="item.scielo==true">Sí</ng-container>
+            <ng-container *ngIf="item.scielo==false || item.scielo==null">No</ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="item.conacyt==true">Sí</ng-container>
+            <ng-container *ngIf="item.conacyt==false || item.conacyt==null">No</ng-container>
+          </td>
+          <td class="sorting_1 dtr-control b-bot-r" *ngIf="modal!='ver'">
+            <button class="btn btn-sm btn-icon btn-primary waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('ver',item)"
+            ><i class="fa fa-eye"></i></button>
+            <button class="btn btn-sm btn-icon btn-success bg-green waves-effect waves-themed mr-1" type="button"
+                    (click)="mostrar('editar',item)">
+              <i class="fa fa-edit"></i></button>
+            <button class="btn btn-sm btn-icon btn-danger bg-red waves-effect waves-themed mr-1" type="button"
+                    (click)="removerItem(item.id)"><i class="fa fa-trash"></i></button>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12 col-md-5 mt-2 mb-2">
+    <div class="dataTables_info ml-2" id="dt-basic-example_info" role="status" aria-live="polite">Total de elementos: {{totalItems}} </div>
+  </div>
+  <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+    <pagination-controls
+      id="items2Pagination"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      [responsive]=true
+      (pageChange)="cambiarPagina($event)">
+    </pagination-controls>
+  </div>
+</div>
+
+<div class="modal fade {{(visualizar)?'show':''}}" id="default-example-modal-center" tabindex="1" role="dialog"
+     style="{{(visualizar)?'display:block;':'display:none;'}}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">
+          {{similar_titulo_modal}}
+        </h4>
+        <button type="button" class="close" aria-label="Close" (click)="mostrar('limpiar')">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="similar_btn_modal=='ver'">
+          <div class="row">
+            <label class="col-6"><b>Año:</b></label>
+            <label class="col-6"> {{datosVigencia.year}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Scopus:</b></label>
+            <label class="col-6"> {{(datosVigencia.scopus==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Scimago:</b></label>
+            <label class="col-6"> {{(datosVigencia.scimago==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>WOSCC:</b></label>
+            <label class="col-6"> {{(datosVigencia.woscc==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>JCR:</b></label>
+            <label class="col-6"> {{(datosVigencia.jcr==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Scielo:</b></label>
+            <label class="col-6"> {{(datosVigencia.scielo==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Conacyt:</b></label>
+            <label class="col-6"> {{(datosVigencia.conacyt==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Permitir modificación automática Scopus:</b></label>
+            <label class="col-6"> {{(datosVigencia.allow_scopus_modification==true)?'Sí':'No'}}</label>
+          </div>
+          <div class="row">
+            <label class="col-6"><b>Permitir modificación automática Scimago:</b></label>
+            <label class="col-6"> {{(datosVigencia.allow_scimago_modification.jcr==true)?'Sí':'No'}}</label>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal!='ver'">
+          <div class="row mb-2">
+            <label class="form-label col-4 mt-1">Año:<b style="color:red">*</b></label>
+            <div class="col-8">
+              <select class="form-control" [(ngModel)]="v_anio">
+                <option value="0">Selecciona un año...</option>
+                <ng-container *ngIf="v_anio_save!=0">
+                  <option value="{{v_anio_save}}">{{v_anio_save}}</option>
+                </ng-container>
+                <ng-container *ngFor="let la of listaAnios">
+                  <option value="{{la}}">{{la}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Scopus:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_scopus">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scopus1"
+                           name="scopus" checked="">
+                    <label class="custom-control-label" for="scopus1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scopus2"
+                           name="scopus" (click)="v_scopus=false">
+                    <label class="custom-control-label" for="scopus2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_scopus">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scopus3"
+                           name="scopus" (click)="v_scopus=true">
+                    <label class="custom-control-label" for="scopus3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scopus4"
+                           name="scopus" checked="">
+                    <label class="custom-control-label" for="scopus4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Scimago:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_scimago">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scimago1"
+                           name="scimago" checked="">
+                    <label class="custom-control-label" for="scimago1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scimago2"
+                           name="scimago" (click)="v_scimago=false">
+                    <label class="custom-control-label" for="scimago2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_scimago">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scimago3"
+                           name="scimago" (click)="v_scimago=true">
+                    <label class="custom-control-label" for="scimago3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scimago4"
+                           name="scimago" checked="">
+                    <label class="custom-control-label" for="scimago4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> WOSCC:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_woscc">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="woscc1"
+                           name="woscc" checked="">
+                    <label class="custom-control-label" for="woscc1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="woscc2"
+                           name="woscc" (click)="v_woscc=false">
+                    <label class="custom-control-label" for="woscc2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_woscc">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="woscc3"
+                           name="woscc" (click)="v_woscc=true">
+                    <label class="custom-control-label" for="woscc3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="woscc4"
+                           name="woscc" checked="">
+                    <label class="custom-control-label" for="woscc4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> JCR:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_jcr">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="jcr1"
+                           name="jcr" checked="">
+                    <label class="custom-control-label" for="jcr1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="jcr2"
+                           name="jcr" (click)="v_jcr=false">
+                    <label class="custom-control-label" for="jcr2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_jcr">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="jcr3"
+                           name="jcr" (click)="v_jcr=true">
+                    <label class="custom-control-label" for="jcr3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="jcr4"
+                           name="jcr" checked="">
+                    <label class="custom-control-label" for="jcr4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Scielo:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_scielo">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scielo1"
+                           name="scielo" checked="">
+                    <label class="custom-control-label" for="scielo1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scielo2"
+                           name="scielo" (click)="v_scielo=false">
+                    <label class="custom-control-label" for="scielo2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_scielo">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scielo3"
+                           name="scielo" (click)="v_scielo=true">
+                    <label class="custom-control-label" for="scielo3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="scielo4"
+                           name="scielo" checked="">
+                    <label class="custom-control-label" for="scielo4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Conacyt:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_conacyt">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="conacyt1"
+                           name="conacyt" checked="">
+                    <label class="custom-control-label" for="conacyt1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="conacyt2"
+                           name="conacyt" (click)="v_conacyt=false">
+                    <label class="custom-control-label" for="conacyt2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_conacyt">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="conacyt3"
+                           name="conacyt" (click)="v_conacyt=true">
+                    <label class="custom-control-label" for="conacyt3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="conacyt4"
+                           name="conacyt" checked="">
+                    <label class="custom-control-label" for="conacyt4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Permitir modificación automática Scopus:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_perm_scopus">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scopus1"
+                           name="perm_scopus" checked="">
+                    <label class="custom-control-label" for="perm_scopus1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scopus2"
+                           name="perm_scopus" (click)="v_perm_scopus=false">
+                    <label class="custom-control-label" for="perm_scopus2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_perm_scopus">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scopus3"
+                           name="perm_scopus" (click)="v_perm_scopus=true">
+                    <label class="custom-control-label" for="perm_scopus3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scopus4"
+                           name="perm_scopus" checked="">
+                    <label class="custom-control-label" for="perm_scopus4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <label class="form-label col-6 mt-1"> Permitir modificación automática Scimago:</label>
+            <div class="col-6">
+              <div class="frame-wrap">
+                <ng-container *ngIf="v_perm_scimago">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scimago1"
+                           name="perm_scimago" checked="">
+                    <label class="custom-control-label" for="perm_scimago1">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scimago2"
+                           name="perm_scimago" (click)="v_perm_scimago=false">
+                    <label class="custom-control-label" for="perm_scimago2">No</label>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!v_perm_scimago">
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scimago3"
+                           name="perm_scimago" (click)="v_perm_scimago=true">
+                    <label class="custom-control-label" for="perm_scimago3">Sí</label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="perm_scimago4"
+                           name="perm_scimago" checked="">
+                    <label class="custom-control-label" for="perm_scimago4">No</label>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <ng-container *ngIf="similar_btn_modal!='editar' && similar_btn_modal!='nuevo'">
+          <button type="button" class="btn btn-secondary waves-effect waves-themed"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>
+        </ng-container>
+        <ng-container *ngIf="similar_btn_modal=='editar' || similar_btn_modal=='nuevo'" >
+          <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-secondary waves-effect waves-themed ml-1"
+                  (click)="mostrar('limpiar')" aria-label="Close">Cerrar</button>&nbsp;
+          <ng-container *ngIf="similar_btn_modal=='nuevo'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed"
+                  (click)="mostrar('agregar')" [disabled]="v_anio==0">
+              <i class="fa fa-save mr-2"></i>Guardar</button>
+          </ng-container>
+          <ng-container *ngIf="similar_btn_modal=='editar'">
+            <button type="button" class="btn btn-primary waves-effect waves-themed"
+                    (click)="mostrar('actualizar')" [disabled]="v_anio==0">
+              <i class="fa fa-save mr-2"></i> Actualizar</button>
+          </ng-container>
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>

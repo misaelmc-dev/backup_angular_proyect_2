@@ -1,0 +1,155 @@
+<div class="panel-hdr">
+  <h2>{{(titulo)?'Tipos de participación permitidos en el evento :':'Agregue los tipos de participación permitidos en el evento :'}}&nbsp;&nbsp;&nbsp;&nbsp;"{{nombre}}"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button *ngIf="this.permisosScicomService.canAgregarTipoParticipacionEvento(eventoId)" type="button" class="btn btn-success btn-icon rounded waves-effect waves-themed"
+            data-toggle="modal" data-target="#participants-modal" (click)="cleanValues()">
+      <i class="fal fa-plus"></i>
+    </button>
+  </h2>
+</div>
+<div style="padding:10px">
+  <table class="table table-bordered table-hover table-striped w-100 dataTable dtr-inline border-table" role="grid"
+         aria-describedby="dt-basic-example_info" >
+    <thead class="bg-primary-600 ">
+    <tr role="row">
+      <th class="sorting border-tl" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1" aria-sort="descending"><i class="fa fa-address-book"></i>&nbsp;&nbsp;Tipo de participación</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-text-height"></i>&nbsp;&nbsp;Descripción</th>
+      <th class="sorting" tabindex="0" aria-controls="dt-basic-example" rowspan="1" colspan="1"><i class="fa fa-calendar"></i>&nbsp;&nbsp;Fechas de registro de participación</th>
+      <th tabindex="0" rowspan="1" colspan="1" class="border-tr"><i class="fa fa-clone"></i>&nbsp;&nbsp;Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngIf="participationAsing.length > 0">
+      <tr class="odd" *ngFor="let part of participationAsing | paginate : {
+            id: 'participationPagination',
+            itemsPerPage: pageSize,
+            currentPage: pageNumber,
+            totalItems: totalItems
+            };let i = index">
+        <td>{{part.nombre}}</td>
+        <td>{{part.descripcion}}</td>
+        <td>
+          <ng-container *ngFor="let fa of fechasAsign">
+            <label *ngIf="fa.id_tipo_rango==2">{{fa.tiempo_inicio | date: 'dd-MM-yyyy'}} <b style="color:darkblue"><-></b> {{fa.tiempo_final | date: 'dd-MM-yyyy'}}</label>
+          </ng-container>
+        </td>
+        <td>
+          <button [disabled]="!this.permisosScicomService.canEditarTipoParticipacionEvento(eventoId)" type="button" class="btn btn-success btn-icon" data-toggle="modal" data-target="#participants-modal"
+                  (click)="updateModal(part)"><i class="fal fa-edit"></i>
+          </button>&nbsp;&nbsp;
+          <button [disabled]="!this.permisosScicomService.canEliminarTipoParticipacionEvento(eventoId)" type="button" class="btn btn-danger btn-icon"
+                  (click)="removeParticipation(part.id)"><i class="fal fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="participationAsing.length==0">
+      <tr class="odd"><td valign="top" colspan="6" class="dataTables_empty" style="color:#0a70bd;font-size:20px">No hay tipos de participaciones que mostrar</td></tr>
+    </ng-container>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-sm-12 col-md-5 mt-2 mb-2">
+      <div class="dataTables_info ml-2" role="status" aria-live="polite">
+        Total de elementos: {{totalItems}}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-7 d-flex flex-row-reverse">
+      <pagination-controls
+        id="participationPagination"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+        [responsive]=true
+        (pageChange)="cambiarPagina($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="participants-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{(flagUpdate)?'Actualizar tipo de participación':'Agregue un tipo de participación'}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fal fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" style="margin:0px;margin-bottom:10px;">
+          <select class="form-control" [(ngModel)]="participationSelected" [disabled]="(flagUpdate)">
+            <ng-container *ngIf="participationNoAsing.length!=0">
+              <option value="0">Selecciona un tipo de participación...</option>
+              <ng-container *ngIf="!flagUpdate">
+                <ng-container *ngFor="let part of participationNoAsing">
+                  <option value="{{part.id}}">{{part.nombre}} - {{part.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="flagUpdate">
+                <ng-container *ngFor="let part of participationAsing">
+                  <option value="{{part.id}}">{{part.nombre}} - {{part.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="participationNoAsing.length==0">
+              <ng-container *ngIf="!flagUpdate">
+                <option value="0">No hay tipos de participación disponibles...</option>
+              </ng-container>
+              <ng-container *ngIf="flagUpdate">
+                <ng-container *ngFor="let part of participationAsing">
+                  <option value="{{part.id}}">{{part.nombre}} - {{part.descripcion}}</option>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </select>
+        </div>
+        <label>Fechas de registro de participación</label>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="input-group">
+              <div class="input-group" style="width: 205px">
+                <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje3==2 || mensaje3==3 || mensaje3==5)}" placeholder="Fecha inicial ..." (cambioFecha)="setFechaInicio($event)" (focus)="validateInput('fecha')" [(ngModel)]="showFechaInicio" appDateranger>
+                <div class="input-group-append rounded-right-radius-3">
+                  <span class="input-group-text fs-xl border-tr border-br rounded-right-radius-3"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+              &nbsp;<b style="color:red;">*</b>
+            </div>
+            <div class="invalid-feedback" *ngIf="mensaje3==2">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="mensaje3==3">La fecha inicial debe de ser anterior a la fecha final.</div>
+            <div class="invalid-feedback" *ngIf="mensaje3==5">Fechas fuera del rango del evento</div>
+          </div>
+          <div class="col-md-6">
+            <div class="input-group">
+              <div class="input-group" style="width: 205px">
+                <input type="text" [class]="{'form-control': true, 'is-invalid': (mensaje4==2 || mensaje4==3 || mensaje4==4 || mensaje4==5)}" placeholder="Fecha final..." (cambioFecha)="setFechaFinal($event)" (focus)="validateInput('fecha')" [(ngModel)]="showFechaFinal" appDateranger>
+                <div class="input-group-append">
+                  <span class="input-group-text fs-xl"><i class="fal fa-calendar"></i></span>
+                </div>
+              </div>
+              &nbsp;<b style="color:red">*</b>
+            </div>
+            <div class="invalid-feedback" *ngIf="mensaje4==2">El campo es obligatorio.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==3">La fecha debe de ser posterior a la fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==4">Ingresa una fecha inicial.</div>
+            <div class="invalid-feedback" *ngIf="mensaje4==5">Fecha fuera del rango del evento</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span style="margin-top:-15px">(<b style="color:red">*</b>) campo obligatorio&nbsp;&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(participationSelected==0 || fechaInicio=='' || fechaFinal=='' || mensaje3!=1 || mensaje4!=1)" (click)="asingParticipation()" *ngIf="!flagUpdate">
+            <i class="fal fa-check" ></i>&nbsp;Guardar
+          </button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" [disabled]="(participationSelected==0 || fechaInicio=='' || fechaFinal=='' || mensaje3!=1 || mensaje4!=1)" (click)="updateParticipation()" *ngIf="flagUpdate">
+            <i class="fal fa-check" ></i>&nbsp;Actualizar
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-modal [show] = "loadingCount > 0"></app-loading-modal>
